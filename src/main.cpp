@@ -12,6 +12,7 @@
 #include <iostream>
 #include <container/darray.h>
 #include <container/array.h>
+#include <container/deque.h>
 
 
 int main(int argc, char const *argv[])
