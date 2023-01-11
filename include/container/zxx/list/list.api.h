@@ -40,17 +40,15 @@ public:
   ///@{
   explicit list(const Allocator &allocator = Allocator());
   explicit list(size_type n);
-  list(size_type n, const T &value,
-               const Allocator &allocator = Allocator());
+  list(size_type n, const T &value, const Allocator &allocator = Allocator());
   template <class InputIterator>
   list(InputIterator first, InputIterator last,
-               const Allocator &allocator = Allocator());
+       const Allocator &allocator = Allocator());
   list(const list &x);
   list(list &&x);
   list(const list &x, const Allocator &allocator);
   list(list &&x, const Allocator &);
-  list(std::initializer_list<T>,
-               const Allocator &allocator = Allocator());
+  list(std::initializer_list<T>, const Allocator &allocator = Allocator());
   ~list();
   list<T, Allocator> &operator=(const list<T, Allocator> &x);
   list<T, Allocator> &operator=(list<T, Allocator> &&x);
@@ -82,7 +80,7 @@ public:
    *
    */
   ///@{
-    size_type size() const;
+  size_type size() const;
   size_type max_size() const;
   void resize(size_type sz);
   void resize(size_type sz, const T &c);
@@ -137,14 +135,18 @@ public:
    *
    */
   ///@{
-void splice(const_iterator position, list<T,Allocator>& x) noexcept;
+  void splice(const_iterator position, list<T, Allocator> &x) noexcept;
 
-void splice(const_iterator position, list<T,Allocator>&& x) noexcept;
+  void splice(const_iterator position, list<T, Allocator> &&x) noexcept;
 
-void splice(const_iterator position, list<T,Allocator>& x, const_iterator i) noexcept;
-void splice(const_iterator position, list<T,Allocator>&& x, const_iterator i) noexcept;
-void splice(const_iterator position, list<T,Allocator>& x, const_iterator first, const_iterator last) noexcept;
-void splice(const_iterator position, list<T,Allocator>&& x, const_iterator first, const_iterator last) noexcept;
+  void splice(const_iterator position, list<T, Allocator> &x,
+              const_iterator i) noexcept;
+  void splice(const_iterator position, list<T, Allocator> &&x,
+              const_iterator i) noexcept;
+  void splice(const_iterator position, list<T, Allocator> &x,
+              const_iterator first, const_iterator last) noexcept;
+  void splice(const_iterator position, list<T, Allocator> &&x,
+              const_iterator first, const_iterator last) noexcept;
 
   void remove(const T &value);
   template <class Predicate> void remove_if(Predicate pred);
@@ -152,12 +154,10 @@ void splice(const_iterator position, list<T,Allocator>&& x, const_iterator first
   void unique();
   template <class BinaryPredicate> void unique(BinaryPredicate binary_pred);
 
-  void merge(list<T,Allocator>& x);
+  void merge(list<T, Allocator> &x);
   void merge(list<T, Allocator> &&x);
-  template <class Compare>
-  void merge(list<T, Allocator> &x, Compare comp);
-  template <class Compare>
-  void merge(list<T, Allocator> &&x, Compare comp);
+  template <class Compare> void merge(list<T, Allocator> &x, Compare comp);
+  template <class Compare> void merge(list<T, Allocator> &&x, Compare comp);
 
   void sort();
   template <class Compare> void sort(Compare comp);
@@ -183,23 +183,17 @@ void swap(list<T, Allocator> &x, list<T, Allocator> &y);
  */
 ///@{
 template <class T, class Allocator>
-bool operator==(const list<T, Allocator> &x,
-                const list<T, Allocator> &y);
+bool operator==(const list<T, Allocator> &x, const list<T, Allocator> &y);
 template <class T, class Allocator>
-bool operator<(const list<T, Allocator> &x,
-               const list<T, Allocator> &y);
+bool operator<(const list<T, Allocator> &x, const list<T, Allocator> &y);
 template <class T, class Allocator>
-bool operator!=(const list<T, Allocator> &x,
-                const list<T, Allocator> &y);
+bool operator!=(const list<T, Allocator> &x, const list<T, Allocator> &y);
 template <class T, class Allocator>
-bool operator>(const list<T, Allocator> &x,
-               const list<T, Allocator> &y);
+bool operator>(const list<T, Allocator> &x, const list<T, Allocator> &y);
 template <class T, class Allocator>
-bool operator>=(const list<T, Allocator> &x,
-                const list<T, Allocator> &y);
+bool operator>=(const list<T, Allocator> &x, const list<T, Allocator> &y);
 template <class T, class Allocator>
-bool operator<=(const list<T, Allocator> &x,
-                const list<T, Allocator> &y);
+bool operator<=(const list<T, Allocator> &x, const list<T, Allocator> &y);
 
 ///@}
 
