@@ -1,4 +1,4 @@
-# Core Containers Library Reference
+# A powerful, faster and flexible container library
 
 ```{toctree}
 ---
@@ -15,3 +15,4 @@ zxx_core_container/graph/graph_main
 ```{note}
 This project is under active development.
 ```
+

@@ -66,7 +66,7 @@ breathe_projects = {
 html_theme = 'pydata_sphinx_theme'
 
 # The title in the home page
-html_title = '<b>zxx::core::container</b> Library'
+html_title = '<b>zxx::core::container</b>'
 
 html_short_title = ""
 
