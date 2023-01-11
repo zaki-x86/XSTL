@@ -13,6 +13,8 @@
 #include <container/darray.h>
 #include <container/array.h>
 #include <container/deque.h>
+#include <container/forward_list.h>
+#include <container/list.h>
 
 
 int main(int argc, char const *argv[])
