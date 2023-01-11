@@ -1,78 +1,50 @@
-# Containers #  
+# zxx::core::container
 
-> Project is on hold because I am currently conscripted :(
+> Project is under active development :)
 
-[TOC]
+<img src="https://img.shields.io/badge/OS-Windows%20%7C%20macOS-blue" alt="Supported OS" />
 
+<img src="https://img.shields.io/badge/compiler-gcc%20%7C%20msvc%20%7C%20clang-green" alt="Supported compilers" />
 
-## About ##
+A powerful and flexible container library for C++ programming.
 
-### Description ###
+## About
 
-This project introduces basic data structures and algorithms that are used very often in everyday programming tasks to store and manipulate data efficiently.
+`zxx::core::container` is a part of `core` library, and the core library is part of `zxx` library. This library provides a wide range of container types, including `darray`, `list`, `map`, `unordered_map`, `set`, `unordered_set`, `stack`, `queue`, `priority_queue`, and more. Each container is designed to be efficient, easy to use, and fully customizable.
 
-The basic represented data structures are:
+## Description
 
-- [Dynamic Array](pages/DynamicArray.md)
-- [Linked List](pages/LinkedList.md)
-- [Stack](pages/Stack.md)
-- [Queue](pages/Queue.md)
-- [Binary Tree](pages/BinaryTree.md)
-- [Hash Table](pages/HashTable.md)
-- [Binary Search Tree](pages/BinarySearchTree.md)
-- [Red Black Tree](pages/RedBlackTree.md)
-- [Graph](pages/Graph.md)
+The `zxx::core::container` library offers a wide range of container types, each with its own strengths and weaknesses. For example, `darray` is ideal for situations where you need a dynamic array with a fast random-access time, while `list` is better suited for situations where you need a linked list with fast insertion and deletion times. `map` and `unordered_map` provide an efficient way to store key-value pairs, while `set` and `unordered_set` provide an efficient way to store unique elements.
 
-### Design ###
+The library also includes several specialized containers, such as `stack`, `queue`, and `priority_queue`, which are useful in specific situations. All of the containers are designed to be easy to use and fully customizable, so you can use them in a variety of different contexts.
 
-TODO: Design pattern used
+## Getting Started
 
-### Test ###
+### Requirements
 
-TODO: how unit tests are organized
+- OS: Windows, macOS
+- Compilers: gcc, msvc, clang
 
-## Getting Started ##
+### Installation
 
-### Requirements ###
+```bash
+# Using cmake
+mkdir build
+cd build
+cmake ..
+make
+make install
 
-TODO: Install compiler and cmake
+# Using apt-get on debian, ubuntu
+sudo apt-get install zxx-core-container
+```
 
-### Installation ###
+## Author
 
-TODO: Install library
+Name: M Zaki
+Email: zaki.x86@gmail.com
 
-### Usage ###
+## Contribution
 
-TODO: link library with existing projects
-
-TODO: Enable/Disable testing
-
-## Roadmap ##
-
-TODO: What to do next
-
-## Authors ##
-
-Mohamed Zaki
-Mechatronics Engineer
-
-## License ##
-
-TODO
-
-## References ##
-
-### Books ###
-
-- Introduction to Algorithms, 3rd Ed, Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest and Clifford Stein
-- The C++ Programming Language, 4th Edition by Bjarne Stroustrup
-
-### Other Resources ###
-
-- [GitHub | README Template Example](https://github.com/dec0dOS/amazing-github-template#readme)
-- [GitHub | CMake Examples](https://github.com/ttroy50/cmake-examples/tree/master/01-basic)
-- [GitHub | Modern Cpp Template](https://github.com/filipdutescu/modern-cpp-template)
-- [Alex Ott | Test Driven Development](https://alexott.net/en/cpp/CppTestingIntro.html)
-- [Doxygen Awesome | Change Doxygen docs theme](https://jothepro.github.io/doxygen-awesome-css/index.html)
-- [StackOverFlow | How do I create a random alpha-numeric string in C++?](https://stackoverflow.com/questions/440133/how-do-i-create-a-random-alpha-numeric-string-in-c)
-- [Sandor Dargo's Blog](https://www.sandordargo.com/blog/2019/04/24/parameterized-testing-with-gtest)
+Your contributions are always welcome and appreciated.
+Please read [the contribution guideline]() for more information.
