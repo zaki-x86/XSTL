@@ -9,7 +9,7 @@
         #if defined(BUILD_SHARED)
             #define ZXX_PUBLIC __declspec(dllexport)
             #define ZXX_INTERNAL
-        #elif !defined(BUILD_SHARED)
+        #elif defined(BUILD_STATIC)
             #define ZXX_PUBLIC __declspec(dllimport)
             #define ZXX_INTERNAL
         #else

@@ -159,7 +159,7 @@ if(BUILD_SHARED_LIBS)
     message(STATUS "Building ${PROJECT_NAME} as a shared library")
     target_compile_definitions(${PROJECT_NAME} PRIVATE -DBUILD_SHARED)
 else()
-    message(STATUS "Building MyLibrary as a static library")
+    message(STATUS "Building ${PROJECT_NAME} as a static library")
     target_compile_definitions(${PROJECT_NAME} PRIVATE -DBUILD_STATIC)
 endif()
 
