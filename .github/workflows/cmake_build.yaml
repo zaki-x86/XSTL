@@ -299,11 +299,15 @@ jobs:
         path: build
         key: ${{ matrix.config.name }}-build
         restore-keys: |
-          ${{ matrix.config.name }}-ccache-
+          ${{ matrix.config.name }}-build-
 
     - name: Run tests
       shell: cmake -P {0}
       run: |
+        message(STATUS "Current directory:")
+        execute_process(COMMAND ls)
+
+
         include(ProcessorCount)
         ProcessorCount(N)
         set(ENV{CTEST_OUTPUT_ON_FAILURE} "ON")
@@ -321,26 +325,29 @@ jobs:
           message("::error::${test_results}")
           message(FATAL_ERROR "Running tests failed!")
         endif()
-
-    - name: Clear cache
-      uses: actions/github-script@v6
-      with:
-        script: |
-          console.log("About to clear")
-          const caches = await github.rest.actions.getActionsCacheList({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-          })
-          for (const cache of caches.data.actions_caches) {
-            console.log(cache)
-            if(cache.key.includes("-build"))
-            github.rest.actions.deleteActionsCacheById({
+  
+  remove-build:
+    uses: actions/github-script@v6
+    with:
+      script: |
+        console.log("About to clear")
+        const caches = await github.rest.actions.getActionsCacheList({
+          owner: context.repo.owner,
+          repo: context.repo.repo,
+        })
+        for (const cache of caches.data.actions_caches) {
+          console.log(cache)
+          if(cache.key.includes("-build"))
+          {
+              console.log("removing: ${cache.key}")
+              github.rest.actions.deleteActionsCacheById({
               owner: context.repo.owner,
               repo: context.repo.repo,
               cache_id: cache.id,
             })
           }
-          console.log("Clear completed")
+          }
+        console.log("Clear completed")
 
   release:
     if: contains(github.ref, 'tags/v')
