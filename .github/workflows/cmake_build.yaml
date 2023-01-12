@@ -327,27 +327,29 @@ jobs:
         endif()
   
   remove-build:
-    uses: actions/github-script@v6
-    with:
-      script: |
-        console.log("About to clear")
-        const caches = await github.rest.actions.getActionsCacheList({
-          owner: context.repo.owner,
-          repo: context.repo.repo,
-        })
-        for (const cache of caches.data.actions_caches) {
-          console.log(cache)
-          if(cache.key.includes("-build"))
-          {
-              console.log("removing: ${cache.key}")
-              github.rest.actions.deleteActionsCacheById({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              cache_id: cache.id,
-            })
-          }
-          }
-        console.log("Clear completed")
+    needs: test
+    steps:
+    - uses: actions/github-script@v6
+      with:
+        script: |
+          console.log("About to clear")
+          const caches = await github.rest.actions.getActionsCacheList({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          })
+          for (const cache of caches.data.actions_caches) {
+            console.log(cache)
+            if(cache.key.includes("-build"))
+            {
+                console.log("removing: ${cache.key}")
+                github.rest.actions.deleteActionsCacheById({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                cache_id: cache.id,
+              })
+            }
+            }
+          console.log("Clear completed")
 
   release:
     if: contains(github.ref, 'tags/v')
