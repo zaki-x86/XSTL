@@ -20,6 +20,8 @@ jobs:
           exclude_check: ./build ./examples ./libs ./scripts
           output_file: ./static_analysis.report.txt
           other_options: -v
+      
+      - name: display report
         run:  |
           cat static_analysis.report.txt
 
