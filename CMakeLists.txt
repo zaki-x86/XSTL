@@ -38,7 +38,6 @@ if (UNIX)
     add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
 endif (UNIX)
 
-
 ##################################################################################
 ##################################################################################
 
@@ -155,6 +154,14 @@ if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
   )
 endif()
 
+# Check if the library is being built as a shared library
+if(BUILD_SHARED_LIBS)
+    message(STATUS "Building ${PROJECT_NAME} as a shared library")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -DBUILD_SHARED)
+else()
+    message(STATUS "Building MyLibrary as a static library")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -DBUILD_STATIC)
+endif()
 
 message(STATUS "Added all header and implementation files.\n")
 
@@ -422,11 +429,11 @@ message(STATUS "Finished building requirements for installing the package.\n")
 # Unit testing setup
 #
 
-#if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-#  enable_testing()
-#  message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
-#  add_subdirectory(test)
-#endif()
+if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
+  enable_testing()
+  message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
+  add_subdirectory(test)
+endif()
 
 ##################################################################################
 ##################################################################################
