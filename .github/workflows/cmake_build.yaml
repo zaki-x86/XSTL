@@ -209,6 +209,14 @@ jobs:
           message(FATAL_ERROR "Build failed")
         endif()
     
+    - name: Restore cache
+      uses: actions/cache@v3
+      with:
+        path: build
+        key: ${{ matrix.config.name }}-build
+        restore-keys: |
+          ${{ matrix.config.name }}-build-
+          
     - name: ccache statistics
       shell: cmake -P {0}
       run: |
@@ -284,18 +292,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Restore cache
+    - name: Restore cached build
+      id: cache-build
       uses: actions/cache@v3
+      outputs:
+        key: 
       with:
-        path: .ccache
-        key: ${{ matrix.config.name }}-ccache-${{ steps.ccache_cache_timestamp.outputs.timestamp }}
+        key: ${{ matrix.config.name }}-build
         restore-keys: |
           ${{ matrix.config.name }}-ccache-
 
     - name: Run tests
       shell: cmake -P {0}
       run: |
-        execute_process(COMMAND ls)
         include(ProcessorCount)
         ProcessorCount(N)
         set(ENV{CTEST_OUTPUT_ON_FAILURE} "ON")
@@ -313,6 +322,12 @@ jobs:
           message("::error::${test_results}")
           message(FATAL_ERROR "Running tests failed!")
         endif()
+
+    - name: Delete cached build
+      run: |
+        echo "Deleting the build/ cache"
+        curl -X DELETE -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/zaki-x86/zxx_core_container/actions/caches?key=${{${{ matrix.config.name }}-build}}
+
 
   release:
     if: contains(github.ref, 'tags/v')
