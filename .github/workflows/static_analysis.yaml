@@ -19,6 +19,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN}}
           exclude_check: ./build ./examples ./libs ./scripts
           output_file: ./static_analysis.report.txt
+          other_options: -v
+        run:  |
+          cat static_analysis.report.txt
 
       - name: publish report    
         uses: mikeal/publish-to-github-action@master
