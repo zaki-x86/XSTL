@@ -11,7 +11,8 @@
 
 BEGIN_NS_ZXX_CORE_CONTAINER
 
-template <class T, class Allocator = std::allocator<T>> class list {
+template <class T, class Allocator = std::allocator<T>> 
+class ZXX_PUBLIC list {
 public:
   /**
    * @name Public Type Aliases

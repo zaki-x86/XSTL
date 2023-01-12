@@ -30,7 +30,7 @@ BEGIN_NS_ZXX_CORE_CONTAINER
  * @tparam T The type of the elements stored in the array.
  * @tparam N The size of the array.
  */
-template <typename T, size_t N> struct array {
+template <typename T, size_t N> struct ZXX_PUBLIC array {
 
   // types:
 

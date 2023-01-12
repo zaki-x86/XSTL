@@ -8,8 +8,6 @@
 #define _ARRAY_TRAITS_H_
 
 BEGIN_NS_ZXX_CORE_CONTAINER
-
-    using size_t = std::size_t;   
      
     /**
      * `_array_traits` is a class template that is used to provide information about the size and element type of an `zxx::core::array` object. 
@@ -25,7 +23,7 @@ BEGIN_NS_ZXX_CORE_CONTAINER
      * 
      */
     template<typename _T, size_t _N>
-    struct _array_traits
+    struct ZXX_INTERNAL _array_traits
     {
         typedef _T _Type[_N];
         #if __cplusplus >= 201703L
@@ -43,7 +41,7 @@ BEGIN_NS_ZXX_CORE_CONTAINER
     };
 
     template<typename _T>
-    struct _array_traits<_T, 0>
+    struct ZXX_INTERNAL _array_traits<_T, 0>
     {
         struct _Type { };
         #if cplusplus >= 201703L

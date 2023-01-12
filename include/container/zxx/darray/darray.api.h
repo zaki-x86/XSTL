@@ -51,7 +51,7 @@ BEGIN_NS_ZXX_CORE_CONTAINER
  * is similar to the one provided by std::vector.
  */
 template <typename T, typename Allocator = std::allocator<T>>
-class darray : protected Darray_base<T, Allocator> {
+class ZXX_PUBLIC darray : protected Darray_base<T, Allocator> {
 private:
   // These aliases will be useful later on, bc we will no longer use any std::something in the future, therefore, I grouped them here and aliased them, so I can easily change them later when I create my own zxx::something
   typedef std::ptrdiff_t zxx_ptrdiff_t;

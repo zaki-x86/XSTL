@@ -29,7 +29,7 @@ BEGIN_NS_ZXX_CORE_CONTAINER
  */
 
 template <typename T, typename Allocator>
-struct Darray_base {
+struct ZXX_INTERNAL Darray_base {
 
   /**
    * @brief createS a new allocator type `_Tp_alloc_type` that is parameterized with the same type as `Darray_base`.

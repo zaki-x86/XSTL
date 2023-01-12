@@ -6,10 +6,10 @@
 #ifndef ZXX_INTERNAL
 
     #ifdef WIN32 || _WIN32
-        #if defined(XMATH_BUILD_SHARED)
+        #if defined(BUILD_SHARED_LIBS)
             #define ZXX_PUBLIC __declspec(dllexport)
             #define ZXX_INTERNAL
-        #elif defined(XMATH_BUILD_STATIC)
+        #elif !defined(BUILD_SHARED_LIBS)
             #define ZXX_PUBLIC __declspec(dllimport)
             #define ZXX_INTERNAL
         #else

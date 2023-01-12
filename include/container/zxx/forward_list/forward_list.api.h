@@ -10,7 +10,8 @@
 #include "forward_list.iterator.h"
 
 BEGIN_NS_ZXX_CORE_CONTAINER
-template <class T, class Allocator = std::allocator<T>> class forward_list {
+template <class T, class Allocator = std::allocator<T>> 
+class ZXX_PUBLIC forward_list {
 public:
   /**
    * @name Public Type Aliases

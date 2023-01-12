@@ -22,7 +22,7 @@
 
 
 template<typename T, typename Allocator>
-struct _Deque_base
+struct ZXX_INTERNAL _Deque_base
 {
 
 };

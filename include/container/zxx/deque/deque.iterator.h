@@ -4,7 +4,7 @@
 
 
 template<typename Deque>
-struct deque_iterator
+struct ZXX_PUBLIC deque_iterator
 {
 
 };

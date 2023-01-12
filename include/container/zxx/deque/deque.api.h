@@ -14,7 +14,7 @@
 BEGIN_NS_ZXX_CORE_CONTAINER
 
 template <class T, class Allocator = std::allocator<T>>
-class deque : protected _Deque_base<T, Allocator> {
+class ZXX_PUBLIC deque : protected _Deque_base<T, Allocator> {
 public:
   /**
    * @name Public Type Aliases
