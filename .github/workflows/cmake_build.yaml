@@ -296,6 +296,7 @@ jobs:
       id: cache-build
       uses: actions/cache@v3
       with:
+        path: build
         key: ${{ matrix.config.name }}-build
         restore-keys: |
           ${{ matrix.config.name }}-ccache-
