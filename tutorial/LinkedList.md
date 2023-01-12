@@ -1,1 +1,0 @@
-# Linked Lists #    {#linked_list}
