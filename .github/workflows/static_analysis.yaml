@@ -19,13 +19,9 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN}}
           check_library:
           skip_preprocessor:
-          enable:
+          enable: all
           exclude_check: |
-            test
-            build
-            examples
-            libs
-            scripts
+            build examples libs scripts
           inconclusive:
           inline_suppression:
           force_language: c++
