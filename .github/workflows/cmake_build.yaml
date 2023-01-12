@@ -295,8 +295,6 @@ jobs:
     - name: Restore cached build
       id: cache-build
       uses: actions/cache@v3
-      outputs:
-        key: 
       with:
         key: ${{ matrix.config.name }}-build
         restore-keys: |
