@@ -17,20 +17,11 @@ jobs:
         uses: deep5050/cppcheck-action@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN}}
-          check_library:
-          skip_preprocessor:
           enable: all
-          exclude_check: |
-            build examples libs scripts
-          inconclusive:
-          inline_suppression:
-          force_language: c++
-          force:
+          exclude_check: build examples libs scripts
           max_ctu_depth: 2
-          platform: 
           std: c++20
           output_file: ./static_analysis.report.txt
-          other_options:
 
       - name: publish report    
         uses: mikeal/publish-to-github-action@master
