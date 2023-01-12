@@ -17,12 +17,11 @@ jobs:
         uses: deep5050/cppcheck-action@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN}}
-          exclude_check: ./build ./examples ./libs ./scripts
-          other_options: -v
+          other_options: -i ./build -i ./examples -i ./libs -i ./scripts -v
       
       - name: display report
         run:  |
-          cat static_analysis.report.txt
+          cat cppcheck_report.txt
 
       - name: publish report    
         uses: mikeal/publish-to-github-action@master

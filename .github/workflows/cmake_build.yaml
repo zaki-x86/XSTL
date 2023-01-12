@@ -342,7 +342,7 @@ jobs:
             console.log(cache)
             if(cache.key.includes("-build"))
             {
-                console.log("removing: ${cache.key}")
+                console.log(`removing: ${cache.key}`)
                 github.rest.actions.deleteActionsCacheById({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
