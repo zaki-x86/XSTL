@@ -17,7 +17,7 @@ jobs:
         uses: deep5050/cppcheck-action@main
         with:
           github_token: ${{ secrets.GITHUB_TOKEN}}
-          other_options: -i ./build -i ./examples -i ./libs -i ./scripts -v
+          other_options: -i ./examples -i ./libs -i ./scripts -v
       
       - name: display report
         run:  |
