@@ -113,6 +113,7 @@ jobs:
         # Debugging step: Show GITHUB_PATH
         execute_process(
           COMMAND cat $ENV{GITHUB_PATH}
+          COMMAND ninja --version
         )
     
     - name: Download ccache
