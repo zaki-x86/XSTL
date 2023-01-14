@@ -110,14 +110,6 @@ jobs:
           )
         endif()
 
-        # Debugging step: Show GITHUB_PATH
-        execute_process(
-          COMMAND cat $ENV{GITHUB_PATH}
-        )
-        execute_process(
-          COMMAND COMMAND ninja --version
-        )
-        
     - name: Download ccache
       id: ccache
       shell: cmake -P {0}
