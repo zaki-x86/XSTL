@@ -2,12 +2,10 @@
 
 #define _FORWARD_LIST_API_H_
 
-#include <initializer_list>
-#include <iostream>
-#include <memory>
+#include <forward_list>
 
 #include "config/zxx.config.h"
-#include "forward_list.iterator.h"
+#include "forward_list.iterator.hpp"
 
 BEGIN_NS_ZXX_CORE_CONTAINER
 template <class T, class Allocator = std::allocator<T>> 

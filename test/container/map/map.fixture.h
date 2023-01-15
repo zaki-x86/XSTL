@@ -1,14 +1,15 @@
-#ifndef _LIST_FIXTURE_H_
 
-#define _LIST_FIXTURE_H_
+#ifndef _MAP_FIXTURE_H_
+
+#define _MAP_FIXTURE_H_
 
 
-#include "container/list"
+#include "container/map"
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 
     template<typename T>
-    class list_test : public ::testing::Test
+    class map_test : public ::testing::Test
     {
     protected:
         void SetUp() override{}
@@ -18,4 +19,5 @@ BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 
 END_NS_ZXX_CORE_CONTAINER_TEST
 
-#endif //
+#endif // !_MAP_TEST_HPP
+

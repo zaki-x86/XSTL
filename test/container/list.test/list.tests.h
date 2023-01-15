@@ -1,6 +1,6 @@
-#ifndef _DEQUE_TESTS_H_
+#ifndef _LIST_TESTS_H_
 
-#define _DEQUE_TESTS_H_
+#define _LIST_TESTS_H_
 
 #include "container/list.test/list.fixture.h"
 #include <iostream>

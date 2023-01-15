@@ -3,7 +3,7 @@
 #define _DARRAY_FIXTURE_H_
 
 
-#include "container/darray.h"
+#include "container/darray"
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 

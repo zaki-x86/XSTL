@@ -1,5 +1,5 @@
 /**
- * @file array.h
+ * @file array
  * @author M Zaki (zaki.x86@gmail.com)
  * @brief static array container header file, similar to std::array
  * @version 0.1
@@ -13,7 +13,7 @@
 
 #define _ARRAY_H_
 
-#include "zxx/array/array.api.h"
+#include "zxx/array/array.api.hpp"
 #include "zxx/array/array.imp.cc"
 
 #endif // !_ARRAY_H_

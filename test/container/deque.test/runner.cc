@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include "gtest/gtest.h"
-#include "container/deque.h"
 #include "deque.tests.h"
 
 int main(int argc, char *argv[])

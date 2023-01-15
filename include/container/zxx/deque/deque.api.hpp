@@ -2,14 +2,12 @@
 
 #define _DEQUE_API_H_
 
-#include <iostream>
-#include <memory>
-#include <initializer_list>
+#include <deque>
 
 #include "config/zxx.config.h"
-#include "deque.base.h"
-#include "deque.iterator.h"
-#include "deque.utils.h"
+#include "deque.base.hpp"
+#include "deque.iterator.hpp"
+#include "deque.utils.hpp"
 
 BEGIN_NS_ZXX_CORE_CONTAINER
 

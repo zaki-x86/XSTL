@@ -3,7 +3,7 @@
 #define _DEQUE_FIXTURE_H_
 
 
-#include "container/deque.h"
+#include "container/deque"
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 

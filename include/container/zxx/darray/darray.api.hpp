@@ -9,24 +9,20 @@
  *
  */
 
-#ifndef _ZXX_DARRAY_H_
+#ifndef _DARRAY_API_H_
 
-#define _ZXX_DARRAY_H_
+#define _DARRAY_API_H_
 
 // <--- std header files  --->
-#include <algorithm>
-#include <exception>
-#include <iostream>
-#include <memory>
-#include <type_traits>
+#include <vector>
 
 // <--- zxx::core headers needed --->
 #include "config/zxx.config.h"
 
 // <--- darray headers --->
-#include "darray.base.h"
-#include "darray.iterator.h"
-#include "darray.utils.h"
+#include "darray.base.hpp"
+#include "darray.iterator.hpp"
+#include "darray.utils.hpp"
 
 BEGIN_NS_ZXX_CORE_CONTAINER
 
@@ -1625,4 +1621,4 @@ std::ostream &operator<<(std::ostream &os, const darray<T> &d) {
 END_NS_ZXX_CORE_CONTAINER
 
 
-#endif // !_ZXX_DARRAY_H_
+#endif // !_DARRAY_API_H_

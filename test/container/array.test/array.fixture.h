@@ -3,7 +3,7 @@
 #define _ARRAY_FIXTURE_H_
 
 
-#include "container/array.h"
+#include "container/array"
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 

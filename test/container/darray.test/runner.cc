@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include "gtest/gtest.h"
-#include "container/darray.h"
 #include "darray.tests.h"
 
 int main(int argc, char *argv[])

@@ -3,7 +3,7 @@
 #define _FORWARD_LIST_FIXTURE_H_
 
 
-#include "container/forward_list.h"
+#include "container/forward_list"
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 

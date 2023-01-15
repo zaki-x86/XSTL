@@ -18,7 +18,7 @@
 #include <memory>
 
 // <--- zxx::core headers --->
-#include "array.traits.h"
+#include "array.traits.hpp"
 #include "config/zxx.config.h"
 
 // <--- array headers --->
