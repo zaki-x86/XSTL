@@ -8,22 +8,19 @@ set(exe_sources
 )
 
 set(headers
-  include/container/array.h
-  include/container/darray.h
-  include/container/deque.h
-  include/container/forward_list.h
-  include/container/list.h
-  # include/container/hash_table.h
-  # include/container/map.h
-  # include/container/multimap.h
-  # include/container/unordered_map.h
-  # include/container/unordered_multimap.h
-  # include/container/set.h
-  # include/container/multiset.h
-  # include/container/unordered_set.h
-  # include/container/unordered_multiset.h
-  # include/container/queue.h
-  # include/container/stack.h
+  include/container/array
+  include/container/darray
+  include/container/deque
+  include/container/forward_list
+  include/container/list
+  include/container/map
+  include/container/unordered_map
+  include/container/set
+  include/container/unordered_set
+  include/container/hash_table
+  include/container/rb_tree
+  # include/container/queue
+  # include/container/stack
   # TODO: also add primitive data structures
 )
 
