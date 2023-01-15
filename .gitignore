@@ -13,3 +13,4 @@ new_version
 *.temp.*
 *.temp.*
 remarks
+*.internal*
