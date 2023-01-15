@@ -10,11 +10,11 @@
  */
 
 #include <iostream>
-#include <container/darray.h>
-#include <container/array.h>
-#include <container/deque.h>
-#include <container/forward_list.h>
-#include <container/list.h>
+#include <container/darray>
+#include <container/array>
+#include <container/deque>
+#include <container/forward_list>
+#include <container/list>
 
 
 int main(int argc, char const *argv[])
