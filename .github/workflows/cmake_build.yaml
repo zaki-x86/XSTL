@@ -50,11 +50,11 @@ jobs:
             environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
         # Test Build fails with MinGW
-        # - {
-        #     name: "Windows Latest MinGW", artifact: "Windows-MinGW.7z",
-        #     os: windows-latest,
-        #     cc: "gcc", cxx: "g++"
-        #   }
+        - {
+            name: "Windows Latest MinGW", artifact: "Windows-MinGW.7z",
+            os: windows-latest,
+            cc: "gcc", cxx: "g++"
+           }
         - {
             name: "Ubuntu Latest GCC", artifact: "Linux.7z",
             os: ubuntu-latest,
@@ -256,11 +256,11 @@ jobs:
             environment_script: "C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
           }
         # Test Build fails with MinGW
-        # - {
-        #     name: "Windows Latest MinGW", artifact: "Windows-MinGW.7z",
-        #     os: windows-latest,
-        #     cc: "gcc", cxx: "g++"
-        #   }
+        - {
+            name: "Windows Latest MinGW", artifact: "Windows-MinGW.7z",
+            os: windows-latest,
+            cc: "gcc", cxx: "g++"
+          }
         - {
             name: "Ubuntu Latest GCC", artifact: "Linux.7z",
             os: ubuntu-latest,
