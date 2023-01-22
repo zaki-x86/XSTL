@@ -168,6 +168,7 @@ jobs:
               -D CMAKE_C_COMPILER_LAUNCHER=ccache
               -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
               -D TEST_ALL=ON
+              -DCMAKE_EXE_LINKER_FLAGS=-static
             RESULT_VARIABLE result
           )
         
