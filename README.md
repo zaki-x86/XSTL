@@ -43,8 +43,9 @@ sudo apt-get install zxx-core-container
 
 ## Author
 
-Name: M Zaki
-Email: zaki.x86@gmail.com
+- Name: M Zaki
+
+- Email: zaki.x86@gmail.com
 
 ## Documentation
 
