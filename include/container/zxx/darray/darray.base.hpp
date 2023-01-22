@@ -72,7 +72,7 @@ struct ZXX_INTERNAL Darray_base {
   // used by the vector's data.
   ~Darray_base() {
     _m_deallocate(_m_impl._m_start,
-                  _m_impl._m_end_of_storage - _m_impl._m_start);
+                  static_cast<std::size_t>(_m_impl._m_end_of_storage - _m_impl._m_start));
   }
 
   // Returns a reference to the allocator object.

@@ -1,0 +1,1 @@
+class rb_tree_iterator{};

@@ -29,9 +29,8 @@ using TestTypeParameters = ::testing::Types<
     char*,
     int*,
     std::string*, 
-    std::string, 
-    std::set<int, 10>
-    >;
+    std::string
+	>;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(set_Test, set_test, TestTypeParameters);
 

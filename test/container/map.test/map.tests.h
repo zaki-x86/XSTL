@@ -29,8 +29,7 @@ using TestTypeParameters = ::testing::Types<
     char*,
     int*,
     std::string*, 
-    std::string, 
-    std::map<int, 10>
+    std::string
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(map_Test, map_test, TestTypeParameters);

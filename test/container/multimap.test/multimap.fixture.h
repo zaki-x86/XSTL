@@ -4,7 +4,7 @@
 #define _MULTIMAP_FIXTURE_H_
 
 
-#include "container/multimap"
+#include "container/map"
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 

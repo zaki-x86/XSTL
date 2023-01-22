@@ -5,7 +5,7 @@
 
 #include "container/multiset.test/multiset.fixture.h"
 #include <iostream>
-#include <multiset>
+#include <set>
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 
@@ -29,8 +29,7 @@ using TestTypeParameters = ::testing::Types<
     char*,
     int*,
     std::string*, 
-    std::string, 
-    std::multiset<int, 10>
+    std::string
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(multiset_Test, multiset_test, TestTypeParameters);

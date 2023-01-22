@@ -5,7 +5,6 @@
 
 #include "container/unordered_set.test/unordered_set.fixture.h"
 #include <iostream>
-#include <unordered_set>
 
 BEGIN_NS_ZXX_CORE_CONTAINER_TEST
 
@@ -29,8 +28,7 @@ using TestTypeParameters = ::testing::Types<
     char*,
     int*,
     std::string*, 
-    std::string, 
-    std::unordered_set<int, 10>
+    std::string
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(unordered_set_Test, unordered_set_test, TestTypeParameters);

@@ -17,6 +17,11 @@ template <class Key,
 class ZXX_PUBLIC unordered_set {
 public:
     // types:
+	typedef Key* iterator;
+	typedef const Key* const_iterator;
+	typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  
     typedef Key                                      key_type;
     typedef Key                                      value_type;
     typedef Hash                                     hasher;
@@ -85,7 +90,7 @@ public:
     iterator insert(const_iterator position, value_type&& x);
     template <class InputIterator>
     void insert(InputIterator first, InputIterator last);
-    void insert(std::initializer_listil);
+    void insert(std::initializer_list<value_type> list);
     iterator erase(const_iterator position);
     size_type erase(const key_type& x);
     iterator erase(const_iterator first, const_iterator last);
@@ -136,14 +141,6 @@ const unordered_set<Key, Hash, Pred, Alloc>& b);
 template <class Key, class Hash, class Pred, class Alloc>
 bool operator!=(const unordered_set<Key, Hash, Pred, Alloc>& a,
 const unordered_set<Key, Hash, Pred, Alloc>& b);
-
-template <class Key, class Hash, class Pred, class Alloc>
-bool operator==(const unordered_set<Key, Hash, Pred, Alloc>& a,
-const unordered_multiset<Key, Hash, Pred, Alloc>& b);
-
-template <class Key, class Hash, class Pred, class Alloc>
-bool operator!=(const unordered_set<Key, Hash, Pred, Alloc>& a,
-const unordered_multiset<Key, Hash, Pred, Alloc>& b);
 
 END_NS_ZXX_CORE_CONTAINER
 

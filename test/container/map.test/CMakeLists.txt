@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
-project(darray.test)
+project(map.test)
 
-include(${CMAKE_SOURCE_DIR}/scripts/cmake/SetupTestFramework.cmake)
 include(GoogleTest)
 
 message(STATUS "Setting up testing tool")

@@ -29,8 +29,7 @@ using TestTypeParameters = ::testing::Types<
     char*,
     int*,
     std::string*, 
-    std::string, 
-    std::unordered_map<int, 10>
+    std::string
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(unordered_map_Test, unordered_map_test, TestTypeParameters);
