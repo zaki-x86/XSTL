@@ -326,7 +326,7 @@ ZXX_FORCE_INLINE bool operator>=(const array<_T, _N> &_one, const array<_T, _N> 
 }
 
 template <class _T, size_t _N>
-ZXX_FORCE_INLINE std::ostream &operator<<(std::ostream &os, const array<_T, _N> &arr) {
+std::ostream &operator<<(std::ostream &os, const array<_T, _N> &arr) {
   os << "[";
   for (const auto &x : arr) {
     os << x << ", ";
