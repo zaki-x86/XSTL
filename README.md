@@ -1,10 +1,10 @@
-# zxx::core::container
+# `zxx::core::container`
 
 > Project is under active development :)
 
 <img src="https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-blue" alt="Supported OS" />
 
-<img src="https://img.shields.io/badge/compiler-gcc%20%7C%20msvc%20%7C%20clang-green" alt="Supported compilers" />
+<img src="https://img.shields.io/badge/compiler-gcc%20%7C%20MinGWgcc%20%7C%20msvc%20%7C%20clang-green" alt="Supported compilers"/>
 
 <img src="https://img.shields.io/github/actions/workflow/status/zaki-x86/zxx_core_container/cmake_build.yaml?style=plastic" alt="Build Workflow" />
 
