@@ -28,12 +28,7 @@ using UnorderedSetTestTypeParameters = ::testing::Types<
     char*,
     int*,
     std::string*, 
-<<<<<<< HEAD:test/include/container/unordered_set.test/unordered_set.tests.h
-    std::string, 
-    std::unordered_set<int>
-=======
     std::string
->>>>>>> a570bd30f98418cde5146e11e4bf53f55c2a1cd6:test/container/unordered_set.test/unordered_set.tests.h
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(unordered_set_Test, unordered_set_test, UnorderedSetTestTypeParameters);

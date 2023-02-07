@@ -29,12 +29,7 @@ using MultisetTestTypeParameters = ::testing::Types<
     char*,
     int*,
     std::string*, 
-<<<<<<< HEAD:test/include/container/multiset.test/multiset.tests.h
-    std::string, 
-    std::multiset<int>
-=======
     std::string
->>>>>>> a570bd30f98418cde5146e11e4bf53f55c2a1cd6:test/container/multiset.test/multiset.tests.h
     >;
 
 INSTANTIATE_TYPED_TEST_SUITE_P(multiset_Test, multiset_test, MultisetTestTypeParameters);
