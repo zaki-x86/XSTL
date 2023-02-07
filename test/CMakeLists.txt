@@ -1,42 +1,63 @@
 cmake_minimum_required(VERSION 3.15)
 
-#
+##################################################################
 # Project details
-#
+##################################################################
 
 project(
   container.test
   LANGUAGES CXX
 )
 
+##################################################################
+# Project Options
+##################################################################
+
+option(EnableValgrind    "Execute test suite with Valgrind." OFF)
+option(EnableFastTests   "Skip expensive/slow tests." OFF)
+
+set(32bitTest     AUTO CACHE STRING "Enable the 32bit unit test (ON/OFF/AUTO/ONLY).")
+set(TestStandards "" CACHE STRING "The list of standards to test explicitly.")
+
+##################################################################
+# Import testing framework
+##################################################################
+
 add_subdirectory(libs/gtest EXCLUDE_FROM_ALL)
 
-# option(TEST_ALL "toggle option to execute all unit tests from all test suites" ON)
-# option(TEST_ARRAY "toggle option to execute array container test cases" OFF)
-# option(TEST_DARRAY "toggle option to execute darray container test cases" OFF)
-# option(TEST_DEQUE "toggle option to execute deque container test cases" OFF)
-# option(TEST_FORWARD_LIST "toggle option to execute deque container test cases" OFF)
-# option(TEST_LIST "toggle option to execute deque container test cases" OFF)
 
-# if(TEST_ALL)
-#   add_subdirectory(container/array.test)
-#   add_subdirectory(container/darray.test)
-#   add_subdirectory(container/deque.test)
-#   add_subdirectory(container/forward_list.test)
-#   add_subdirectory(container/list.test)
-# elseif(TEST_ARRAY)
-#   add_subdirectory(container/array.test)
-# elseif(TEST_DARRAY)
-#   add_subdirectory(container/darray.test)
-# elseif(TEST_DEQUE)
-#   add_subdirectory(container/deque.test)
-# elseif(TEST_FORWARD_LIST)
-#   add_subdirectory(container/forward_list.test)
-# elseif(TEST_LIST)
-#   add_subdirectory(container/list.test)
-# endif()
+##################################################################
+# Setup Valgrind
+##################################################################
 
-# build test executable
+if(EnableValgrind)
+    include(Valgrind)
+endif()
+
+
+#############################################################################
+# detect standard support
+#############################################################################
+
+# C++11 is the minimum required
+set(compiler_supports_cpp_11 TRUE)
+
+foreach(feature ${CMAKE_CXX_COMPILE_FEATURES})
+    if (${feature} STREQUAL cxx_std_14)
+        set(compiler_supports_cpp_14 TRUE)
+    elseif (${feature} STREQUAL cxx_std_17)
+        set(compiler_supports_cpp_17 TRUE)
+    elseif (${feature} STREQUAL cxx_std_20)
+        set(compiler_supports_cpp_20 TRUE)
+    elseif (${feature} STREQUAL cxx_std_23)
+        set(compiler_supports_cpp_23 TRUE)
+    endif()
+endforeach()
+
+##################################################################
+# Build Target
+##################################################################
+
 set(test_exe src/all.cc)
 
 add_executable(
@@ -44,8 +65,32 @@ add_executable(
     ${test_exe}
 )
 
+##################################################################
+# Set CXX standards
+##################################################################
+
 # set cxx standard
-target_compile_features( container.test PUBLIC cxx_std_11 )
+
+if(TestStandards STREQUAL "11")
+    message(STATUS "testing library against c++11")
+    target_compile_features( container.test PUBLIC cxx_std_11 )
+elseif(TestStandards STREQUAL "14" AND compiler_supports_cpp_14)
+    message(STATUS "testing library against c++14")
+    target_compile_features( container.test PUBLIC cxx_std_14 )
+elseif(TestStandards STREQUAL "17" AND compiler_supports_cpp_17)
+    message(STATUS "testing library against c++17")
+    target_compile_features( container.test PUBLIC cxx_std_17 )
+elseif(TestStandards STREQUAL "20" AND compiler_supports_cpp_20)
+    message(STATUS "testing library against c++20")
+    target_compile_features( container.test PUBLIC cxx_std_20 )
+elseif(TestStandards STREQUAL "23" AND compiler_supports_cpp_23)
+    message(STATUS "testing library against c++20")
+    target_compile_features( container.test PUBLIC cxx_std_20 )
+else()
+    message(WARNING "forcing testing library against c++11, because requested standard is not supported by this compiler")
+    target_compile_features( container.test PUBLIC cxx_std_11 )
+endif()
+
 
 # link gtest to executable target
 target_link_libraries(
