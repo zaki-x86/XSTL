@@ -23,7 +23,14 @@ set(TestStandards "" CACHE STRING "The list of standards to test explicitly.")
 # Import testing framework
 ##################################################################
 
-add_subdirectory(libs/gtest EXCLUDE_FROM_ALL)
+if(GCC_VERSION VERSION_LESS 5.0)
+  message(STATUS "GCC version is less than 5.0, using gtest-1.8.0")
+  add_subdirectory(libs/gtest-1.8.0 EXCLUDE_FROM_ALL)
+else()
+  message(STATUS "GCC version is greater than or equal to 5.0, using gtest-1.8.1")
+  add_subdirectory(libs/gtest-1.8.1 EXCLUDE_FROM_ALL)
+endif()
+
 
 
 ##################################################################

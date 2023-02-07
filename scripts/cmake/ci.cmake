@@ -631,7 +631,7 @@ add_custom_target(ci_test_clang_sanitizer
 add_custom_target(ci_test_valgrind
     COMMAND CXX=${GCC_TOOL} ${CMAKE_COMMAND}
         -DCMAKE_BUILD_TYPE=Debug -GNinja
-        -DBuildTests=ON -DENABLE_Valgrind=ON
+        -DBuildTests=ON -DEnableValgrind=ON
         -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_valgrind
     COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_valgrind
     COMMAND cd ${PROJECT_BINARY_DIR}/build_valgrind && ${CMAKE_CTEST_COMMAND} -L valgrind --parallel ${N} --output-on-failure
