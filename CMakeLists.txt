@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.16)
 
 ##################################################################################
 ##################################################################################
@@ -107,9 +107,9 @@ include(Vcpkg)
 #
 
 # Find all headers and implementation files
-file(GLOB visible_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/container/main/*")
-file(GLOB internal_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/config/*.h")
-file(GLOB implementation_files "${CMAKE_CURRENT_SOURCE_DIR}/include/container/zxx/*")
+# file(GLOB visible_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/container/main/*")
+# file(GLOB internal_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/config/*.h")
+# file(GLOB implementation_files "${CMAKE_CURRENT_SOURCE_DIR}/include/container/zxx/*")
 
 add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
