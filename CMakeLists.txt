@@ -1,5 +1,3 @@
-## NOTES
-# Disabled doxygen build temporarely
 
 cmake_minimum_required(VERSION 3.15)
 
@@ -21,13 +19,45 @@ project(
 ##################################################################################
 ##################################################################################
 
+##
+## MAIN_PROJECT CHECK
+## determine if project is built as a subproject (using add_subdirectory) or if it is the main project
+##
+set(MAIN_PROJECT OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    set(MAIN_PROJECT ON)
+endif()
+
+##################################################################################
+##################################################################################
+
+##
+## Setup the include path
+##
+##
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake ${CMAKE_MODULE_PATH})
+
+##################################################################################
+##################################################################################
+
 #
 # Set project options
 #
 
-include(scripts/cmake/StandardSettings.cmake)
-include(scripts/cmake/StaticAnalyzers.cmake)
-include(scripts/cmake/Utils.cmake)
+include(Utils)
+
+option(BuildTests "Build the unit tests when BUILD_TESTING is enabled." ${MAIN_PROJECT})
+option(CI         "Enable CI build targets." OFF)
+option(TreatWarningsAsErrors "Treat compiler warnings as errors." OFF)
+option(EnableConan "Enable the Conan package manager for this project." OFF)
+option(EnableVcPkg "Enable the Vcpkg package manager for this project." OFF)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(${PROJECT_NAME}_VERBOSE_OUTPUT "Enable verbose output, allowing for a better understanding of each step taken." ON)
+option(${PROJECT_NAME}_GENERATE_EXPORT_HEADER "Create a `project_export.h` file containing all exported symbols." OFF)
+
+if (CI)
+    include(ci)
+endif ()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
@@ -45,13 +75,8 @@ endif (UNIX)
 # Setup alternative names
 #
 
-if(${PROJECT_NAME}_USE_ALT_NAMES)
-  string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
-  string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
-else()
-  set(PROJECT_NAME_LOWERCASE ${PROJECT_NAME})
-  set(PROJECT_NAME_UPPERCASE ${PROJECT_NAME})
-endif()
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
 
 ##################################################################################
 ##################################################################################
@@ -71,8 +96,8 @@ endif()
 # Enable package managers
 #
 
-include(scripts/cmake/Conan.cmake)
-include(scripts/cmake/Vcpkg.cmake)
+include(Conan)
+include(Vcpkg)
 
 ##################################################################################
 ##################################################################################
@@ -82,88 +107,54 @@ include(scripts/cmake/Vcpkg.cmake)
 #
 
 # Find all headers and implementation files
-include(scripts/cmake/SourcesAndHeaders.cmake)
+file(GLOB visible_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/container/main/*")
+file(GLOB internal_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/config/*.h")
+file(GLOB implementation_files "${CMAKE_CURRENT_SOURCE_DIR}/include/container/zxx/*")
 
-if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${exe_sources} )
-  add_executable(${PROJECT_NAME} ${exe_sources})
+add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-  if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    verbose_message("Found the following sources:")
-    foreach(source IN LISTS exe_sources)
-      verbose_message("* ${source}")
-    endforeach()
-  endif()
-
-  if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    add_library(${PROJECT_NAME}_LIB ${headers} ${sources})
-
-    if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-      verbose_message("Found the following headers:")
-      foreach(header IN LISTS headers)
-        verbose_message("* ${header}")
-      endforeach()
-    endif()
-  endif()
-  
-elseif(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  add_library(${PROJECT_NAME} INTERFACE)
-
-  if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    verbose_message("Found the following headers:")
-    foreach(header IN LIST headers)
-      verbose_message("* ${header}")
-    endforeach()
-  endif()
-
-else()
-  add_library(
-    ${PROJECT_NAME}
-    ${headers}
-    ${sources}
-  )
-
-  if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    verbose_message("Found the following sources:")
-    foreach(source IN LISTS sources)
-      verbose_message("* ${source}")
-    endforeach()
-    verbose_message("Found the following headers:")
-    foreach(header IN LISTS headers)
-      verbose_message("* ${header}")
-    endforeach()
-  endif()
+if(${PROJECT_NAME}_VERBOSE_OUTPUT)
+  verbose_message("Found the following headers:")
+  foreach(header IN LISTS visible_headers)
+    verbose_message("* ${header}")
+  endforeach()
 endif()
 
-set_target_properties(
-    ${PROJECT_NAME}
-    PROPERTIES
-    LINKER_LANGUAGE CXX
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
-  )
-  
-if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-  set_target_properties(
-    ${PROJECT_NAME}_LIB
-    PROPERTIES
-    LINKER_LANGUAGE CXX
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-    OUTPUT_NAME ${PROJECT_NAME}
-  )
-endif()
+#set_target_properties(
+#  ${PROJECT_NAME}
+#  PROPERTIES
+#  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
+#  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
+#  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
+#)
 
 # Check if the library is being built as a shared library
 if(BUILD_SHARED_LIBS)
     message(STATUS "Building ${PROJECT_NAME} as a shared library")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE -DBUILD_SHARED)
+    target_compile_definitions(${PROJECT_NAME} INTERFACE -DBUILD_SHARED)
 else()
     message(STATUS "Building ${PROJECT_NAME} as a static library")
-    target_compile_definitions(${PROJECT_NAME} PRIVATE -DBUILD_STATIC)
+    target_compile_definitions(${PROJECT_NAME} INTERFACE -DBUILD_STATIC)
 endif()
 
+#
+# Set the build/user include directories
+#
+
+# Allow usage of header files in the `src` directory, but only for utilities
+
+target_include_directories(
+  ${PROJECT_NAME}
+  INTERFACE
+  $<INSTALL_INTERFACE:include/container>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
+)
+
+message(STATUS "Finished setting up include directories.")
+
 message(STATUS "Added all header and implementation files.\n")
+verbose_message("Project is now aliased as ${PROJECT_NAME}::${PROJECT_NAME}.\n")
 
 ##################################################################################
 ##################################################################################
@@ -172,17 +163,7 @@ message(STATUS "Added all header and implementation files.\n")
 # Set the project standard and warnings
 #
 
-if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
-else()
-  target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
-
-  if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    target_compile_features(${PROJECT_NAME}_LIB PUBLIC cxx_std_11)
-  endif()
-endif()
-include(scripts/cmake/CompilerWarnings.cmake)
-set_project_warnings(${PROJECT_NAME})
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
 
 verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
 
@@ -238,67 +219,6 @@ verbose_message("Successfully added all dependencies and linked against them.")
 ##################################################################################
 ##################################################################################
 
-#
-# Set the build/user include directories
-#
-
-# Allow usage of header files in the `src` directory, but only for utilities
-if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  target_include_directories(
-    ${PROJECT_NAME}
-    INTERFACE
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  )
-else()
-  target_include_directories(
-    ${PROJECT_NAME}
-    PUBLIC
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-  )
-  if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    target_include_directories(
-      ${PROJECT_NAME}_LIB
-      PUBLIC
-      $<INSTALL_INTERFACE:include>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-      PRIVATE
-      ${CMAKE_CURRENT_SOURCE_DIR}/src
-    )
-  endif()
-endif()
-
-message(STATUS "Finished setting up include directories.")
-
-##################################################################################
-##################################################################################
-
-#
-# Provide alias to library for
-#
-
-if(${PROJECT_NAME}_BUILD_EXECUTABLE)
-  add_executable(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-else()
-  add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-endif()
-
-verbose_message("Project is now aliased as ${PROJECT_NAME}::${PROJECT_NAME}.\n")
-
-##################################################################################
-##################################################################################
-
-#
-# Format the project using the `clang-format` target (i.e: cmake --build build --target clang-format)
-#
-
-add_clang_format_target()
-
-##################################################################################
-##################################################################################
 
 #
 # Install library for easy downstream inclusion
@@ -429,7 +349,7 @@ message(STATUS "Finished building requirements for installing the package.\n")
 # Unit testing setup
 #
 
-if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
+if(BuildTests)
   enable_testing()
   message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
   add_subdirectory(test)
