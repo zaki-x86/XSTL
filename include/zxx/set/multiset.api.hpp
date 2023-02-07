@@ -32,10 +32,6 @@ public:
     typedef typename Allocator::const_pointer        const_pointer;
     typedef typename Allocator::size_type            size_type;
     typedef typename Allocator::difference_type      difference_type;
-    typedef Key* iterator; // temp
-    typedef std::reverse_iterator<iterator> reverse_iterator;
-    typedef const Key* const_iterator;
-    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
     // construct/copy/destroy:
     explicit multiset(const Compare& comp = Compare(),

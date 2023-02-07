@@ -32,10 +32,6 @@ public:
   typedef typename Allocator::difference_type difference_type;
   typedef typename Allocator::local_iterator local_iterator;
   typedef typename Allocator::const_local_iterator const_local_iterator;
-  typedef Key* iterator; // temp
-  typedef std::reverse_iterator<iterator> reverse_iterator;
-  typedef const Key* const_iterator;
-  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
   // construct/copy/destroy:
   explicit unordered_multimap(size_type n = 0, const Hash &hf = Hash(),

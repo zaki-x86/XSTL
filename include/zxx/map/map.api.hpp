@@ -27,14 +27,7 @@ public:
   typedef typename Allocator::difference_type difference_type;
   typedef typename Allocator::reference reference;
   typedef typename Allocator::const_reference const_reference;
-<<<<<<< HEAD:include/zxx/map/map.api.hpp
   typedef typename Allocator::const_pointer const_pointer;
-  typedef Key* iterator; // temp
-  typedef std::reverse_iterator<iterator> reverse_iterator;
-  typedef const Key* const_iterator;
-  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-=======
->>>>>>> a570bd30f98418cde5146e11e4bf53f55c2a1cd6:include/container/zxx/map/map.api.hpp
 
   class value_compare {
   protected:

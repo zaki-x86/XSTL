@@ -36,10 +36,6 @@ public:
     typedef typename Allocator::difference_type      difference_type;
     typedef typename Allocator::local_iterator       local_iterator;
     typedef typename Allocator::const_local_iterator const_local_iterator;
-    typedef Key* iterator; // temp
-    typedef std::reverse_iterator<iterator> reverse_iterator;
-    typedef const Key* const_iterator;
-    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
     // construct/copy/destroy:
     explicit unordered_set(size_type n = 0,
@@ -95,15 +91,7 @@ public:
     iterator insert(const_iterator position, value_type&& x);
     template <class InputIterator>
     void insert(InputIterator first, InputIterator last);
-<<<<<<< HEAD:include/zxx/unordered_set/unordered_set.api.hpp
-    void insert(std::initializer_list<value_type> il);
-=======
-    void insert(std::initializer_list<value_type> list);
->>>>>>> a570bd30f98418cde5146e11e4bf53f55c2a1cd6:include/container/zxx/unordered_set/unordered_set.api.hpp
-    iterator erase(const_iterator position);
-    size_type erase(const key_type& x);
     iterator erase(const_iterator first, const_iterator last);
-    void clear();
     void swap(unordered_set&);
 
     // observers:

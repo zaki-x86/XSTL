@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.15)
 
 #
 # Project details
@@ -9,7 +9,7 @@ project(
   LANGUAGES CXX
 )
 
-add_subdirectory(libs/gtest)
+add_subdirectory(libs/gtest EXCLUDE_FROM_ALL)
 
 # option(TEST_ALL "toggle option to execute all unit tests from all test suites" ON)
 # option(TEST_ARRAY "toggle option to execute array container test cases" OFF)
