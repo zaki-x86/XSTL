@@ -11,21 +11,33 @@ template <class Key, class T, class Compare = std::less<Key>,
 class ZXX_PUBLIC multimap {
 public:
   // types:
+  typedef Key* iterator;
+  typedef const Key* const_iterator; 
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  
   typedef Key key_type;
   typedef std::pair<const Key, T> value_type;
   typedef T mapped_type;
   typedef Compare key_compare;
   typedef Allocator allocator_type;
+<<<<<<< HEAD:include/zxx/map/multimap.api.hpp
   typedef value_type &reference;
+=======
+>>>>>>> a570bd30f98418cde5146e11e4bf53f55c2a1cd6:include/container/zxx/map/multimap.api.hpp
   typedef typename Allocator::pointer pointer;
   typedef typename Allocator::const_pointer const_pointer;
   typedef typename Allocator::size_type size_type;
   typedef typename Allocator::difference_type difference_type;
+  typedef typename Allocator::reference reference;
   typedef typename Allocator::const_reference const_reference;
+<<<<<<< HEAD:include/zxx/map/multimap.api.hpp
   typedef Key* iterator; // temp
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef const Key* const_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+=======
+>>>>>>> a570bd30f98418cde5146e11e4bf53f55c2a1cd6:include/container/zxx/map/multimap.api.hpp
 
   class value_compare {
   protected:

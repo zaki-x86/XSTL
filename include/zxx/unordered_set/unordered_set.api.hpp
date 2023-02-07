@@ -18,6 +18,11 @@ template <class Key,
 class ZXX_PUBLIC unordered_set {
 public:
     // types:
+	typedef Key* iterator;
+	typedef const Key* const_iterator;
+	typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  
     typedef Key                                      key_type;
     typedef Key                                      value_type;
     typedef Hash                                     hasher;
@@ -90,7 +95,11 @@ public:
     iterator insert(const_iterator position, value_type&& x);
     template <class InputIterator>
     void insert(InputIterator first, InputIterator last);
+<<<<<<< HEAD:include/zxx/unordered_set/unordered_set.api.hpp
     void insert(std::initializer_list<value_type> il);
+=======
+    void insert(std::initializer_list<value_type> list);
+>>>>>>> a570bd30f98418cde5146e11e4bf53f55c2a1cd6:include/container/zxx/unordered_set/unordered_set.api.hpp
     iterator erase(const_iterator position);
     size_type erase(const key_type& x);
     iterator erase(const_iterator first, const_iterator last);

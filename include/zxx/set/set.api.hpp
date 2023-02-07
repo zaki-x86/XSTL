@@ -7,8 +7,6 @@
 #include <set>
 
 #include "config/zxx.config.h"
-//#include "set.iterator.hpp"
-//
 
 BEGIN_NS_ZXX_CORE_CONTAINER
 
@@ -17,6 +15,11 @@ template <class Key, class Compare = std::less<Key>,
 class ZXX_PUBLIC set {
 public:
   // types:
+  typedef Key* iterator;					// temp
+  typedef const Key* const_iterator;		// temp
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  
   typedef Key key_type;
   typedef Key value_type;
   typedef Compare key_compare;
@@ -130,11 +133,10 @@ template <class Key, class Compare, class Allocator>
 bool operator<=(const set<Key, Compare, Allocator>& x,
                 const set<Key, Compare, Allocator>& y);
 
-#if __cplusplus > 201703L
+#if __cplusplus >= 202003L
     template <class Key, class Compare, class Allocator>
     inline auto operator<=>(const set<Key, Compare, Allocator>& x,
-                    const set<Key, Compare, Allocator>& y) 
-        ->std::strong_ordering;
+                    const set<Key, Compare, Allocator>& y) ->std::strong_ordering;
 #endif
 
 END_NS_ZXX_CORE_CONTAINER

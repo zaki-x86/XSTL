@@ -13,6 +13,11 @@ template <class Key, class T, class Hash = std::hash<Key>,
 class ZXX_PUBLIC unordered_map {
 public:
   // types:
+  typedef Key* iterator;
+  typedef const Key* const_iterator;
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  
   typedef Key key_type;
   typedef std::pair<const Key, T> value_type;
   typedef T mapped_type;

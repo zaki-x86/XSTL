@@ -6,7 +6,6 @@ include(${CMAKE_SOURCE_DIR}/scripts/cmake/SetupTestFramework.cmake)
 include(GoogleTest)
 
 message(STATUS "Setting up testing tool")
-setup_gtest()
 
 message(STATUS "gtest found: " ${GTEST_FOUND})
 

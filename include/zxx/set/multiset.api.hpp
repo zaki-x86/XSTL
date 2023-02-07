@@ -7,8 +7,6 @@
 #include <set>
 
 #include "config/zxx.config.h"
-//#include "multiset.iterator.hpp"
-//
 
 BEGIN_NS_ZXX_CORE_CONTAINER
 
@@ -18,6 +16,11 @@ template <class Key,
 class ZXX_PUBLIC multiset {
 public:
     // types:
+	typedef Key* iterator;
+	typedef const Key* const_iterator;
+	typedef std::reverse_iterator<iterator> reverse_iterator;
+    typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+	
     typedef Key                                      key_type;
     typedef Key                                      value_type;
     typedef Compare                                  key_compare;
@@ -134,11 +137,10 @@ template <class Key, class Compare, class Allocator>
 bool operator<=(const multiset<Key, Compare, Allocator>& x,
                 const multiset<Key, Compare, Allocator>& y);
 
-#if __cplusplus > 201703L
+#if __cplusplus >= 202003L
     template <class Key, class Compare, class Allocator>
     inline auto operator<=>(const multiset<Key, Compare, Allocator>& x,
-                    const multiset<Key, Compare, Allocator>& y) 
-        ->std::strong_ordering;
+                    const multiset<Key, Compare, Allocator>& y) ->std::strong_ordering;
 #endif
 
 END_NS_ZXX_CORE_CONTAINER

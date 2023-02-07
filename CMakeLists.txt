@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.24)
 
 ##################################################################################
 ##################################################################################
@@ -212,7 +212,7 @@ verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}
 #
 # On Linux and Mac this variable is ignored. If any issues rise from it, try commenting it out
 # and letting CMake decide how to link with it.
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+#set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 verbose_message("Successfully added all dependencies and linked against them.")
 
@@ -352,6 +352,7 @@ message(STATUS "Finished building requirements for installing the package.\n")
 if(BuildTests)
   enable_testing()
   message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
+  add_subdirectory(libs/googletest)
   add_subdirectory(test)
 endif()
 
