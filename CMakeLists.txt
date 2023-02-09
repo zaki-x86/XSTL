@@ -1,5 +1,5 @@
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 
 ##################################################################################
 ##################################################################################
@@ -107,27 +107,15 @@ include(Vcpkg)
 #
 
 # Find all headers and implementation files
-# file(GLOB visible_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/container/main/*")
-# file(GLOB internal_headers "${CMAKE_CURRENT_SOURCE_DIR}/include/config/*.h")
-# file(GLOB implementation_files "${CMAKE_CURRENT_SOURCE_DIR}/include/container/zxx/*")
-
 add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-  verbose_message("Found the following headers:")
-  foreach(header IN LISTS visible_headers)
-    verbose_message("* ${header}")
-  endforeach()
-endif()
-
-#set_target_properties(
-#  ${PROJECT_NAME}
-#  PROPERTIES
-#  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-#  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-#  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
-#)
+# if(${PROJECT_NAME}_VERBOSE_OUTPUT)
+#   verbose_message("Found the following headers:")
+#   foreach(header IN LISTS visible_headers)
+#     verbose_message("* ${header}")
+#   endforeach()
+# endif()
 
 # Check if the library is being built as a shared library
 if(BUILD_SHARED_LIBS)
