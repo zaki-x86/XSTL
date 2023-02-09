@@ -2,11 +2,21 @@
 
 > Project is under active development :)
 
-<img src="https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-blue" alt="Supported OS" />
+[![Ubuntu](https://github.com/zaki-x86/core-container/workflows/Ubuntu/badge.svg)](https://github.com/zaki-x86/core-container/actions?query=workflow%3AUbuntu)
 
-<img src="https://img.shields.io/badge/compiler-gcc%20%7C%20MinGWgcc%20%7C%20msvc%20%7C%20clang-green" alt="Supported compilers"/>
+[![macOS](https://github.com/zaki-x86/core-container/workflows/macOS/badge.svg)](https://github.com/zaki-x86/core-container/actions?query=workflow%3AmacOS)
 
-<img src="https://img.shields.io/github/actions/workflow/status/zaki-x86/zxx_core_container/cmake_build.yaml?style=plastic" alt="Build Workflow" />
+[![Windows](https://github.com/zaki-x86/core-container/workflows/Windows/badge.svg)](https://github.com/zaki-x86/core-container/actions?query=workflow%3AWindows)
+
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/zaki-x86/core-container/main/LICENSE.MIT)
+
+[![GitHub Releases](https://img.shields.io/github/release/zaki-x86/core-container.svg)](https://github.com/zaki-x86/core-container/releases)
+
+[![GitHub Downloads](https://img.shields.io/github/downloads/zaki-x86/core-container/total)](https://github.com/nlohmann/json/releases)
+
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub-Sponsors-ff69b4)](https://github.com/sponsors/zaki-x86)
+
+[![REUSE status](https://api.reuse.software/badge/github.com/zaki-x86/core-container)](https://api.reuse.software/info/github.com/zaki-x86/core-container)
 
 A powerful and flexible container library for C++ programming.
 
