@@ -8,6 +8,7 @@ TestReports
 Testing
 docs/source/doxygen/xml
 CMakeSettings.json
+out
 
 #Temporary disabled
 new_version
