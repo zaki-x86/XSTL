@@ -12,7 +12,7 @@
 #include "gtest/gtest.h"
 
 #include "container/array.test/array.tests.h"
-#include "container/darray.test/darray.tests.h"
+#include "container/vector.test/vector.tests.h"
 #include "container/deque.test/deque.tests.h"
 #include "container/forward_list.test/forward_list.tests.h"
 #include "container/list.test/list.tests.h"
