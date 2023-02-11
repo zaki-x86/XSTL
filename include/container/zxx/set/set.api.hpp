@@ -6,13 +6,13 @@
 #include <memory>
 #include <set>
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
 
 template <class Key, class Compare = std::less<Key>,
           class Allocator = std::allocator<Key>>
-class ZXX_PUBLIC set {
+class XSTL_API set {
 public:
   // types:
   typedef Key* iterator;					// temp
@@ -135,6 +135,6 @@ bool operator<=(const set<Key, Compare, Allocator>& x,
                     const set<Key, Compare, Allocator>& y) ->std::strong_ordering;
 #endif
 
-END_NS_ZXX_CORE_CONTAINER
+_END_XSTL
 
 #endif // !_SET_API_H_

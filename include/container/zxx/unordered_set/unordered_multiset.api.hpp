@@ -1,28 +1,25 @@
-#ifndef _UNORDERED_SET_API_H_
+#ifndef _UNORDERED_MULTISET_API_H_
 
-#define _UNORDERED_SET_API_H_
+#define _UNORDERED_MULTISET_API_H_
 
 #include <iostream>
 #include <memory>
 #include <unordered_set>
-#include <initializer_list>
+#include "config/config.h"
 
-#include "config/zxx.config.h"
-
-BEGIN_NS_ZXX_CORE_CONTAINER
-
+_BEGIN_XSTL
 template <class Key,
           class Hash = std::hash<Key>,
           class KeyEqual = std::equal_to<Key>,
           class Allocator = std::allocator<Key> >
-class ZXX_PUBLIC unordered_set {
+class XSTL_API unordered_multiset {
 public:
     // types:
 	typedef Key* iterator;
 	typedef const Key* const_iterator;
 	typedef std::reverse_iterator<iterator> reverse_iterator;
     typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-  
+	
     typedef Key                                      key_type;
     typedef Key                                      value_type;
     typedef Hash                                     hasher;
@@ -38,31 +35,31 @@ public:
     typedef typename Allocator::const_local_iterator const_local_iterator;
 
     // construct/copy/destroy:
-    explicit unordered_set(size_type n = 0,
-                           const Hash& hf = Hash(),
-                           const KeyEqual& eql = KeyEqual(),
-                           const Allocator& = Allocator());
+    explicit unordered_multiset(size_type n = 0,
+                                const Hash& hf = Hash(),
+                                const KeyEqual& eql = KeyEqual(),
+                                const Allocator& = Allocator());
 
     template <class InputIterator>
-    unordered_set(InputIterator first, InputIterator last,
-                  size_type n = 0,
-                  const Hash& hf = Hash(),
-                  const KeyEqual& eql = KeyEqual(),
-                  const Allocator& = Allocator());
+    unordered_multiset(InputIterator first, InputIterator last,
+                       size_type n = 0,
+                       const Hash& hf = Hash(),
+                       const KeyEqual& eql = KeyEqual(),
+                       const Allocator& = Allocator());
 
-    unordered_set(const unordered_set&);
-    unordered_set(unordered_set&&);
-    unordered_set(std::initializer_list<value_type>,
-                  size_type n = 0,
-                  const Hash& hf = Hash(),
-                  const KeyEqual& eql = KeyEqual(),
-                  const Allocator& = Allocator());
+    unordered_multiset(const unordered_multiset&);
+    unordered_multiset(unordered_multiset&&);
+    unordered_multiset(std::initializer_list<value_type>,
+                       size_type n = 0,
+                       const Hash& hf = Hash(),
+                       const KeyEqual& eql = KeyEqual(),
+                       const Allocator& = Allocator());
 
-    ~unordered_set();
+    ~unordered_multiset();
 
-    unordered_set& operator=(const unordered_set&);
-    unordered_set& operator=(unordered_set&&);
-    unordered_set& operator=(std::initializer_list<value_type>);
+    unordered_multiset& operator=(const unordered_multiset&);
+    unordered_multiset& operator=(unordered_multiset&&);
+    unordered_multiset& operator=(std::initializer_list<value_type>);
 
     // iterators:
     iterator                begin();
@@ -80,43 +77,46 @@ public:
 
     // modifiers:
     template <class... Args>
-    std::pair<iterator, bool> emplace(Args&&... args);
+    iterator emplace(Args&&... args);
 
     template <class... Args>
     iterator emplace_hint(const_iterator position, Args&&... args);
 
-    std::pair<iterator, bool> insert(const value_type& x);
-    std::pair<iterator, bool> insert(value_type&& x);
+    iterator insert(const value_type& x);
+    iterator insert(value_type&& x);
     iterator insert(const_iterator position, const value_type& x);
     iterator insert(const_iterator position, value_type&& x);
     template <class InputIterator>
     void insert(InputIterator first, InputIterator last);
+    void insert(std::initializer_list<value_type>);
+    iterator erase(const_iterator position);
+    size_type erase(const key_type& x);
     iterator erase(const_iterator first, const_iterator last);
-    void swap(unordered_set&);
+    void clear();
+    void swap(unordered_multiset&);
 
     // observers:
     hasher hash_function() const;
     key_equal key_eq() const;
     allocator_type get_allocator() const;
 
-    // set operations - lookup:
+    // set operations:
     iterator find(const key_type& x);
     const_iterator find(const key_type& x) const;
     size_type count(const key_type& x) const;
     std::pair<iterator, iterator> equal_range(const key_type& x);
     std::pair<const_iterator, const_iterator> equal_range(const key_type& x) const;
 
-    // bucket interface
+    // bucket interface:
     size_type bucket_count() const;
     size_type max_bucket_count() const;
     size_type bucket_size(size_type n) const;
-    size_type bucket(const key_type& k) const;
+    size_type bucket(const key_type& x) const;
     local_iterator begin(size_type n);
-    const_local_iterator begin(size_type n) const;
     local_iterator end(size_type n);
+    const_local_iterator begin(size_type n) const;
     const_local_iterator end(size_type n) const;
     const_local_iterator cbegin(size_type n) const;
-    const_local_iterator cend(size_type n) const;
 
     // hash policy
     float load_factor() const;
@@ -124,21 +124,20 @@ public:
     void max_load_factor(float z);
     void rehash(size_type n);
     void reserve(size_type n);
-   
+
 };
+template <class Key, class Hash, class Pred, class Alloc>
+void swap(unordered_multiset<Key, Hash, Pred, Alloc>& x,
+unordered_multiset<Key, Hash, Pred, Alloc>& y);
 
 template <class Key, class Hash, class Pred, class Alloc>
-void swap(unordered_set<Key, Hash, Pred, Alloc>& x,
-unordered_set<Key, Hash, Pred, Alloc>& y);
+bool operator==(const unordered_multiset<Key, Hash, Pred, Alloc>& a,
+const unordered_multiset<Key, Hash, Pred, Alloc>& b);
 
 template <class Key, class Hash, class Pred, class Alloc>
-bool operator==(const unordered_set<Key, Hash, Pred, Alloc>& a,
-const unordered_set<Key, Hash, Pred, Alloc>& b);
+bool operator!=(const unordered_multiset<Key, Hash, Pred, Alloc>& a,
+const unordered_multiset<Key, Hash, Pred, Alloc>& b);
 
-template <class Key, class Hash, class Pred, class Alloc>
-bool operator!=(const unordered_set<Key, Hash, Pred, Alloc>& a,
-const unordered_set<Key, Hash, Pred, Alloc>& b);
+_END_XSTL
 
-END_NS_ZXX_CORE_CONTAINER
-
-#endif // !_UNORDERED_SET_API_H_
+#endif // !_UNORDERED_MULTISET_API_H_

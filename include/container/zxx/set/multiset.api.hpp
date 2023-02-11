@@ -6,14 +6,14 @@
 #include <memory>
 #include <set>
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
 
 template <class Key,
           class Compare = std::less<Key>,
           class Allocator = std::allocator<Key> >
-class ZXX_PUBLIC multiset {
+class XSTL_API multiset {
 public:
     // types:
 	typedef Key* iterator;
@@ -139,6 +139,6 @@ bool operator<=(const multiset<Key, Compare, Allocator>& x,
                     const multiset<Key, Compare, Allocator>& y) ->std::strong_ordering;
 #endif
 
-END_NS_ZXX_CORE_CONTAINER
+_END_XSTL
 
 #endif // !_MULTISET_API_H_

@@ -4,7 +4,7 @@
 
 
 template<typename Deque>
-struct ZXX_PUBLIC deque_iterator
+struct XSTL_API deque_iterator
 {
 
 };

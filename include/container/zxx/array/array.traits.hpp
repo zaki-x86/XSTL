@@ -1,13 +1,13 @@
 
 #include <type_traits>
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 
 #ifndef _ARRAY_TRAITS_H_
 
 #define _ARRAY_TRAITS_H_
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
      
     /**
      * `_array_traits` is a class template that is used to provide information about the size and element type of an `zxx::core::array` object. 
@@ -23,25 +23,25 @@ BEGIN_NS_ZXX_CORE_CONTAINER
      * 
      */
     template<typename _T, size_t _N>
-    struct ZXX_INTERNAL _array_traits
+    struct XSTL_INTERNAL _array_traits
     {
-        typedef _T _Type[_N];
+        using _Type = _T[_N];
         #if __cplusplus >= 201703L
             typedef std::is_swappable<_T> _Is_swappable;
             typedef std::is_nothrow_swappable<_T> _Is_nothrow_swappable;
         #endif
 
-        static ZXX_CONSTEXPR _T&
+        static CONSTEXPR20 _T&
         _s_ref(const _Type& __t, size_t __n) noexcept
         { return const_cast<_T&>(__t[__n]); }
 
-        static ZXX_CONSTEXPR _T*
+        static CONSTEXPR20 _T*
         _s_ptr(const _Type& __t) noexcept
         { return const_cast<_T*>(__t); }
     };
 
     template<typename _T>
-    struct ZXX_INTERNAL _array_traits<_T, 0>
+    struct XSTL_INTERNAL _array_traits<_T, 0>
     {
         struct _Type { };
         #if cplusplus >= 201703L
@@ -49,15 +49,15 @@ BEGIN_NS_ZXX_CORE_CONTAINER
             typedef std::true_type _Is_nothrow_swappable;
         #endif
 
-        static ZXX_CONSTEXPR _T&
+        static CONSTEXPR20 _T&
         _s_ref(const _Type&, size_t) noexcept
         { return *static_cast<_T*>(nullptr); }
 
-        static ZXX_CONSTEXPR _T*
+        static CONSTEXPR20 _T*
         _s_ptr(const _Type&) noexcept
         { return nullptr; }
     };
 
-END_NS_ZXX_CORE_CONTAINER
+_END_XSTL
 
 #endif // !_ARRAY_TRAITS_H_

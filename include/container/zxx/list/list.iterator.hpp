@@ -4,7 +4,7 @@
 
 
 template<typename List>
-struct ZXX_PUBLIC list_iterator
+struct XSTL_API list_iterator
 {
 
 };

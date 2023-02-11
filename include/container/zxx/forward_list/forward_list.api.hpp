@@ -4,12 +4,12 @@
 
 #include <forward_list>
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 #include "forward_list.iterator.hpp"
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
 template <class T, class Allocator = std::allocator<T>> 
-class ZXX_PUBLIC forward_list {
+class XSTL_API forward_list {
 public:
   /**
    * @name Public Type Aliases
@@ -183,6 +183,6 @@ bool operator<=(const forward_list<T, Allocator> &x,
                 const forward_list<T, Allocator> &y);
 
 ///@}
-END_NS_ZXX_CORE_CONTAINER
+_END_XSTL
 
 #endif // !_FORWARD_LIST_H_

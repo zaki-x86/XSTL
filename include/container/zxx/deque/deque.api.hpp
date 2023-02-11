@@ -4,15 +4,15 @@
 
 #include <deque>
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 #include "deque.base.hpp"
 #include "deque.iterator.hpp"
 #include "deque.utils.hpp"
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
 
 template <class T, class Allocator = std::allocator<T>>
-class ZXX_PUBLIC deque : protected _Deque_base<T, Allocator> {
+class XSTL_API deque : protected _Deque_base<T, Allocator> {
 public:
   /**
    * @name Public Type Aliases
@@ -141,6 +141,6 @@ public:
   allocator_type get_allocator() const;
   ///@}
 };
-END_NS_ZXX_CORE_CONTAINER
+_END_XSTL
 
 #endif // !_DEQUE_API_H_

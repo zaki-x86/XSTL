@@ -2,15 +2,15 @@
 
 #define _UNORDERED_MAP_API_H_
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 #include <unordered_map>
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
 
 template <class Key, class T, class Hash = std::hash<Key>,
           class KeyEqual = std::equal_to<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
-class ZXX_PUBLIC unordered_map {
+class XSTL_API unordered_map {
 public:
   // types:
   typedef Key* iterator;
@@ -129,6 +129,6 @@ template <class Key, class T, class Hash, class Pred, class Alloc>
 bool operator!=(const unordered_map<Key, T, Hash, Pred, Alloc> &a,
                 const unordered_map<Key, T, Hash, Pred, Alloc> &b);
 
-END_NS_ZXX_CORE_CONTAINER
+_END_XSTL
 
 #endif // !_UNORDERED_MAP_API_H_

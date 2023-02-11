@@ -6,13 +6,13 @@
 #include <iostream>
 #include <memory>
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 #include "list.iterator.hpp"
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
 
 template <class T, class Allocator = std::allocator<T>> 
-class ZXX_PUBLIC list {
+class XSTL_API list {
 public:
   /**
    * @name Public Type Aliases
@@ -198,6 +198,6 @@ bool operator<=(const list<T, Allocator> &x, const list<T, Allocator> &y);
 
 ///@}
 
-END_NS_ZXX_CORE_CONTAINER
+_END_XSTL
 
 #endif // !_LIST_H_

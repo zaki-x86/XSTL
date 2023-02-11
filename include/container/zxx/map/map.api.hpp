@@ -1,18 +1,18 @@
-#ifndef _MULTIMAP_H_
-#define _MULTIMAP_H_
+#ifndef _MAP_H_
+#define _MAP_H_
 
 #include <map>
 
-#include "config/zxx.config.h"
+#include "config/config.h"
 
-BEGIN_NS_ZXX_CORE_CONTAINER
+_BEGIN_XSTL
 template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
-class ZXX_PUBLIC multimap {
+class XSTL_API map {
 public:
   // types:
   typedef Key* iterator;
-  typedef const Key* const_iterator; 
+  typedef const Key* const_iterator;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
   
@@ -27,6 +27,7 @@ public:
   typedef typename Allocator::difference_type difference_type;
   typedef typename Allocator::reference reference;
   typedef typename Allocator::const_reference const_reference;
+  typedef typename Allocator::const_pointer const_pointer;
 
   class value_compare {
   protected:
@@ -43,24 +44,23 @@ public:
   };
 
   // construct/copy/destroy:
-  explicit multimap(const Compare &comp = Compare(),
-                    const Allocator & = Allocator());
+  explicit map(const Compare &comp = Compare(),
+               const Allocator & = Allocator());
+
   template <class InputIterator>
-  multimap(InputIterator first, InputIterator last,
-           const Compare &comp = Compare(), const Allocator & = Allocator());
-  multimap(const multimap<Key, T, Compare, Allocator> &x);
-  multimap(multimap<Key, T, Compare, Allocator> &&x);
-  explicit multimap(const Allocator &);
-  multimap(const multimap &, const Allocator &);
-  multimap(multimap &&, const Allocator &);
-  multimap(std::initializer_list<value_type>, const Compare & = Compare(),
-           const Allocator & = Allocator());
+  map(InputIterator first, InputIterator last, const Compare &comp = Compare(),
+      const Allocator & = Allocator());
 
-  ~multimap();
+  map(const map &);
+  map(map &&);
+  map(std::initializer_list<value_type>, const Compare &comp = Compare(),
+      const Allocator & = Allocator());
 
-  multimap &operator=(const multimap &);
-  multimap &operator=(multimap &&);
-  multimap &operator=(std::initializer_list<value_type>);
+  ~map();
+
+  map &operator=(const map &);
+  map &operator=(map &&);
+  map &operator=(std::initializer_list<value_type>);
 
   // iterators:
   iterator begin();
@@ -88,27 +88,24 @@ public:
   T &operator[](key_type &&x);
 
   // modifiers:
-  template <class... Args> iterator emplace(Args &&... args);
-  template <class... Args>
-  iterator emplace_hint(const_iterator position, Args &&... args);
-  iterator insert(const value_type &x);
-  template <class P> iterator insert(P &&x);
+  std::pair<iterator, bool> insert(const value_type &x);
+  template <class P> pair<iterator, bool> insert(P &&x);
   iterator insert(const_iterator position, const value_type &x);
-  template <class P> iterator insert(const_iterator position, P &&x);
-  template <class InputIterator>
+  template <class P>
+  iterator insert(const_iterator position, P &&) template <class InputIterator>
   void insert(InputIterator first, InputIterator last);
   void insert(std::initializer_list<value_type>);
   iterator erase(iterator position);
   size_type erase(const key_type &x);
   iterator erase(iterator first, iterator last);
-  void swap(multimap &);
+  void swap(map &);
   void clear();
 
   // observers:
   key_compare key_comp() const;
   value_compare value_comp() const;
 
-  // multimap operations:
+  // map operations:
   iterator find(const key_type &x);
   const_iterator find(const key_type &x) const;
   size_type count(const key_type &x) const;
@@ -124,29 +121,28 @@ public:
 };
 
 template <class Key, class T, class Compare, class Allocator>
-bool operator==(const multimap<Key, T, Compare, Allocator> &x,
-                const multimap<Key, T, Compare, Allocator> &y);
+bool operator==(const map<Key, T, Compare, Allocator> &x,
+                const map<Key, T, Compare, Allocator> &y);
 template <class Key, class T, class Compare, class Allocator>
-bool operator<(const multimap<Key, T, Compare, Allocator> &x,
-               const multimap<Key, T, Compare, Allocator> &y);
+bool operator<(const map<Key, T, Compare, Allocator> &x,
+               const map<Key, T, Compare, Allocator> &y);
 template <class Key, class T, class Compare, class Allocator>
-bool operator!=(const multimap<Key, T, Compare, Allocator> &x,
-                const multimap<Key, T, Compare, Allocator> &y);
+bool operator!=(const map<Key, T, Compare, Allocator> &x,
+                const map<Key, T, Compare, Allocator> &y);
 template <class Key, class T, class Compare, class Allocator>
-bool operator>(const multimap<Key, T, Compare, Allocator> &x,
-               const multimap<Key, T, Compare, Allocator> &y);
+bool operator>(const map<Key, T, Compare, Allocator> &x,
+               const map<Key, T, Compare, Allocator> &y);
 template <class Key, class T, class Compare, class Allocator>
-bool operator>=(const multimap<Key, T, Compare, Allocator> &x,
-                const multimap<Key, T, Compare, Allocator> &y);
+bool operator>=(const map<Key, T, Compare, Allocator> &x,
+                const map<Key, T, Compare, Allocator> &y);
 template <class Key, class T, class Compare, class Allocator>
-bool operator<=(const multimap<Key, T, Compare, Allocator> &x,
+bool operator<=(const map<Key, T, Compare, Allocator> &x,
 
-                const multimap<Key, T, Compare, Allocator> &y);
+                const map<Key, T, Compare, Allocator> &y);
 // specialized algorithms:
 template <class Key, class T, class Compare, class Allocator>
-void swap(multimap<Key, T, Compare, Allocator> &x,
-          multimap<Key, T, Compare, Allocator> &y);
-          
-END_NS_ZXX_CORE_CONTAINER
+void swap(map<Key, T, Compare, Allocator> &x,
+          map<Key, T, Compare, Allocator> &y);
+_END_XSTL
 
-#endif // !_MULTIMAP_H_
+#endif // !_MAP_H_

@@ -4,7 +4,7 @@
 
 
 template<typename ForwardList>
-struct ZXX_PUBLIC forward_list_iterator
+struct XSTL_API forward_list_iterator
 {
 
 };
