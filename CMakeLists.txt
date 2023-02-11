@@ -2,8 +2,8 @@
 cmake_minimum_required(VERSION 3.21)
 
 ##################################################################################
+# Project details
 ##################################################################################
-
 #
 # Project details
 #
@@ -17,47 +17,81 @@ project(
 )
 
 ##################################################################################
+# MAIN_PROJECT CHECK
+
+## determine if project is built as a subproject (using add_subdirectory) or if it is the main project
 ##################################################################################
 
-##
-## MAIN_PROJECT CHECK
-## determine if project is built as a subproject (using add_subdirectory) or if it is the main project
-##
 set(MAIN_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(MAIN_PROJECT ON)
 endif()
 
 ##################################################################################
+# Setup the include path
 ##################################################################################
 
-##
-## Setup the include path
-##
-##
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake ${CMAKE_MODULE_PATH})
 
-##################################################################################
-##################################################################################
-
-#
-# Set project options
-#
-
+include(StaticAnalyzers)
 include(Utils)
+##################################################################################
+# Set project options
+##################################################################################
 
-option(BuildTests "Build the unit tests when BUILD_TESTING is enabled." ${MAIN_PROJECT})
-option(CI         "Enable CI build targets." OFF)
-option(TreatWarningsAsErrors "Treat compiler warnings as errors." OFF)
+option(BuildExe "Build the project as an executable, rather than a library." OFF)
+option(BuildHeadersOnly "Build the project as a header-only library." OFF)
+option(UseAltNames "Use alternative names for the project, such as naming the include directory all lowercase." ON)
+option(WarningsAsErrors "Treat compiler warnings as errors." OFF)
+
+# Package Managers
 option(EnableConan "Enable the Conan package manager for this project." OFF)
 option(EnableVcPkg "Enable the Vcpkg package manager for this project." OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-option(${PROJECT_NAME}_VERBOSE_OUTPUT "Enable verbose output, allowing for a better understanding of each step taken." ON)
-option(${PROJECT_NAME}_GENERATE_EXPORT_HEADER "Create a `project_export.h` file containing all exported symbols." OFF)
 
-if (CI)
-    include(ci)
-endif ()
+option(EnableTesting "Enable unit tests for the projects (from the `test` subfolder)." ${MAIN_PROJECT})
+option(EnableCi "Enable CI build targets." OFF)
+
+option(UseGTest "Use the GoogleTest library for creating unit tests." ON)
+option(UseGMock "Use the GoogleMock library for extending the unit tests." OFF)
+option(UseCatch2 "Use the Catch2 library for creating unit tests." OFF)
+option(UseDoctest "Use the Doctest library for creating unit tests." OFF)
+
+option(EnableClangTidy "Enable static analysis with Clang-Tidy." OFF)
+option(EnableCppCheck "Enable static analysis with Cppcheck." OFF)
+
+option(EnableCodeCoverage "Enable code coverage through GCC." OFF)
+
+option(EnableDoxygen "Enable Doxygen documentation builds of source." OFF)
+
+# Generate compile_commands.json for clang based tools
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(VerboseOutput "Enable verbose output, allowing for a better understanding of each step taken." ON)
+option(GenerateExportHeader "Create a `project_export.h` file containing all exported symbols." OFF)
+option(EnableLTO "Enable Interprocedural Optimization, aka Link Time Optimization (LTO)." OFF)
+option(EnableCCache "Enable the usage of Ccache, in order to speed up rebuild times." ON)
+
+# Export all symbols when building a shared library
+if(BUILD_SHARED_LIBS)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+endif()
+
+if(EnableLTO)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT result OUTPUT output)
+  if(result)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+  else()
+    message(SEND_ERROR "IPO is not supported: ${output}.")
+  endif()
+endif()
+
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
@@ -68,18 +102,18 @@ if (UNIX)
     add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
 endif (UNIX)
 
-##################################################################################
-##################################################################################
 
 #
 # Setup alternative names
 #
 
-string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
-
-##################################################################################
-##################################################################################
+if(UseAltNames)
+  string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
+  string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
+else()
+  set(PROJECT_NAME_LOWERCASE ${PROJECT_NAME})
+  set(PROJECT_NAME_UPPERCASE ${PROJECT_NAME})
+endif()
 
 #
 # Prevent building in the source directory
@@ -90,34 +124,133 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif()
 
 ##################################################################################
+# Build CI/CD targets
 ##################################################################################
 
-#
+if (EnableCi)
+    include(ci)
+endif ()
+
+##################################################################################
 # Enable package managers
-#
+##################################################################################
 
 include(Conan)
 include(Vcpkg)
 
+
 ##################################################################################
+# Add configuration related header files
 ##################################################################################
 
 #
-# Create library, setup header and source files
+# Add version header
+
+## Only if project is built as a main project
 #
 
+if(MAIN_PROJECT)
+    configure_file(
+      ${CMAKE_CURRENT_LIST_DIR}/include/config/version.h.in
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/config/version.h
+      @ONLY
+    )
+    install(
+      FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/config/version.h
+      DESTINATION
+      include/config
+    )
+endif()
+
+#
+# Add config header
+
+## Only if project is built as a main project
+#
+
+if(MAIN_PROJECT)
+    configure_file(
+      ${CMAKE_CURRENT_LIST_DIR}/include/config/config.h.in
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/config/config.h
+      @ONLY
+    )
+    install(
+      FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/config/config.h
+      DESTINATION
+      include/config
+    )
+endif()
+
+verbose_message("Successfully generated configuration files.")
+
+
+##################################################################################
+# Create library, setup headers and source files
+##################################################################################
+
+#
 # Find all headers and implementation files
+#
+
+file(GLOB_RECURSE CONTAINER_HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/container/*")
+file(GLOB_RECURSE CONFIG_HEADER_FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/config/*.h")
+
+set(HEADER_FILES ${CONTAINER_HEADER_FILES} ${CONFIG_HEADER_FILES})
+set(INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
 add_library(${PROJECT_NAME} INTERFACE)
+
+if(VerboseOutput)
+    verbose_message("Found the following headers:")
+    
+    foreach(HEADER_FILE ${HEADER_FILES})
+        verbose_message("* ${HEADER_FILE}")
+    endforeach()
+endif()
+
+message(STATUS "Added all header and implementation files.\n")
+
+
+#
+# Provide alias to library for
+#
+
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
-# if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-#   verbose_message("Found the following headers:")
-#   foreach(header IN LISTS visible_headers)
-#     verbose_message("* ${header}")
-#   endforeach()
-# endif()
+verbose_message("Project is now aliased as ${PROJECT_NAME}::${PROJECT_NAME}.\n")
 
+#
+# Set Target Properties
+#
+
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
+)
+
+#
+# Set the build/user include directories
+#
+
+target_include_directories(
+    ${PROJECT_NAME}
+    INTERFACE
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${INC_DIR}>
+     $<BUILD_INTERFACE:${INC_DIR}/container>
+)
+
+message(STATUS "Finished setting up include directories.")
+
+#
 # Check if the library is being built as a shared library
+#
+
 if(BUILD_SHARED_LIBS)
     message(STATUS "Building ${PROJECT_NAME} as a shared library")
     target_compile_definitions(${PROJECT_NAME} INTERFACE -DBUILD_SHARED)
@@ -126,30 +259,10 @@ else()
     target_compile_definitions(${PROJECT_NAME} INTERFACE -DBUILD_STATIC)
 endif()
 
-#
-# Set the build/user include directories
-#
-
-# Allow usage of header files in the `src` directory, but only for utilities
-
-target_include_directories(
-  ${PROJECT_NAME}
-  INTERFACE
-  $<INSTALL_INTERFACE:include/container>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>  
-)
-
-message(STATUS "Finished setting up include directories.")
-
-message(STATUS "Added all header and implementation files.\n")
-verbose_message("Project is now aliased as ${PROJECT_NAME}::${PROJECT_NAME}.\n")
 
 ##################################################################################
-##################################################################################
-
-#
 # Set the project standard and warnings
-#
+##################################################################################
 
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
 
@@ -162,7 +275,7 @@ verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}
 # Enable Doxygen
 #
 
-# include(cmake/Doxygen.cmake)
+# include(Doxygen)
 
 ##################################################################################
 ##################################################################################
@@ -207,7 +320,6 @@ verbose_message("Successfully added all dependencies and linked against them.")
 ##################################################################################
 ##################################################################################
 
-
 #
 # Install library for easy downstream inclusion
 #
@@ -242,31 +354,8 @@ install(
 )
 
 ##################################################################################
-##################################################################################
-
-#
-# Add version header
-#
-
-configure_file(
-  ${CMAKE_CURRENT_LIST_DIR}/scripts/cmake/version.hpp.in
-  include/${PROJECT_NAME_LOWERCASE}/version.hpp
-  @ONLY
-)
-
-install(
-  FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME_LOWERCASE}/version.hpp
-  DESTINATION
-  include/${PROJECT_NAME_LOWERCASE}
-)
-
-##################################################################################
-##################################################################################
-
-#
 # Install the `include` directory
-#
+##################################################################################
 
 install(
   DIRECTORY
@@ -278,11 +367,8 @@ install(
 verbose_message("Install targets successfully built. Install with `cmake --build <build_directory> --target install --config <build_config>`.")
 
 ##################################################################################
-##################################################################################
-
-#
 # Quick `ConfigVersion.cmake` creation
-#
+##################################################################################
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
@@ -309,13 +395,10 @@ install(
 )
 
 ##################################################################################
+# Generate export header if specified
 ##################################################################################
 
-#
-# Generate export header if specified
-#
-
-if(${PROJECT_NAME}_GENERATE_EXPORT_HEADER)
+if(GenerateExportHeader)
   include(GenerateExportHeader)
   generate_export_header(${PROJECT_NAME})
   install(
@@ -331,25 +414,13 @@ endif()
 message(STATUS "Finished building requirements for installing the package.\n")
 
 ##################################################################################
+# Unit testing setup
 ##################################################################################
 
-#
-# Unit testing setup
-#
-
-if(BuildTests)
+if(EnableTesting)
   enable_testing()
   message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
   add_subdirectory(test)
 endif()
 
-##################################################################################
-##################################################################################
-
-#
-# Examples setup
-#
-
-message(STATUS "Building dynamic_array examples: ")
-#add_subdirectory(examples/darray)
 
