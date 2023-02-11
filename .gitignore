@@ -5,9 +5,9 @@ extras
 TestReports
 .gitmodules
 .clang-format
-Licence
 Testing
 docs/source/doxygen/xml
+CMakeSettings.json
 
 #Temporary disabled
 new_version
