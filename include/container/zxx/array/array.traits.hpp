@@ -73,7 +73,7 @@ struct XSTL_INTERNAL _array_traits<_T, 0> {
     // TODO: define function as noreturn
     XSTL_FORCE_INLINE _T& operator[](size_t) const noexcept { // TODO: create a function that orchastrate a crash }
     // Conversion to a pointer produces a null pointer.
-    XSTL_FORCE_INLINE operator _T*() const noexcept { return nullptr; } 
+    XSTL_FORCE_INLINE _T* operator _T*() const noexcept { return nullptr; } 
   };
 
   // uncomment those later when <xstl/type_traits> is included - only works with
