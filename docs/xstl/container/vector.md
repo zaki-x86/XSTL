@@ -1,6 +1,6 @@
-# List (Doubly Linked List)
+# Vector (Dynamic Array)
 
-**Defined in header file**: `<list>`
+**Defined in header file**: `<vector>`
 
 ```cpp
 // Signature
