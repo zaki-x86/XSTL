@@ -67,13 +67,14 @@ struct XSTL_INTERNAL _array_traits {
 
 template <typename _T>
 struct XSTL_INTERNAL _array_traits<_T, 0> {
-  
   struct _CStyle_array {
     // Indexing is undefined.
     // TODO: define function as noreturn
-    XSTL_FORCE_INLINE _T& operator[](size_t) const noexcept { // TODO: create a function that orchastrate a crash }
+    XSTL_FORCE_INLINE _T& operator[](size_t) const noexcept {
+      // TODO: create a function that orchastrate a crash
+    }
     // Conversion to a pointer produces a null pointer.
-    XSTL_FORCE_INLINE _T* operator _T*() const noexcept { return nullptr; } 
+    XSTL_FORCE_INLINE operator _T*() const noexcept { return nullptr; }
   };
 
   // uncomment those later when <xstl/type_traits> is included - only works with
@@ -85,7 +86,9 @@ struct XSTL_INTERNAL _array_traits<_T, 0> {
     return *static_cast<_T*>(nullptr);
   }
 
-  static CONSTEXPR20 _T* _s_ptr(const _CStyle_array&) noexcept { return nullptr; }
+  static CONSTEXPR20 _T* _s_ptr(const _CStyle_array&) noexcept {
+    return nullptr;
+  }
 };
 
 _END_XSTL
