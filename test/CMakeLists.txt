@@ -22,10 +22,10 @@ set(TestStandards "" CACHE STRING "The list of standards to test explicitly.")
 # Import testing framework
 ##################################################################
 
-if(UNIX AND GCC_VERSION VERSION_LESS 5.0)
+if(CMAKE_COMPILER_IS_GNUCXX AND GCC_VERSION VERSION_LESS 5.0)
   message(STATUS "GCC version is less than 5.0, using gtest-1.8.0")
   add_subdirectory(libs/gtest-1.8.0 EXCLUDE_FROM_ALL)
-elseif(UNIX AND GCC_VERSION VERSION_GREATER 4.0)
+elseif(CMAKE_COMPILER_IS_GNUCXX AND GCC_VERSION VERSION_GREATER 4.0)
   message(STATUS "GCC version is greater than or equal to 5.0, using gtest-1.8.1")
   add_subdirectory(libs/gtest-1.8.1 EXCLUDE_FROM_ALL)
 else()
