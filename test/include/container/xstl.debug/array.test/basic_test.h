@@ -18,7 +18,7 @@ _BEGIN_XSTL_TEST
 
 template<typename Type>
 class ArrayBasicTest : public ::testing::Test {
-
+public:
     static const size_t TESTING_SIZE = 100;
 
     void SetUp() override {
@@ -30,7 +30,6 @@ class ArrayBasicTest : public ::testing::Test {
     void TearDown() override {
     }
 
-protected:
     xstl::array<Type, TESTING_SIZE> arr;
     Type c_arr[TESTING_SIZE];
     Debug_array<Type, TESTING_SIZE> debugger;

@@ -42,6 +42,7 @@ _BEGIN_XSTL
  * functions, rather than using a class template like `_array_traits`.
  *
  */
+
 template <typename _T, size_t _N>
 struct XSTL_INTERNAL _array_traits {
   // _CStyle_array aliases a c style array type
