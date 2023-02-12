@@ -12,13 +12,9 @@
 #define XSTL_ASSERT(cond, fail_msg) EXPECT_TRUE(cond) << (fail_msg)
 
 _BEGIN_XSTL_TEST
-    
-    /// _Debug_arr
-    // A debugging interface for xstl::array
-    // _Ty is stored type within the array, _Size is the size of the array, _arr is the array to debug
-    // _ref is a c-style array to use as a reference to debug xstl::array
-    // _arr is a clone of _ref, and we used _ref as a "reference container" to debug _arr
 
+    // Groups together all utility functions that an Array debugger needs
+    /// Can also be useful within testing context
     struct DebugUtils
     {
         template<typename _Ty, size_t _Size>
@@ -51,6 +47,14 @@ _BEGIN_XSTL_TEST
     /// FIXME : Getting a warning for all _verify_*_ok() functions 
     /// use of member '_verify_*_ok' found via unqualified lookup into dependent bases of class templates is a Microsoft extension
     /// for all functionions _verify_*_ok()
+    /// Issue is originated from the fact, for some compilers and c++ standards, the class `Debug_array` is not able to find  `_verify_*_ok` because it is declared within the scope of a member function, and it didn't look for it within the super class context. 
+    /// Suggtested fix is to add `this->_verify_*_ok()` to tell the compiler that these functions are members of the base class and therefore members of the child class as well. 
+
+    /// _Debug_arr
+    // A debugging interface for xstl::array
+    // _Ty is stored type within the array, _Size is the size of the array, _arr is the array to debug
+    // _ref is a c-style array to use as a reference to debug xstl::array
+    // _arr is a clone of _ref, and we used _ref as a "reference container" to debug _arr
     template<typename _Ty, std::size_t _Size>
     struct XSTL_INTERNAL _Debug_array
     {
@@ -254,7 +258,7 @@ _BEGIN_XSTL_TEST
             
         }
 
-    private:
+    protected:
         xstl::array<_Ty, _Size> _arr;
         _Ty _ref[_Size];
         
@@ -302,87 +306,87 @@ _BEGIN_XSTL_TEST
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_forward_iteration()
     {
-        _verify_iter_ok();
+        this->_verify_iter_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_const_forward_iteration()
     {
-        _verify_citer_ok();
+        this->_verify_citer_ok();
     }
     
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_reverse_iteration()
     {
-        _verify_riter_ok();
+        this->_verify_riter_ok();
     }
     
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_const_reverse_iteration()
     {
-        _verify_criter_ok();
+        this->_verify_criter_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_access_via_operator()
     {
-        _verify_access_operator_ok();
+        this->_verify_access_operator_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_access_via_at()
     {
-        _verify_at_ok();
+        this->_verify_at_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_generated_c_array()
     {
-        _verify_data_ok();
+        this->_verify_data_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_front_and_back_access()
     {
-        _verify_front_ok();
-        _verify_back_ok();
+        this->_verify_front_ok();
+        this->_verify_back_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_fill()
     {
-        _verify_fill_ok();
+        this->_verify_fill_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::test_swap()
     {
-        _verify_swap_ok();
+        this->_verify_swap_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::perform_storage_checks()
     {
-        _verify_size_ok();
-        _verify_max_size_ok();
-        _verify_empty_ok();
+        this->_verify_size_ok();
+        this->_verify_max_size_ok();
+        this->_verify_empty_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::perform_accessors_checks()
     {
-        _verify_access_operator_ok();
-        _verify_at_ok();
-        _verify_front_ok();
-        _verify_back_ok();
-        _verify_data_ok();
+        this->_verify_access_operator_ok();
+        this->_verify_at_ok();
+        this->_verify_front_ok();
+        this->_verify_back_ok();
+        this->_verify_data_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
     void Debug_array<_Ty, _Size>::perform_modifiers_checks()
     {
-        _verify_fill_ok();
-        _verify_swap_ok();
+        this->_verify_fill_ok();
+        this->_verify_swap_ok();
     }
 
     template<typename _Ty, std::size_t _Size>
