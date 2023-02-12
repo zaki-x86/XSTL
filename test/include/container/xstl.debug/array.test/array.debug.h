@@ -65,7 +65,7 @@ _BEGIN_XSTL_TEST
         void _verify_iter_ok() {
             // test: begin() and end()
 
-            for (struct{ size_t i; xstl::array<_Ty, _Size>::iterator _it; } loop = { 0, _arr.begin() }; loop._it != _arr.end(); ++loop._it, ++loop.i)
+            for (struct { size_t i; typename xstl::array<_Ty, _Size>::iterator _it; } loop = { 0, _arr.begin() }; loop._it != _arr.end(); ++loop._it, ++loop.i)
             {
                 XSTL_ASSERT(*(loop._it) == _ref[loop.i], "iterator functions failed!");
                 //EXPECT_TRUE(*(loop._it) == _ref[loop.i]) << "iterator functions failed!";
@@ -77,7 +77,7 @@ _BEGIN_XSTL_TEST
 
             // test const overloads of: begin() const and end() const
             
-            for (struct{ size_t i; xstl::array<_Ty, _Size>::const_iterator _it; } loop = { 0, _carr.begin()}; loop._it != _carr.end(); ++loop._it, ++loop.i)
+            for (struct{ size_t i; typename xstl::array<_Ty, _Size>::const_iterator _it; } loop = { 0, _carr.begin()}; loop._it != _carr.end(); ++loop._it, ++loop.i)
             {
                 XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of iterator functions failed!");
             }
@@ -89,7 +89,7 @@ _BEGIN_XSTL_TEST
             _carr = static_cast<const xstl::array<_Ty, _Size>>(_carr);
 
             // test of: cbegin() const and cend() const
-            for (struct{ size_t i; xstl::array<_Ty, _Size>::const_iterator _it; } loop = { 0, _carr.begin() }; loop._it != _carr.end(); ++loop._it, ++loop.i)
+            for (struct{ size_t i; typename xstl::array<_Ty, _Size>::const_iterator _it; } loop = { 0, _carr.begin() }; loop._it != _carr.end(); ++loop._it, ++loop.i)
             {
                 XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of iterator functions failed!");
             }
@@ -98,7 +98,7 @@ _BEGIN_XSTL_TEST
         void _verify_riter_ok() {
             // Test rbegin and rend
 
-            for (struct{ size_t i; xstl::array<_Ty, _Size>::reverse_iterator _it; } loop = { _Size - 1, _arr.rbegin() }; loop._it != _arr.rend(); ++loop._it, --loop.i)
+            for (struct{ size_t i; typename xstl::array<_Ty, _Size>::reverse_iterator _it; } loop = { _Size - 1, _arr.rbegin() }; loop._it != _arr.rend(); ++loop._it, --loop.i)
             {
                 XSTL_ASSERT(*(loop._it) == _ref[loop.i], "reverse iterator functions failed!");
             }
@@ -109,7 +109,7 @@ _BEGIN_XSTL_TEST
 
             // test const overloads of: rbegin() const and rend() const
 
-            for (struct { size_t i; xstl::array<_Ty, _Size>::const_reverse_iterator _it; } loop = { _Size - 1, _carr.crbegin() }; loop._it != _carr.rend(); ++loop._it, --loop.i)
+            for (struct { size_t i; typename xstl::array<_Ty, _Size>::const_reverse_iterator _it; } loop = { _Size - 1, _carr.crbegin() }; loop._it != _carr.rend(); ++loop._it, --loop.i)
             {
                 XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of reverse iterator functions failed!");
             }
@@ -122,7 +122,7 @@ _BEGIN_XSTL_TEST
 
             // Test: crbegin() and crend()
 
-            for (struct{ size_t i ; xstl::array<_Ty, _Size>::const_reverse_iterator _it; } loop = { _Size - 1, _carr.crbegin() }; loop._it != _carr.crend(); ++loop._it, --loop.i)
+            for (struct{ size_t i ; typename xstl::array<_Ty, _Size>::const_reverse_iterator _it; } loop = { _Size - 1, _carr.crbegin() }; loop._it != _carr.crend(); ++loop._it, --loop.i)
             {
                 XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of reverse iterator functions failed!");
             }

@@ -32,7 +32,7 @@ endif()
 ##################################################################################
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake ${CMAKE_MODULE_PATH})
-
+message(STATUS "Module path is set to: ${CMAKE_MODULE_PATH}")
 include(StaticAnalyzers)
 include(Utils)
 ##################################################################################
@@ -173,7 +173,6 @@ if(MAIN_PROJECT)
     configure_file(
       ${CMAKE_CURRENT_LIST_DIR}/include/config/config.h.in
       ${CMAKE_CURRENT_SOURCE_DIR}/include/config/config.h
-      @ONLY
     )
     install(
       FILES

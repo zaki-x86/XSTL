@@ -8,17 +8,54 @@
 
 // compiler:
 
-#define XSTL_GCC defined(__GNUC__)
-#define XSTL_CLANG defined(__clang__)
-#define XSTL_MSVC defined(_MSC_VER)
+#if defined(__GNUC__)
+#define XSTL_GCC 1
+#define XSTL_CLANG 0
+#define XSTL_MSVC 0
+#elif defined(__clang__)
+#define XSTL_GCC 0
+#define XSTL_CLANG 1
+#define XSTL_MSVC 0
+#elif defined(_MSC_VER)
+#define XSTL_GCC 0
+#define XSTL_CLANG 0
+#define XSTL_MSVC 1
+#endif
+
 
 // os:
 
-#define XSTL_WIN32 defined(_WIN32)
-#define XSTL_WIN64 defined(_WIN64)
-#define XSTL_WIN XSTL_WIN32 || XSTL_WIN64
-#define XSTL_LINUX defined(__linux__) || defined(__unix__)
-#define XSTL_MAC defined(__APPLE__)
+#if defined(_WIN32) && !defined(_WIN64)
+#define XSTL_WIN 1
+#define XSTL_WIN32 1
+#define XSTL_WIN64 0
+#define XSTL_LINUX 0
+#define XSTL_MAC 0
+#elif defined(_WIN64) && !defined(_WIN32)
+#define XSTL_WIN 1
+#define XSTL_WIN64 0
+#define XSTL_WIN32 0 
+#define XSTL_LINUX 0
+#define XSTL_MAC 0
+#elif defined(_WIN32) && defined(_WIN64)
+#define XSTL_WIN 1
+#define XSTL_WIN32 1
+#define XSTL_WIN64 1
+#define XSTL_LINUX 0
+#define XSTL_MAC 0
+#endif
+
+#if defined(__linux__) || defined(__unix__)
+#define XSTL_LINUX 1
+#else
+#define XSTL_LINUX 0
+#endif
+
+#if defined(__APPLE__)
+#define XSTL_MAC 1
+#else
+#define XSTL_MAC 0
+#endif
 
 // cpp version:
 
@@ -29,10 +66,14 @@
 #define XSTL_CXX23 __cplusplus >  202003L
 
 // Library options:
+#if defined(_DEBUG) || NDEBUG
+#define XSTL_DEBUG 1
+#elif
+#define XSTL_DEBUG 0
+#endif
 
-#define XSTL_DEBUG defined(_DEBUG) || NDEBUG
-#define XSTL_DISABLE_EXTENSIONS 
-#define XSTL_UNDER_TEST ON
+//#define XSTL_DISABLE_EXTENSIONS 
+//#define XSTL_UNDER_TEST ON
 
 // **************************************
 /// Define internal and public components
