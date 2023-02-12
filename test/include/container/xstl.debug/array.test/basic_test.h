@@ -24,15 +24,17 @@ public:
     void SetUp() override {
         DebugUtils::init_cstyle_array<Type, TESTING_SIZE>(c_arr);
         DebugUtils::clone_c_array<Type, TESTING_SIZE>(arr, c_arr);
-        debugger = Debug_array<Type, TESTING_SIZE>(arr, c_arr);
     }
 
     void TearDown() override {
     }
 
+    Debug_array<Type, TESTING_SIZE> debugger(arr, c_arr);
+
+protected:
     xstl::array<Type, TESTING_SIZE> arr;
     Type c_arr[TESTING_SIZE];
-    Debug_array<Type, TESTING_SIZE> debugger;
+
 };
 
 using PimitiveTypes = ::testing::Types<
