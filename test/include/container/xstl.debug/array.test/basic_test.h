@@ -13,6 +13,10 @@
 
 _BEGIN_XSTL_TEST
 
+/// FIXME
+/// Getting this warning:
+/// use of undeclared identifier 'debugger'; unqualified lookup into dependent bases of class template ('CanForwardIterateOverArray' , 'CanConstForwardIterateOverArray', .. etc) is a Microsoft extension
+
 template<typename Type>
 class ArrayBasicTest : public ::testing::Test {
 

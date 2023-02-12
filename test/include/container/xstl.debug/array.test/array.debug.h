@@ -48,6 +48,10 @@ _BEGIN_XSTL_TEST
         }
     };
 
+    /// FIXME
+    /// Getting this warning: 
+    /// use of member '_verify_*_ok' found via unqualified lookup into dependent bases of class templates is a Microsoft extension
+    /// for all functionions _verify_*_ok()
     template<typename _Ty, std::size_t _Size>
     struct XSTL_INTERNAL _Debug_array
     {
@@ -271,7 +275,7 @@ _BEGIN_XSTL_TEST
     {
         using _Base = _Debug_array<_Ty, _Size>;
 
-        Debug_array() : _Base() {};
+        Debug_array() : _Base() {}
         Debug_array(const xstl::array<_Ty, _Size>& arr, _Ty* ref) : _Base(arr, ref) {}
 
         void test_forward_iteration();
