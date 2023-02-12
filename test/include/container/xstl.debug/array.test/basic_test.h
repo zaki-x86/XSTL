@@ -13,8 +13,7 @@
 
 _BEGIN_XSTL_TEST
 
-/// FIXME
-/// Getting this warning:
+/// FIXME : warning related to an issue with instantiating the `debugger` object
 /// use of undeclared identifier 'debugger'; unqualified lookup into dependent bases of class template ('CanForwardIterateOverArray' , 'CanConstForwardIterateOverArray', .. etc) is a Microsoft extension
 
 template<typename Type>

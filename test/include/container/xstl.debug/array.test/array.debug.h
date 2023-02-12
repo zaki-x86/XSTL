@@ -48,8 +48,7 @@ _BEGIN_XSTL_TEST
         }
     };
 
-    /// FIXME
-    /// Getting this warning: 
+    /// FIXME : Getting a warning for all _verify_*_ok() functions 
     /// use of member '_verify_*_ok' found via unqualified lookup into dependent bases of class templates is a Microsoft extension
     /// for all functionions _verify_*_ok()
     template<typename _Ty, std::size_t _Size>

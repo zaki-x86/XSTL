@@ -47,8 +47,8 @@ struct XSTL_INTERNAL _array_traits {
   // _CStyle_array aliases a c style array type
   using _CStyle_array = _T[_N];
 
-  // uncomment those later when <xstl/type_traits> is included - only works with
-  // standard c++17 and highers
+  // TODO : come back to uncomment those when <xstl/type_traits> is included
+  // only works with standard c++17 and highers in STL, should work with any std version c++ in xstl
   // using _Is_swappable = xstl::is_swappable<_T>;
   // using _Is_nothrow_swappable = xstl::is_nothrow_swappable<_T>;
 
@@ -77,8 +77,8 @@ struct XSTL_INTERNAL _array_traits<_T, 0> {
     XSTL_FORCE_INLINE operator _T*() const noexcept { return nullptr; }
   };
 
-  // uncomment those later when <xstl/type_traits> is included - only works with
-  // standard c++17 and highers
+  // TODO : come back to uncomment those when <xstl/type_traits> is included
+  // only works with standard c++17 and highers in STL, should work with c++v in xstl
   // using _Is_swappable = xstl::true_type;
   // using _Is_nothrow_swappable = xstl::true_type;
 
