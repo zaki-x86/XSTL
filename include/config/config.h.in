@@ -3,6 +3,38 @@
 #define _XSTL_CONFIG_H_
 
 // **************************************
+/// General puprose macros
+// **************************************
+
+// compiler:
+
+#define XSTL_GCC defined(__GNUC__)
+#define XSTL_CLANG defined(__clang__)
+#define XSTL_MSVC defined(_MSC_VER)
+
+// os:
+
+#define XSTL_WIN32 defined(_WIN32)
+#define XSTL_WIN64 defined(_WIN64)
+#define XSTL_WIN XSTL_WIN32 || XSTL_WIN64
+#define XSTL_LINUX defined(__linux__) || defined(__unix__)
+#define XSTL_MAC defined(__APPLE__)
+
+// cpp version:
+
+#define XSTL_CXX11 __cplusplus >= 201103L
+#define XSTL_CXX14 __cplusplus >= 201403L
+#define XSTL_CXX17 __cplusplus >= 201703L
+#define XSTL_CXX20 __cplusplus >= 202003L
+#define XSTL_CXX23 __cplusplus >  202003L
+
+// Library options:
+
+#define XSTL_DEBUG defined(_DEBUG) || NDEBUG
+#define XSTL_DISABLE_EXTENSIONS @XSTL_DISABLE_EXTENSIONS@
+#define XSTL_UNDER_TEST @EnableTesting@
+
+// **************************************
 /// Define internal and public components
 // **************************************
 
@@ -23,37 +55,57 @@
 /// inline
 /// see:
 
+/// When to use `inline` function?
+/// see: msc: https://learn.microsoft.com/en-us/cpp/cpp/inline-functions-cpp?view=msvc-170
+/// They are best used for small functions, such as accessing private data member
+
 #if __cpp_inline_variables >= 201606L || __cplusplus >= 201703L
-#define XSTL_FORCE_INLINE inline
+#define INLINE_VAR inline
 #else
-#define XSTL_FORCE_INLINE
+#define INLINE_VAR
 #endif
 
+#if XSTL_MSVC
+#define XSTL_FORCE_INLINE __forceinline
+#elif XSTL_GCC || XSTL_CLANG
+#define XSTL_FORCE_INLINE __attribute__((always_inline))
+#else
+#define XSTL_FORCE_INLINE inline
+#endif
 /// constexpr
 /// See: https://en.cppreference.com/w/cpp/language/constexpr
 
+/// strict 
+/// declare variables as const in compile time, simple math ops (compute size, find max of 2 vals, ... etc) 
 #if __cpp_constexpr >= 200704L
 #define CONSTEXPR11 constexpr
 #else
 #define CONSTEXPR11
 #endif
 
+/// relaxed use
+///  more complex expressions involving loops and user-defined types to be used in a constexpr context.
 #if __cpp_constexpr >= 201304L
 #define CONSTEXPR14 constexpr
 #else
 #define CONSTEXPR14
 #endif
 
+/// allowing for if-statements, switch-statements and more flexible definition of constexpr functions.
+///  introduced a new concept of "integral constant expressions" 
+/// that can be used in more places in the language, such as in array dimensions or non-type template arguments.
 #if __cpp_constexpr >= 201603L
 #define CONSTEXPR17 constexpr
 #endif
 
+///  constexpr lambdas and improved reflection capabilities.
 #if __cpp_constexpr >= 201907L
 #define CONSTEXPR20 constexpr
 #else
 #define CONSTEXPR20
 #endif
 
+/// ?
 #if __cpp_constexpr >= 202110L
 #define CONSTEXPR23 constexpr
 #else
@@ -75,6 +127,7 @@
 #define XSTL_NODISCARD
 #endif
 
+// functions that exit the application, loop forever or throw exceptions.
 #if __has_cpp_attribute( noreturn ) >= 200809L
 #define XSTL_NORETURN [[noreturn]]
 #else
@@ -99,6 +152,20 @@
 #else
 #define XSTL_LIKELY
 #define XSTL_UNLIKELY
+#endif
+
+/// GCC specific:
+/// https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes
+/// !TODO
+#if XSTL_GCC
+/// __XSTL_ReadOnlyAccess, __XSTL_ReadWriteAccess, __XSTL_WriteOnlyAccess 
+/// enable the detection of invalid or unsafe accesses by functions to which they apply or their callers, as well as write-only accesses to objects that are never read from. Such accesses may be diagnosed by warnings such as -Wstringop-overflow, -Wuninitialized, -Wunused, and others.
+#define __XSTL_ReadOnlyAccess(arg_index) __attribute__ ((access (read_only, arg_index)))
+#define __XSTL_ReadWriteAccess(arg_index) __attribute__ ((access (read_write, arg_index)))
+#define __XSTL_WriteOnlyAccess(arg_index) __attribute__ ((access (write_only, arg_index)))
+
+#define __XSTL_RarelyUsed __attribute__((cold))
+#define __XSTL_AggressiveOptimize __attribute__((hot))
 #endif
 
 // **************************************
