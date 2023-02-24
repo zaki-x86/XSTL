@@ -24,7 +24,7 @@ jobs:
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@latest
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ci_test_clang
 
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ci_test_gcc
 
@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ${{ matrix.target }}
 
@@ -64,7 +64,7 @@ jobs:
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@latest
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ${{ matrix.target }}
 
@@ -81,29 +81,29 @@ jobs:
   #    - name: Get latest CMake and ninja
   #      uses: lukka/get-cmake@latest
   #    - name: Run CMake
-  #      run: cmake -S . -B build -DCI=On
+  #      run: cmake -S . -B build -DXSTLEnableCi=On
   #    - name: Build
   #      run: cmake --build build --target ${{ matrix.target }}
 
-  #ci_test_coverage:
-  #  runs-on: ubuntu-latest
-  #  container: ghcr.io/nlohmann/json-ci:v2.4.0
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - name: Run CMake
-  #      run: cmake -S . -B build -DCI=On
-  #    - name: Build
-  #      run: cmake --build build --target ci_test_coverage
-  #    - name: Archive coverage report
-  #      uses: actions/upload-artifact@v3
-  #      with:
-  #        name: code-coverage-report
-  #        path: ${{ github.workspace }}/build/html
-  #    - name: Publish report to Coveralls
-  #      uses: coverallsapp/github-action@master
-  #      with:
-  #        github-token: ${{ secrets.GITHUB_TOKEN }}
-  #        path-to-lcov: ${{ github.workspace }}/build/json.info.filtered.noexcept
+  ci_test_coverage:
+   runs-on: ubuntu-latest
+   container: ghcr.io/nlohmann/json-ci:v2.4.0
+   steps:
+     - uses: actions/checkout@v3
+     - name: Run CMake
+       run: cmake -S . -B build -DXSTLEnableCi=On
+     - name: Build
+       run: cmake --build build --target ci_test_coverage
+     - name: Archive coverage report
+       uses: actions/upload-artifact@v3
+       with:
+         name: code-coverage-report
+         path: ${{ github.workspace }}/build/html
+     - name: Publish report to Coveralls
+       uses: coverallsapp/github-action@master
+       with:
+         github-token: ${{ secrets.GITHUB_TOKEN }}
+         path-to-lcov: ${{ github.workspace }}/build/xstl.info.filtered.noexcept
 
   ci_test_compilers_gcc:
     runs-on: ubuntu-latest
@@ -116,7 +116,7 @@ jobs:
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@latest
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ci_test_compiler_default
 
@@ -133,7 +133,7 @@ jobs:
       - name: Get latest CMake and ninja
         uses: lukka/get-cmake@latest
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ci_test_compiler_default
 
@@ -146,7 +146,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ci_test_compiler_${{ matrix.compiler }}
 
@@ -160,7 +160,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: cmake --build build --target ci_test_${{ matrix.compiler }}_cxx${{ matrix.standard }}
 
@@ -170,12 +170,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run CMake
-        run: cmake -S . -B build -DCI=On
+        run: cmake -S . -B build -DXSTLEnableCi=On
       - name: Build
         run: |
           . /opt/intel/oneapi/setvars.sh
           cmake --build build --target ci_icpc
 
+# TODO Execute REUSE check ci/cd, NOTE: Need to go to scripts/cmake/ci/ci.cmake to implement target
 #  ci_reuse_compliance:
 #    runs-on: ubuntu-latest
 #    steps:
@@ -186,6 +187,7 @@ jobs:
 #      - name: Run REUSE lint
 #        run: reuse lint
 
+# TODO Execute test docs ci/cd
   #ci_test_documentation:
   #  runs-on: ubuntu-latest
   #  strategy:
@@ -194,6 +196,6 @@ jobs:
   #  steps:
   #    - uses: actions/checkout@v3
   #    - name: Run CMake
-  #      run: cmake -S . -B build -DCI=On
+  #      run: cmake -S . -B build -DXSTLEnableCi=On
   #    - name: Build
   #      run: cmake --build build --target ${{ matrix.target }}

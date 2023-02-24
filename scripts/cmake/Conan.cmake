@@ -1,4 +1,4 @@
-if(${PROJECT_NAME}_ENABLE_CONAN)
+if(XSTLEnableConan)
   #
   # Setup Conan requires and options here:
   #

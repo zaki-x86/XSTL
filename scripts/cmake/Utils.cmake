@@ -3,7 +3,7 @@
 #
 
 function(verbose_message content)
-    if(${PROJECT_NAME}_VERBOSE_OUTPUT)
+    if(XSTLVerboseOutput)
 			message(STATUS ${content})
     endif()
 endfunction()
@@ -21,12 +21,12 @@ function(add_clang_format_target)
     endif()
 
     if(${PROJECT_NAME}_CLANG_FORMAT_BINARY)
-			if(${PROJECT_NAME}_BUILD_EXECUTABLE)
+			if(XSTLBuildExe)
 				add_custom_target(clang-format
 						COMMAND ${${PROJECT_NAME}_CLANG_FORMAT_BINARY}
-						-i ${exe_sources} ${headers}
+						-i ${XSTL_SOURCE_FILES} ${XSTL_HEADER_FILES}
 						WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-			elseif(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
+			elseif(XSTLBuildHeadersOnly)
 				add_custom_target(clang-format
 						COMMAND ${${PROJECT_NAME}_CLANG_FORMAT_BINARY}
 						-i ${headers}
@@ -34,7 +34,7 @@ function(add_clang_format_target)
 			else()
 				add_custom_target(clang-format
 						COMMAND ${${PROJECT_NAME}_CLANG_FORMAT_BINARY}
-						-i ${sources} ${headers}
+						-i ${XSTL_SOURCE_FILES} ${XSTL_HEADER_FILES}
 						WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 			endif()
 
