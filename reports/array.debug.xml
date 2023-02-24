@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="39" name="AllTests">
+  <testsuite name="ArrayTestWithPrimitiveTypes/ArrayBasicTest/0" tests="13">
+    <testcase name="CanForwardIterateOverArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="73" />
+    <testcase name="CanConstForwardIterateOverArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="78" />
+    <testcase name="CanReverseIterateOverArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="83" />
+    <testcase name="CanConstReverseIterateOverArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="88" />
+    <testcase name="CanGetStorageInfoFromArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="93" />
+    <testcase name="CanAccessArrayUsingAccessOperator" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="98" />
+    <testcase name="CanAccessArrayUsingAt" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="103" />
+    <testcase name="CanGetFrontAndBackElementsOfArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="108" />
+    <testcase name="CanGetWrappedCArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="113" />
+    <testcase name="CanFillArrayWithRandomValue" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="118" />
+    <testcase name="CanSwapArrayWithAnotherArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="123" />
+    <testcase name="CanPeformRelationalOpsOnArray" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="128" />
+    <testcase name="CanPrintArrayElements" type_param="int" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="133" />
+  </testsuite>
+  <testsuite name="ArrayTestWithPrimitiveTypes/ArrayBasicTest/1" tests="13">
+    <testcase name="CanForwardIterateOverArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="73" />
+    <testcase name="CanConstForwardIterateOverArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="78" />
+    <testcase name="CanReverseIterateOverArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="83" />
+    <testcase name="CanConstReverseIterateOverArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="88" />
+    <testcase name="CanGetStorageInfoFromArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="93" />
+    <testcase name="CanAccessArrayUsingAccessOperator" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="98" />
+    <testcase name="CanAccessArrayUsingAt" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="103" />
+    <testcase name="CanGetFrontAndBackElementsOfArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="108" />
+    <testcase name="CanGetWrappedCArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="113" />
+    <testcase name="CanFillArrayWithRandomValue" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="118" />
+    <testcase name="CanSwapArrayWithAnotherArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="123" />
+    <testcase name="CanPeformRelationalOpsOnArray" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="128" />
+    <testcase name="CanPrintArrayElements" type_param="char" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="133" />
+  </testsuite>
+  <testsuite name="ArrayTestWithPrimitiveTypes/ArrayBasicTest/2" tests="13">
+    <testcase name="CanForwardIterateOverArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="73" />
+    <testcase name="CanConstForwardIterateOverArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="78" />
+    <testcase name="CanReverseIterateOverArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="83" />
+    <testcase name="CanConstReverseIterateOverArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="88" />
+    <testcase name="CanGetStorageInfoFromArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="93" />
+    <testcase name="CanAccessArrayUsingAccessOperator" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="98" />
+    <testcase name="CanAccessArrayUsingAt" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="103" />
+    <testcase name="CanGetFrontAndBackElementsOfArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="108" />
+    <testcase name="CanGetWrappedCArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="113" />
+    <testcase name="CanFillArrayWithRandomValue" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="118" />
+    <testcase name="CanSwapArrayWithAnotherArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="123" />
+    <testcase name="CanPeformRelationalOpsOnArray" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="128" />
+    <testcase name="CanPrintArrayElements" type_param="class std::basic_string&lt;char,struct std::char_traits&lt;char&gt;,class std::allocator&lt;char&gt; &gt;" file="X:\Projects\2023\Project_XSTL\xstl-container\test\include\container/array.test/basic_test.h" line="133" />
+  </testsuite>
+</testsuites>
