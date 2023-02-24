@@ -2,7 +2,7 @@
 
 #define _VECTOR_BASE_H_
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 #include <memory>
 
 _BEGIN_XSTL
@@ -29,7 +29,7 @@ _BEGIN_XSTL
  */
 
 template <typename T, typename Allocator>
-struct XSTL_INTERNAL vector_base {
+struct vector_base {
 
   /**
    * @brief createS a new allocator type `_Tp_alloc_type` that is parameterized with the same type as `vector_base`.

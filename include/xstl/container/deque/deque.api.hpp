@@ -4,7 +4,7 @@
 
 #include <deque>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 #include "deque.base.hpp"
 #include "deque.iterator.hpp"
 #include "deque.utils.hpp"
@@ -12,7 +12,7 @@
 _BEGIN_XSTL
 
 template <class T, class Allocator = std::allocator<T>>
-class XSTL_API deque : protected _Deque_base<T, Allocator> {
+class deque : protected _Deque_base<T, Allocator> {
 public:
   /**
    * @name Public Type Aliases

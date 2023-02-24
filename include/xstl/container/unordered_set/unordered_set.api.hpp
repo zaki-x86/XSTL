@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <initializer_list>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 _BEGIN_XSTL
 
@@ -15,7 +15,7 @@ template <class Key,
           class Hash = std::hash<Key>,
           class KeyEqual = std::equal_to<Key>,
           class Allocator = std::allocator<Key> >
-class XSTL_API unordered_set {
+class unordered_set {
 public:
     // types:
 	typedef Key* iterator;

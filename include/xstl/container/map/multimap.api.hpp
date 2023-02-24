@@ -1,14 +1,14 @@
-#ifndef _MULTIMAP_H_
-#define _MULTIMAP_H_
+#ifndef _MULTIMAP_API_H_
+#define _MULTIMAP_API_H_
 
 #include <map>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 _BEGIN_XSTL
 template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
-class XSTL_API multimap {
+class multimap {
 public:
   // types:
   typedef Key* iterator;
@@ -149,4 +149,4 @@ void swap(multimap<Key, T, Compare, Allocator> &x,
           
 _END_XSTL
 
-#endif // !_MULTIMAP_H_
+#endif // !_MULTIMAP_API_H_

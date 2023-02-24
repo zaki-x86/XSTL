@@ -3,14 +3,14 @@
 #define _UNORDERED_MULTIMAP_API_H_
 
 #include <unordered_map>
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 _BEGIN_XSTL
 
 template <class Key, class T, class Hash = std::hash<Key>,
           class KeyEqual = std::equal_to<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
-class XSTL_API unordered_multimap {
+class unordered_multimap {
 public:
   // types:
   typedef Key* iterator;

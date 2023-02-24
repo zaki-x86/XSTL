@@ -19,7 +19,7 @@
 #include <memory>
 
 // <--- XSTL headers --->
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 // <--- array headers --->
 #include "array.traits.hpp"
@@ -31,7 +31,7 @@ _BEGIN_XSTL
  * @tparam T The type of the elements stored in the array.
  * @tparam N The size of the array.
  */
-template <typename T, size_t _Size> struct XSTL_API array {
+template <typename T, size_t _Size> struct array {
 
   // types:
   using value_type = T;

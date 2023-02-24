@@ -2,7 +2,7 @@
 
 #define _UNORDERED_MAP_API_H_
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 #include <unordered_map>
 
 _BEGIN_XSTL
@@ -10,7 +10,7 @@ _BEGIN_XSTL
 template <class Key, class T, class Hash = std::hash<Key>,
           class KeyEqual = std::equal_to<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
-class XSTL_API unordered_map {
+class unordered_map {
 public:
   // types:
   typedef Key* iterator;

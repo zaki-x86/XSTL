@@ -6,14 +6,14 @@
 #include <memory>
 #include <set>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 _BEGIN_XSTL
 
 template <class Key,
           class Compare = std::less<Key>,
           class Allocator = std::allocator<Key> >
-class XSTL_API multiset {
+class multiset {
 public:
     // types:
 	typedef Key* iterator;

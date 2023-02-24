@@ -4,12 +4,12 @@
 
 #include <forward_list>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 #include "forward_list.iterator.hpp"
 
 _BEGIN_XSTL
 template <class T, class Allocator = std::allocator<T>> 
-class XSTL_API forward_list {
+class forward_list {
 public:
   /**
    * @name Public Type Aliases

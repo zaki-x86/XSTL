@@ -17,7 +17,7 @@
 #include <vector>
 
 // <--- XSTL headers needed --->
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 // <--- vector headers --->
 #include "vector.base.hpp"
@@ -46,7 +46,7 @@ _BEGIN_XSTL
  * is similar to the one provided by std::vector.
  */
 template <typename T, typename Allocator = std::allocator<T>>
-class XSTL_API vector : protected vector_base<T, Allocator> {
+class vector : protected vector_base<T, Allocator> {
 private:
   // These aliases will be useful later on, bc we will no longer use any std::something in the future, therefore, I grouped them here and aliased them, so I can easily change them later when I create my own zxx::something
   using zxx_ptrdiff_t = std::ptrdiff_t;

@@ -5,14 +5,14 @@
 #include <iostream>
 #include <memory>
 #include <unordered_set>
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 _BEGIN_XSTL
 template <class Key,
           class Hash = std::hash<Key>,
           class KeyEqual = std::equal_to<Key>,
           class Allocator = std::allocator<Key> >
-class XSTL_API unordered_multiset {
+class unordered_multiset {
 public:
     // types:
 	typedef Key* iterator;

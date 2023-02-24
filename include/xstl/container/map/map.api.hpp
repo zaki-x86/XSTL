@@ -1,21 +1,21 @@
-#ifndef _MAP_H_
-#define _MAP_H_
+#ifndef _MAP_API_H_
+#define _MAP_API_H_
 
 #include <map>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 _BEGIN_XSTL
 template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T>>>
-class XSTL_API map {
+class map {
 public:
   // types:
-  typedef Key* iterator;
-  typedef const Key* const_iterator;
+  typedef Key *iterator;
+  typedef const Key *const_iterator;
   typedef std::reverse_iterator<iterator> reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-  
+
   typedef Key key_type;
   typedef std::pair<const Key, T> value_type;
   typedef T mapped_type;
@@ -27,7 +27,6 @@ public:
   typedef typename Allocator::difference_type difference_type;
   typedef typename Allocator::reference reference;
   typedef typename Allocator::const_reference const_reference;
-  typedef typename Allocator::const_pointer const_pointer;
 
   class value_compare {
   protected:
@@ -89,10 +88,10 @@ public:
 
   // modifiers:
   std::pair<iterator, bool> insert(const value_type &x);
-  template <class P> pair<iterator, bool> insert(P &&x);
+  template <class P> std::pair<iterator, bool> insert(P &&x);
   iterator insert(const_iterator position, const value_type &x);
-  template <class P>
-  iterator insert(const_iterator position, P &&) template <class InputIterator>
+  template <class P> iterator insert(const_iterator position, P &&);
+  template <class InputIterator>
   void insert(InputIterator first, InputIterator last);
   void insert(std::initializer_list<value_type>);
   iterator erase(iterator position);
@@ -145,4 +144,4 @@ void swap(map<Key, T, Compare, Allocator> &x,
           map<Key, T, Compare, Allocator> &y);
 _END_XSTL
 
-#endif // !_MAP_H_
+#endif // !_MAP_API_H_

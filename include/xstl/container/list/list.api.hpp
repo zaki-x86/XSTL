@@ -6,13 +6,13 @@
 #include <iostream>
 #include <memory>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 #include "list.iterator.hpp"
 
 _BEGIN_XSTL
 
 template <class T, class Allocator = std::allocator<T>> 
-class XSTL_API list {
+class list {
 public:
   /**
    * @name Public Type Aliases

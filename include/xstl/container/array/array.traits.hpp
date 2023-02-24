@@ -1,7 +1,7 @@
 
 #include <type_traits>
 
-#include "config/config.h"
+#include "xstl/config/config.h"
 
 #ifndef _ARRAY_TRAITS_H_
 
