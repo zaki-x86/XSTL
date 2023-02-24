@@ -37,7 +37,7 @@ function(set_project_warnings project_name)
       /w14928 # illegal copy-initialization; more than one user-defined
               # conversion has been implicitly applied
       /permissive- # standards conformance mode for MSVC compiler.
-  )#
+  )
 
   set(CLANG_WARNINGS
       -Wall
@@ -61,7 +61,7 @@ function(set_project_warnings project_name)
                  # (ie printf)
   )
 
-  if (${PROJECT_NAME}_WARNINGS_AS_ERRORS)
+  if (XSTLWarningsAsErrors)
     set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
     set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
   endif()
@@ -71,7 +71,7 @@ function(set_project_warnings project_name)
       -Wmisleading-indentation # warn if indentation implies blocks where blocks
                                # do not exist
       -Wduplicated-cond # warn if if / else chain has duplicated conditions
-      #-Wduplicated-branches # warn if if / else branches have duplicated code
+      -Wduplicated-branches # warn if if / else branches have duplicated code
       -Wlogical-op   # warn about logical operations being used where bitwise were
                      # probably wanted
       -Wuseless-cast # warn if you perform a cast to the same type
@@ -88,7 +88,7 @@ function(set_project_warnings project_name)
     message(AUTHOR_WARNING "No compiler warnings set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
   endif()
 
-  if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
+  if(XSTLBuildHeadersOnly)
         target_compile_options(${project_name} INTERFACE ${PROJECT_WARNINGS})
   else()
         target_compile_options(${project_name} PUBLIC ${PROJECT_WARNINGS})

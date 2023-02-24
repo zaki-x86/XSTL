@@ -1,4 +1,4 @@
-if(${PROJECT_NAME}_ENABLE_VCPKG)  
+if(XSTLEnableVcPkg)  
   #
   # If `vcpkg.cmake` (from https://github.com/microsoft/vcpkg) does not exist, download it.
   #
