@@ -1,9 +1,10 @@
 
 #include <gtest/gtest.h>
+#include <xstl/algorithm.hpp>
 
 TEST(TmpTest, CheckValues)
 {
-  EXPECT_TRUE(true);
+  EXPECT_TRUE(xstl::algorithm_test1() == 1);
 }
 
 int main(int argc, char **argv)
