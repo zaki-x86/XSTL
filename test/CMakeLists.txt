@@ -4,9 +4,6 @@
 # TODO : Define test options
 ##################################################################################
 
-include(CompilerWarnings)
-
-option(XSTLWarningsAsErrors ""  OFF)
 option(XSTLEnableValgrind   ""  OFF)
 option(XSTLFastTests        ""  OFF)
 
@@ -98,15 +95,8 @@ foreach(file ${TEST_SRCS})
     target_compile_features(${TEST_NAME} PUBLIC cxx_std_23)
   else()
     target_compile_features(${TEST_NAME} PUBLIC cxx_std_11)
-  endif(XSTLTestStandard)
+  endif()
   
-
-
-    # For local testing
-
-    if(NOT XSTLEnableCi)
-        set_project_warnings(${TEST_NAME})
-    endif()
 
     target_include_directories(
         ${TEST_NAME}

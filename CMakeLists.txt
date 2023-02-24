@@ -34,7 +34,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake ${CMAKE_MODULE_PATH})
 message(STATUS "Module path is set to: ${CMAKE_MODULE_PATH}")
 include(Utils)
-
+include(CompilerWarnings)
 ##################################################################################
 # Set project options
 ##################################################################################
@@ -52,6 +52,7 @@ option(XSTLEnableVcPkg "Enable the Vcpkg package manager for this project." OFF)
 option(XSTLEnableTesting "Enable unit tests for the projects (from the `test` subfolder)." OFF)
 option(XSTLEnableCi "Enable CI build targets." OFF)
 option(XSTLEnableDoxygen "Enable Doxygen documentation builds of source." OFF)
+option(XSTLWarningsAsErrors "Treat compiler warnings as errors"  OFF)
 
 # Generate compile_commands.json for clang based tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -210,7 +211,7 @@ endif(XSTLVerboseOutput)
 
 if(TARGET ${XSTL_TARGET})
   message(STATUS "Added all header and implementation files.\n")
-endif(TARGET)
+endif()
 
 
 #
@@ -266,7 +267,7 @@ endif(BUILD_SHARED_LIBS)
 
 target_compile_features(${XSTL_TARGET} INTERFACE cxx_std_11)
 
-verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
+verbose_message("Using standard ${CMAKE_CXX_STANDARD}.\n")
 
 ##################################################################################
 # Enable Doxygen
@@ -384,8 +385,15 @@ message(STATUS "Finished building requirements for installing the package.\n")
 ##################################################################################
 
 if(XSTLEnableTesting)
+  if(XSTLEnableCi)
+    set_ci_project_warnings(${XSTL_TARGET})
+  else()
+    set_project_warnings(${XSTL_TARGET})
+  endif()
+  
+  verbose_message("Applied aggressive compiler warnings for testing.\n")
   add_subdirectory(libs/gtest)
   enable_testing()
-  message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
+  verbose_message("Build unit tests for the project. Tests should always be found in the test folder\n")
   add_subdirectory(test)
 endif()
