@@ -81,7 +81,7 @@ verbose_message("Adding tests ...")
 file(GLOB TEST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
 
 foreach(file ${TEST_SRCS})
-    string(REGEX REPLACE "(.*/)([a-zA-Z0-9_ ]+)(\.cpp)" "\\2" TEST_NAME ${file}) 
+    get_filename_component(TEST_NAME ${file} NAME_WE)
     add_executable(${TEST_NAME} ${file})
 
   #
@@ -108,7 +108,11 @@ foreach(file ${TEST_SRCS})
         set_project_warnings(${TEST_NAME})
     endif()
 
-
+    target_include_directories(
+        ${TEST_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
 
     target_link_libraries(
         ${TEST_NAME}
