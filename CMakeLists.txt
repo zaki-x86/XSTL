@@ -384,7 +384,7 @@ message(STATUS "Finished building requirements for installing the package.\n")
 ##################################################################################
 
 if(XSTLEnableTesting)
-  add_subdirectory(libs/googletest)
+  add_subdirectory(libs/gtest)
   enable_testing()
   message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
   add_subdirectory(test)
