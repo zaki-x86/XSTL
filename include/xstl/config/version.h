@@ -1,0 +1,11 @@
+#ifndef XSTL_VERSION_H_
+#define XSTL_VERSION_H_
+
+#define XSTL_VERSION "0.1.0"
+
+#define XSTL_MAJOR_VERSION 0
+#define XSTL_MINOR_VERSION 1
+#define XSTL_PATCH_VERSION 0
+
+#endif  // XSTL_VERSION_H_
+

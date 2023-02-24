@@ -13,7 +13,7 @@
 
 #define _FORWARD_LIST_H_
 
-#include "zxx/forward_list/forward_list.api.hpp"
-#include "zxx/forward_list/forward_list.imp.cc"
+#include "container/forward_list/forward_list.api.hpp"
+#include "container/forward_list/forward_list.imp.cc"
 
 #endif // !_FORWARD_LIST_H_

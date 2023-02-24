@@ -13,7 +13,7 @@
 
 #define _RB_TREE_H_
 
-#include "zxx/bin_tree/rb_tree.api.hpp"
-#include "zxx/bin_tree/rb_tree.imp.cc"
+#include "container/bin_tree/rb_tree.api.hpp"
+#include "container/bin_tree/rb_tree.imp.cc"
 
 #endif // !_RB_TREE_H_

@@ -12,7 +12,7 @@
 
 #define _VECTOR_H_
 
-#include "zxx/vector/vector.api.hpp"
-#include "zxx/vector/vector.imp.cc"
+#include "container/vector/vector.api.hpp"
+#include "container/vector/vector.imp.cc"
 
 #endif // !_VECTOR_H_

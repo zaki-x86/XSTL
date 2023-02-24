@@ -13,7 +13,7 @@
 
 #define _ARRAY_H_
 
-#include "zxx/array/array.api.hpp"
-#include "zxx/array/array.imp.cc"
+#include "container/array/array.api.hpp"
+#include "container/array/array.imp.cc"
 
 #endif // !_ARRAY_H_

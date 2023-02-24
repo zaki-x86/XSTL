@@ -13,7 +13,7 @@
 
 #define _HASH_TABLE_H_
 
-#include "zxx/hash_table/hash_table.api.hpp"
-#include "zxx/hash_table/hash_table.imp.cc"
+#include "container/hash_table/hash_table.api.hpp"
+#include "container/hash_table/hash_table.imp.cc"
 
 #endif // !_HASH_TABLE_H_
