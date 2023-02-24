@@ -1,18 +1,35 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Directories
 .vscode
 .vs
 build
-extras
-TestReports
-.gitmodules
-.clang-format
-Testing
-docs/source/doxygen/xml
-CMakeSettings.json
-out
-
-#Temporary disabled
-new_version
-*.temp.*
-*.temp.*
-remarks
+__pycache__
 *.internal*
