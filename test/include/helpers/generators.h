@@ -18,60 +18,12 @@
 #endif // __unix__
 
 
-namespace xstl {
-/// The structs: RandomGeneratorFunctionFactory, QuickRandomGenerator, RandomContainerGenerator, XSTLRandomGenerator
-/// TODO will create c-wrappers for these generators
-struct RandomGenerator {
-    // TODO
-    // More sophisticated random value generator, with more added on customization
-    // Its more general and customizable; it is a wrapper of the all other generators
-};
-
-struct RandomGeneratorFunctionFactory {
-    // TODO
-    // group here: CreateRandom[T]GeneratorFunction() and its utils
-    // Where T is a type to generate
-};
-
-struct QuickRandomGenerator {
-    // TODO
-    // group here: set_random_test_value() overloads
-    // these functions generates a value of type T, where T is a primitive type
-    // it does this with the least possible customization
-    // s.t. the only parameter needed is the variable that stores the randomly generated value
-};
-
-
-template<typename Container>
-struct RandomContainerGenerator {
-    // TODO
-    // This generator is used to generate dummy objects, where you pass in the container type as a template paramert, you may also need to pass the constructor of that `Container`, and the methods that the random generator will use to push values to that container.
-    // For starters this maybe only limited to container objects.
-};
-
-}
-
-template<typename RandomEngine = std::default_random_engine,
-    typename Distrubution = std::uniform_int_distribution<int>,
-    typename Generator = std::mt19937>
-    auto CreateRandomIntegerGeneratorFunction(int from = INT32_MIN, int to = INT32_MAX)
-    -> decltype(std::bind(Distrubution(), Generator()))
-{
-    RandomEngine engine;
-    Generator generator(engine());
-    Distrubution distribution(from, to);
-    auto generate = std::bind(distribution, generator);
-
-    return generate;
-}
-
-
 // definitions 
 
 template<typename T>
 T generate_numeric(const T, const T);
 
-char generate_char();
+char generate_char(bool);
 
 std::string generate_string(const size_t);
 
@@ -161,11 +113,26 @@ T generate_numeric(const T from, const T to)
 }
 
 
+char generate_char(bool literal_only)
+{
+    const char charset[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz";
+
+    const size_t max_index = (sizeof(charset) - 1);
+    char out = charset[ generate_numeric<int>(0, max_index) ];
+
+    if (out != '\0' && isalnum(out))
+        return out;
+    
+    return 'x';
+}
+
 char generate_char()
 {
-    
     const char charset[] =
         "0123456789"
+        "-_*.!@#$%^&()~`+={}<>?,[]"
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         "abcdefghijklmnopqrstuvwxyz";
 
@@ -190,7 +157,7 @@ std::string generate_string(const size_t len)
     tmp_s.reserve(len);
 
     for (size_t i = 0; i < len; ++i) {
-        tmp_s += generate_char();
+        tmp_s += generate_char(false);
     }
 
     if (tmp_s.size() != 0)
@@ -234,7 +201,6 @@ void set_random_test_value(
     var_ = new int(generate_numeric<int>(range_from, range_to));
 }
 
-
 void set_random_test_value(
     char& var_,
     bool
@@ -244,9 +210,8 @@ void set_random_test_value(
 literal_only
     )
 {
-    var_ = generate_char();
+    var_ = generate_char(literal_only);
 }
-
 
 void set_random_test_value(
     char*& var_, 
@@ -289,19 +254,18 @@ void set_random_test_values(
             vec_.push_back(new int(generate_numeric<int>(range_from, range_to)));
 }
 
-
 void set_random_test_values(
     std::vector<char>& vec_,
     bool
     #if defined(__GNUC__) || defined(__GNUG__)
     __attribute__((unused))
     #endif
-literal_only,
+    literal_only,
     size_t vec_size_ 
     )
 {
     for (size_t i = 0; i < vec_size_; i++)
-            vec_.push_back(generate_char());
+            vec_.push_back(generate_char(literal_only));
 }
 
 
