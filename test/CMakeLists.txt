@@ -1,49 +1,23 @@
+##################################################################################
+# Define test options
 
-##################################################################
-# Project details
-##################################################################
+# TODO : Define test options
+##################################################################################
 
-project(
-  container.test
-  LANGUAGES CXX
-)
+include(CompilerWarnings)
 
-##################################################################
-# Project Options
-##################################################################
+option(XSTLWarningsAsErrors ""  OFF)
+option(XSTLEnableValgrind   ""  OFF)
+option(XSTLFastTests        ""  OFF)
 
-option(EnableValgrind    "Execute test suite with Valgrind." OFF)
-option(EnableFastTests   "Skip expensive/slow tests." OFF)
+set(XSTLTestStandard     ""  CACHE STRING "cxx standard to set explicitly")
 
-set(32bitTest     AUTO CACHE STRING "Enable the 32bit unit test (ON/OFF/AUTO/ONLY).")
-set(TestStandards "" CACHE STRING "The list of standards to test explicitly.")
-
-##################################################################
-# Import testing framework
-##################################################################
-
-# if(CMAKE_COMPILER_IS_GNUCXX AND GCC_VERSION VERSION_LESS 5.0)
-#   message(STATUS "GCC version is less than 5.0, using gtest-1.8.0")
-#   add_subdirectory(libs/gtest-1.8.0 EXCLUDE_FROM_ALL)
-# elseif(CMAKE_COMPILER_IS_GNUCXX AND GCC_VERSION VERSION_GREATER 4.0)
-#   message(STATUS "GCC version is greater than or equal to 5.0, using gtest-1.8.1")
-#   add_subdirectory(libs/gtest-1.8.1 EXCLUDE_FROM_ALL)
-# else()
-#     message(STATUS "Using gtest-1.8.1")
-#   add_subdirectory(libs/gtest-1.8.1 EXCLUDE_FROM_ALL)
-# endif()
-
-add_subdirectory(libs/gtest-1.8.1 EXCLUDE_FROM_ALL)
-include(GoogleTest)
-
-##################################################################
-# Setup Valgrind
-##################################################################
-
-if(EnableValgrind)
-    include(Valgrind)
+if(XSTLEnableValgrind)
+    find_program(CMAKE_MEMORYCHECK_COMMAND valgrind)
+    message(STATUS "Executing test suite with Valgrind (${CMAKE_MEMORYCHECK_COMMAND})")
+    set(memcheck_command "${CMAKE_MEMORYCHECK_COMMAND} ${CMAKE_MEMORYCHECK_COMMAND_OPTIONS} --error-exitcode=1 --leak-check=full")
+    separate_arguments(memcheck_command)
 endif()
-
 
 #############################################################################
 # detect standard support
@@ -64,77 +38,98 @@ foreach(feature ${CMAKE_CXX_COMPILE_FEATURES})
     endif()
 endforeach()
 
-##################################################################
-# Build Test Targets
-##################################################################
+##################################################################################
+# Override standard support
 
-file(GLOB TEST_DRIVERS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.driver.cc")
-set(all_exe src/all.cc)
+# source : https://github.com/nlohmann/json/blob/develop/tests/CMakeLists.txt
+##################################################################################
+
+# Clang only supports C++17 starting from Clang 5.0
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+    unset(compiler_supports_cpp_17)
+endif()
+# MSVC 2015 (14.0) does not support C++17
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.1)
+    unset(compiler_supports_cpp_17)
+endif()
+
+# Clang C++20 support appears insufficient prior to Clang 9.0 (based on CI build failure)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    unset(compiler_supports_cpp_20)
+endif()
+# GCC started supporting C++20 features in 8.0 but a test for #3070 segfaults prior to 9.0
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    unset(compiler_supports_cpp_20)
+endif()
+
+##################################################################################
+# Adding tests
+
+# source : https://github.com/nlohmann/json/blob/develop/tests/CMakeLists.txt
+##################################################################################
+
+#
+# Load the desired unit testing framework
+#
+
+include(GoogleTest)
+
+set(GOOGLE_MOCK_LIBRARIES GTest::gmock GTest::gmock_main)
+
+verbose_message("Adding tests ...")
+
+file(GLOB TEST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
+
+foreach(file ${TEST_SRCS})
+    get_filename_component(TEST_NAME ${file} NAME_WE)
+    add_executable(${TEST_NAME} ${file})
+
+  #
+  # Set the compiler standard
+  #
+
+  if(XSTLTestStandard STREQUAL "14" AND compiler_supports_cpp_14)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_14)
+  elseif(XSTLTestStandard STREQUAL "17" AND compiler_supports_cpp_17)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_17)
+  elseif(XSTLTestStandard STREQUAL "20" AND compiler_supports_cpp_20)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_20)
+  elseif(XSTLTestStandard STREQUAL "23" AND compiler_supports_cpp_23)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_23)
+  else()
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_11)
+  endif(XSTLTestStandard)
+  
 
 
-foreach(DRIVER_FILE ${TEST_DRIVERS})
-    
-    message(STATUS "Found the following test sources:\n \t* ${DRIVER_FILE}")
-    
-    get_filename_component(TARGET_NAME ${DRIVER_FILE} NAME)
-    
-    string(REGEX REPLACE "\\.driver\\.cc$" ".debug" SUITE_NAME ${TARGET_NAME})
+    # For local testing
 
-    add_executable(
-    ${SUITE_NAME}
-    ${DRIVER_FILE}
-    )
-
-    ##################################################################
-    # Set CXX standards
-    ##################################################################
-
-    # set cxx standard
-
-    if(TestStandards STREQUAL "11")
-        message(STATUS "testing library against c++11")
-        target_compile_features( ${SUITE_NAME} PUBLIC cxx_std_11 )
-    elseif(TestStandards STREQUAL "14" AND compiler_supports_cpp_14)
-        message(STATUS "testing library against c++14")
-        target_compile_features( ${SUITE_NAME} PUBLIC cxx_std_14 )
-    elseif(TestStandards STREQUAL "17" AND compiler_supports_cpp_17)
-        message(STATUS "testing library against c++17")
-        target_compile_features( ${SUITE_NAME} PUBLIC cxx_std_17 )
-    elseif(TestStandards STREQUAL "20" AND compiler_supports_cpp_20)
-        message(STATUS "testing library against c++20")
-        target_compile_features( ${SUITE_NAME} PUBLIC cxx_std_20 )
-    elseif(TestStandards STREQUAL "23" AND compiler_supports_cpp_23)
-        message(STATUS "testing library against c++20")
-        target_compile_features( ${SUITE_NAME} PUBLIC cxx_std_20 )
-    else()
-        message(WARNING "forcing testing library against c++11")
-        target_compile_features( ${SUITE_NAME} PUBLIC cxx_std_11 )
+    if(NOT XSTLEnableCi)
+        set_project_warnings(${TEST_NAME})
     endif()
 
-    # link gtest to executable target
-    target_link_libraries(
-        ${SUITE_NAME}
-        PUBLIC
-        GTest::gtest_main
-        ${GOOGLE_MOCK_LIBRARIES}
-        container::container
-    )
-
-    # include directories
-    message(STATUS "linking directories to target '${SUITE_NAME}'..")
     target_include_directories(
-        ${SUITE_NAME}
+        ${TEST_NAME}
         PUBLIC
-        ${CMAKE_SOURCE_DIR}/test/include
-        ${CMAKE_SOURCE_DIR}/test/include/container
-        ${CMAKE_SOURCE_DIR}/include/config
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
     )
 
-    # add unit tests
-    message(STATUS "Adding unit tests")
+    target_link_libraries(
+        ${TEST_NAME}
+        zicx::xstl
+        GTest::gtest_main
+    #    Only if needed, uncomment line below
+    #    ${GOOGLE_MOCK_LIBRARIES}
+    )
+    
 
-    gtest_discover_tests(${SUITE_NAME})
+    #
+    # Add the unit tests
+    #
+    #add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})  
+    gtest_discover_tests(${TEST_NAME})
+
+
 endforeach()
 
-
-
+verbose_message("Finished adding unit tests for ${PROJECT_NAME_LOWERCASE}.")
