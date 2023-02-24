@@ -49,7 +49,7 @@ option(XSTLEnableVcPkg "Enable the Vcpkg package manager for this project." OFF)
 
 # TODO : EnableTesting should be OFF, it is ON for now when project is not built as a subproject
 # prior to release 1.0.0 this option should be turned off
-option(XSTLEnableTesting "Enable unit tests for the projects (from the `test` subfolder)." ${MAIN_PROJECT})
+option(XSTLEnableTesting "Enable unit tests for the projects (from the `test` subfolder)." OFF)
 option(XSTLEnableCi "Enable CI build targets." OFF)
 option(XSTLEnableDoxygen "Enable Doxygen documentation builds of source." OFF)
 
@@ -120,9 +120,9 @@ endif()
 # Build CI/CD targets
 ##################################################################################
 
-# if (XSTLEnableCi)
-#     include(ci)
-# endif()
+if(XSTLEnableCi)
+  include(ci)
+endif(XSTLEnableCi)
 
 ##################################################################################
 # Enable package managers

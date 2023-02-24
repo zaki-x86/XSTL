@@ -564,6 +564,8 @@ endforeach()
 
 ###############################################################################
 # Coverage.
+
+## MAYFAIL Need to check where html directory is created to see the coverage report
 ###############################################################################
 
 add_custom_target(ci_test_coverage
@@ -585,7 +587,7 @@ add_custom_target(ci_test_coverage
     COMMAND ${LCOV_TOOL} --directory . --capture --output-file xstl.info --rc lcov_branch_coverage=1
     COMMAND ${LCOV_TOOL} -e xstl.info ${SRC_FILES} --output-file xstl.info.filtered --rc lcov_branch_coverage=1
     COMMAND ${CMAKE_SOURCE_DIR}/test/utils/imapdl/filterbr.py xstl.info.filtered > xstl.info.filtered.noexcept
-    COMMAND genhtml --title "XSTL for Modern C++" --legend --demangle-cpp --output-directory html --show-details --branch-coverage json.info.filtered.noexcept
+    COMMAND genhtml --title "XSTL for Modern C++" --legend --demangle-cpp --output-directory html --show-details --branch-coverage xstl.info.filtered.noexcept
 
     COMMENT "Compile and test with coverage"
 )
@@ -623,6 +625,10 @@ add_custom_target(ci_test_identation
 
 ###############################################################################
 # Valgrind.
+
+## Run all tests that has a label "valgrind"
+## FIXME 
+## MAYFAIL 
 ###############################################################################
 
 add_custom_target(ci_test_valgrind

@@ -9,7 +9,8 @@ include(CompilerWarnings)
 option(XSTLWarningsAsErrors ""  OFF)
 option(XSTLEnableValgrind   ""  OFF)
 option(XSTLFastTests        ""  OFF)
-option(XSTLTestStandard     ""  "")
+
+set(XSTLTestStandard     ""  CACHE STRING "cxx standard to set explicitly")
 
 if(XSTLEnableValgrind)
     find_program(CMAKE_MEMORYCHECK_COMMAND valgrind)
@@ -89,13 +90,25 @@ foreach(file ${TEST_SRCS})
   # Set the compiler standard
   #
 
+  if(XSTLTestStandard STREQUAL "14" AND compiler_supports_cpp_14)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_14)
+  elseif(XSTLTestStandard STREQUAL "17" AND compiler_supports_cpp_17)
     target_compile_features(${TEST_NAME} PUBLIC cxx_std_17)
+  elseif(XSTLTestStandard STREQUAL "20" AND compiler_supports_cpp_20)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_20)
+  elseif(XSTLTestStandard STREQUAL "23" AND compiler_supports_cpp_23)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_23)
+  else()
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_11)
+  endif(XSTLTestStandard)
+  
+
 
     # For local testing
 
-    # if(NOT XSTLEnableCi)
-    #     set_project_warnings(${TEST_NAME})
-    # endif()
+    if(NOT XSTLEnableCi)
+        set_project_warnings(${TEST_NAME})
+    endif()
 
 
 
