@@ -72,7 +72,7 @@ endif()
 # Load the desired unit testing framework
 #
 
-add_subdirectory(libs/googletest)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/googletest)
 
 include(GoogleTest)
 
