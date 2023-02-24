@@ -1,85 +1,120 @@
-cmake_minimum_required(VERSION 3.15)
+##################################################################################
+# Define test options
 
+# TODO : Define test options
+##################################################################################
+
+include(CompilerWarnings)
+
+option(XSTLWarningsAsErrors ""  OFF)
+option(XSTLEnableValgrind   ""  OFF)
+option(XSTLFastTests        ""  OFF)
+option(XSTLTestStandard     ""  "")
+
+if(XSTLEnableValgrind)
+    find_program(CMAKE_MEMORYCHECK_COMMAND valgrind)
+    message(STATUS "Executing test suite with Valgrind (${CMAKE_MEMORYCHECK_COMMAND})")
+    set(memcheck_command "${CMAKE_MEMORYCHECK_COMMAND} ${CMAKE_MEMORYCHECK_COMMAND_OPTIONS} --error-exitcode=1 --leak-check=full")
+    separate_arguments(memcheck_command)
+endif()
+
+#############################################################################
+# detect standard support
+#############################################################################
+
+# C++11 is the minimum required
+set(compiler_supports_cpp_11 TRUE)
+
+foreach(feature ${CMAKE_CXX_COMPILE_FEATURES})
+    if (${feature} STREQUAL cxx_std_14)
+        set(compiler_supports_cpp_14 TRUE)
+    elseif (${feature} STREQUAL cxx_std_17)
+        set(compiler_supports_cpp_17 TRUE)
+    elseif (${feature} STREQUAL cxx_std_20)
+        set(compiler_supports_cpp_20 TRUE)
+    elseif (${feature} STREQUAL cxx_std_23)
+        set(compiler_supports_cpp_23 TRUE)
+    endif()
+endforeach()
+
+##################################################################################
+# Override standard support
+
+# source : https://github.com/nlohmann/json/blob/develop/tests/CMakeLists.txt
+##################################################################################
+
+# Clang only supports C++17 starting from Clang 5.0
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.0)
+    unset(compiler_supports_cpp_17)
+endif()
+# MSVC 2015 (14.0) does not support C++17
+if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 19.1)
+    unset(compiler_supports_cpp_17)
+endif()
+
+# Clang C++20 support appears insufficient prior to Clang 9.0 (based on CI build failure)
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    unset(compiler_supports_cpp_20)
+endif()
+# GCC started supporting C++20 features in 8.0 but a test for #3070 segfaults prior to 9.0
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    unset(compiler_supports_cpp_20)
+endif()
+
+##################################################################################
+# Adding tests
+
+# source : https://github.com/nlohmann/json/blob/develop/tests/CMakeLists.txt
+##################################################################################
 
 #
-# Project details
+# Load the desired unit testing framework
 #
 
-project(
-  ${CMAKE_PROJECT_NAME}Tests
-  LANGUAGES CXX
-)
+add_subdirectory(libs/googletest)
 
-verbose_message("Adding tests under ${CMAKE_PROJECT_NAME}Tests...")
+include(GoogleTest)
 
-foreach(file ${test_sources})
-  string(REGEX REPLACE "(.*/)([a-zA-Z0-9_ ]+)(\.cpp)" "\\2" test_name ${file}) 
-  add_executable(${test_name}_Tests ${file})
+set(GOOGLE_MOCK_LIBRARIES GTest::gmock GTest::gmock_main)
+
+verbose_message("Adding tests ...")
+
+file(GLOB TEST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
+
+foreach(file ${TEST_SRCS})
+    string(REGEX REPLACE "(.*/)([a-zA-Z0-9_ ]+)(\.cpp)" "\\2" TEST_NAME ${file}) 
+    add_executable(${TEST_NAME} ${file})
 
   #
   # Set the compiler standard
   #
 
-  target_compile_features(${test_name}_Tests PUBLIC cxx_std_17)
+    target_compile_features(${TEST_NAME} PUBLIC cxx_std_17)
 
-  #
-  # Setup code coverage if enabled
-  #
+    # For local testing
 
-  if (${CMAKE_PROJECT_NAME}_ENABLE_CODE_COVERAGE)
-    target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -O0 -g -fprofile-arcs -ftest-coverage)
-    target_link_options(${CMAKE_PROJECT_NAME} PUBLIC -fprofile-arcs -ftest-coverage)
-    verbose_message("Code coverage is enabled and provided with GCC.")
-  endif()
+    # if(NOT XSTLEnableCi)
+    #     set_project_warnings(${TEST_NAME})
+    # endif()
 
-  #
-  # Load the desired unit testing framework
-  #
-  # Currently supported: GoogleTest (and GoogleMock), Catch2.
 
-  if(${CMAKE_PROJECT_NAME}_BUILD_EXECUTABLE)
-    set(${CMAKE_PROJECT_NAME}_TEST_LIB ${CMAKE_PROJECT_NAME}_LIB)
-  else()
-    set(${CMAKE_PROJECT_NAME}_TEST_LIB ${CMAKE_PROJECT_NAME})
-  endif()
-
-  if(${CMAKE_PROJECT_NAME}_USE_GTEST)
-    find_package(GTest REQUIRED)
-
-    if(${CMAKE_PROJECT_NAME}_USE_GOOGLE_MOCK)
-      set(GOOGLE_MOCK_LIBRARIES GTest::gmock GTest::gmock_main)
-    endif()
 
     target_link_libraries(
-      ${test_name}_Tests
-      PUBLIC
-        GTest::GTest
-        GTest::Main
-        ${GOOGLE_MOCK_LIBRARIES}
-        ${${CMAKE_PROJECT_NAME}_TEST_LIB}
+        ${TEST_NAME}
+        zicx::xstl
+        GTest::gtest_main
+    #    Only if needed, uncomment line below
+    #    ${GOOGLE_MOCK_LIBRARIES}
     )
-  elseif(${CMAKE_PROJECT_NAME}_USE_CATCH2)
-    find_package(Catch2 REQUIRED)
-    target_link_libraries(
-      ${test_name}_Tests
-      PUBLIC
-        Catch2::Catch2
-        ${${CMAKE_PROJECT_NAME}_TEST_LIB}
-    )
-  else()
-    message(FATAL_ERROR "Unknown testing library. Please setup your desired unit testing library by using `target_link_libraries`.")  
-  endif()
+    
 
-  #
-  # Add the unit tests
-  #
+    #
+    # Add the unit tests
+    #
+    #add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})  
+    gtest_discover_tests(${TEST_NAME})
 
-  add_test(
-    NAME
-      ${test_name}
-    COMMAND
-      ${test_name}_Tests
-  )
+
 endforeach()
 
-verbose_message("Finished adding unit tests for ${CMAKE_PROJECT_NAME}.")
+verbose_message("Finished adding unit tests for ${PROJECT_NAME_LOWERCASE}.")

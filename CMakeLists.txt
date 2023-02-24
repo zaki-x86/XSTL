@@ -1,85 +1,112 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.20)
 
 ##################################################################################
-##################################################################################
-
-#
 # Project details
-#
+
+# TODO: Add project documentation website in HOMEPAGE_URL
+# TODO : Add project description
+# TODO: Configure automated version adjustment from a version.txt file
+##################################################################################
 
 project(
-  "Project"
+  XSTL
   VERSION 0.1.0
   DESCRIPTION ""
   LANGUAGES CXX
 )
 
 ##################################################################################
+# MAIN_PROJECT CHECK
+
+# determine if project is built as a subproject (using add_subdirectory) or if it is the main project
 ##################################################################################
 
-##
-## MAIN_PROJECT CHECK
-## determine if project is built as a subproject (using add_subdirectory) or if it is the main project
-##
 set(MAIN_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(MAIN_PROJECT ON)
+    message(STATUS "XSTL is being built as a main project")
 endif()
 
 ##################################################################################
+# Setup the include path
 ##################################################################################
 
-##
-## Setup the include path
-##
-##
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake ${CMAKE_MODULE_PATH})
-
-##################################################################################
-##################################################################################
-
-#
-# Set project options
-#
-
-include(StandardSettings)
-include(StaticAnalyzers)
+message(STATUS "Module path is set to: ${CMAKE_MODULE_PATH}")
 include(Utils)
 
-option(BuildTests "Build the unit tests when BUILD_TESTING is enabled." ${MAIN_PROJECT})
-option(CI         "Enable CI build targets." OFF)
+##################################################################################
+# Set project options
+##################################################################################
+
+set(XSTL_TARGET ${PROJECT_NAME})
+
+option(XSTLUseAltNames "Use alternative names for the project, such as naming the include directory all lowercase." ON)
+
+# Package Managers
+option(XSTLEnableConan "Enable the Conan package manager for this project." OFF)
+option(XSTLEnableVcPkg "Enable the Vcpkg package manager for this project." OFF)
+
+# TODO : EnableTesting should be OFF, it is ON for now when project is not built as a subproject
+# prior to release 1.0.0 this option should be turned off
+option(XSTLEnableTesting "Enable unit tests for the projects (from the `test` subfolder)." ${MAIN_PROJECT})
+option(XSTLEnableCi "Enable CI build targets." OFF)
+option(XSTLEnableDoxygen "Enable Doxygen documentation builds of source." OFF)
+
+# Generate compile_commands.json for clang based tools
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+option(XSTLVerboseOutput "Enable verbose output, allowing for a better understanding of each step taken." ON)
+option(XSTLGenerateExportHeader "Create a `project_export.h` file containing all exported symbols." OFF)
+option(XSTLEnableLTO "Enable Interprocedural Optimization, aka Link Time Optimization (LTO)." OFF)
+option(XSTLEnableCCache "Enable the usage of Ccache, in order to speed up rebuild times." ON)
+
+# Export all symbols when building a shared library
+if(BUILD_SHARED_LIBS)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+endif()
+
+if(XSTLEnableLTO)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT result OUTPUT output)
+  if(result)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+  else()
+    message(SEND_ERROR "IPO is not supported: ${output}.")
+  endif()
+endif()
+
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif()
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Debug")
 endif()
-message(STATUS "Started CMake for ${PROJECT_NAME} v${PROJECT_VERSION}...\n")
+message(STATUS "Started CMake for ${XSTL_TARGET} v${PROJECT_VERSION}...\n")
 
-if (UNIX)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  if (UNIX)
     add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
-endif (UNIX)
+  endif (UNIX)  
+  message(STATUS "_DEBUG macro is added for debugging specific code\n")
+endif(CMAKE_BUILD_TYPE STREQUAL "Debug")
 
-
-if (CI)
-    include(ci)
-endif ()
-
-##################################################################################
-##################################################################################
 
 #
 # Setup alternative names
 #
 
-if(${PROJECT_NAME}_USE_ALT_NAMES)
-  string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWERCASE)
-  string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPERCASE)
+if(XSTLUseAltNames)
+  string(TOLOWER ${XSTL_TARGET} PROJECT_NAME_LOWERCASE)
+  string(TOUPPER ${XSTL_TARGET} PROJECT_NAME_UPPERCASE)
 else()
-  set(PROJECT_NAME_LOWERCASE ${PROJECT_NAME})
-  set(PROJECT_NAME_UPPERCASE ${PROJECT_NAME})
+  set(PROJECT_NAME_LOWERCASE ${XSTL_TARGET})
+  set(PROJECT_NAME_UPPERCASE ${XSTL_TARGET})
 endif()
-
-##################################################################################
-##################################################################################
 
 #
 # Prevent building in the source directory
@@ -90,239 +117,177 @@ if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
 endif()
 
 ##################################################################################
+# Build CI/CD targets
 ##################################################################################
 
-#
+# if (XSTLEnableCi)
+#     include(ci)
+# endif()
+
+##################################################################################
 # Enable package managers
-#
+##################################################################################
 
 include(Conan)
 include(Vcpkg)
 
 ##################################################################################
+# Add configuration related header files
 ##################################################################################
 
+set(VERSION_CONFIG_IN "${CMAKE_CURRENT_LIST_DIR}/scripts/cmake/config/version.h.in")
+set(VERSION_CONFIG_OUT "${CMAKE_CURRENT_SOURCE_DIR}/include/xstl/config/version.h")
+set(VERSION_CONFIG_INSTALL_LOCATION "include/xstl/config")
+
+set(XSTL_CONFIG_IN "${CMAKE_CURRENT_LIST_DIR}/scripts/cmake/config/config.h.in")
+set(XSTL_CONFIG_OUT "${CMAKE_CURRENT_SOURCE_DIR}/include/xstl/config/config.h")
+set(XSTL_CONFIG_INSTALL_LOCATION "include/xstl/config")
+
 #
-# Create library, setup header and source files
+# Add version header
 #
 
-# Find all headers and implementation files
-include(SourcesAndHeaders)
-
-if(${PROJECT_NAME}_BUILD_EXECUTABLE)
-  add_executable(${PROJECT_NAME} ${exe_sources})
-
-  if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    verbose_message("Found the following sources:")
-    foreach(source IN LISTS exe_sources)
-      verbose_message("* ${source}")
-    endforeach()
-  endif()
-
-  if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    add_library(${PROJECT_NAME}_LIB ${headers} ${sources})
-
-    if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-      verbose_message("Found the following headers:")
-      foreach(header IN LISTS headers)
-        verbose_message("* ${header}")
-      endforeach()
-    endif()
-  endif()
-elseif(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  add_library(${PROJECT_NAME} INTERFACE)
-
-  if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    verbose_message("Found the following headers:")
-    foreach(header IN LIST headers)
-      verbose_message("* ${header}")
-    endforeach()
-  endif()
-else()
-  add_library(
-    ${PROJECT_NAME}
-    ${headers}
-    ${sources}
-  )
-
-  if(${PROJECT_NAME}_VERBOSE_OUTPUT)
-    verbose_message("Found the following sources:")
-    foreach(source IN LISTS sources)
-      verbose_message("* ${source}")
-    endforeach()
-    verbose_message("Found the following headers:")
-    foreach(header IN LISTS headers)
-      verbose_message("* ${header}")
-    endforeach()
-  endif()
-endif()
-
-set_target_properties(
-  ${PROJECT_NAME}
-  PROPERTIES
-  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
+configure_file(
+  ${VERSION_CONFIG_IN}
+  ${VERSION_CONFIG_OUT}
+  @ONLY
 )
-if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-  set_target_properties(
-    ${PROJECT_NAME}_LIB
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
-    OUTPUT_NAME ${PROJECT_NAME}
-  )
-endif()
 
-message(STATUS "Added all header and implementation files.\n")
-
-##################################################################################
-##################################################################################
+install(
+  FILES
+  ${VERSION_CONFIG_OUT}
+  DESTINATION
+  ${VERSION_CONFIG_INSTALL_LOCATION}
+)
 
 #
-# Set the project standard and warnings
+# Add config header
+## Only if project is built as a main project
 #
 
-if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_11)
-else()
-  target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_11)
+configure_file(
+  ${XSTL_CONFIG_IN}
+  ${XSTL_CONFIG_OUT}
+  @ONLY
+)
 
-  if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    target_compile_features(${PROJECT_NAME}_LIB PUBLIC cxx_std_11)
-  endif()
-endif()
-#include(CompilerWarnings)
-#set_project_warnings(${PROJECT_NAME})
+install(
+  FILES
+  ${XSTL_CONFIG_OUT}
+  DESTINATION
+  ${XSTL_CONFIG_INSTALL_LOCATION}
+)
 
-verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
+verbose_message("Successfully generated configuration files for ${XSTL_TARGET}.")
 
 ##################################################################################
+# Create library, setup headers and source files
 ##################################################################################
 
 #
-# Enable Doxygen
+# Find all headers and implementation files
 #
 
-include(Doxygen)
+file(GLOB XSTL_HEADER_FILES "include/xstl/*.hpp")
+file(GLOB_RECURSE XSTL_SOURCE_FILES "src/*.cpp")
+file(GLOB XSTL_CONFIG_HEADER_FILES "include/xstl/config/*.h")
 
-##################################################################################
-##################################################################################
+add_library(${XSTL_TARGET} ${XSTL_SOURCE_FILES})
+if(XSTLVerboseOutput)
+    verbose_message("Found the following headers:")
+    foreach(HEADER_FILE ${XSTL_HEADER_FILES})
+        verbose_message("* ${HEADER_FILE}")
+    endforeach()
 
-#
-# Model project dependencies
-#
+    if(XSTL_SOURCE_FILES)
+      verbose_message("Found the following sources:")
+      foreach(SOURCE_FILE ${XSTL_SOURCE_FILES})
+        verbose_message("* ${SOURCE_FILE}")
+      endforeach()
+    endif(XSTL_SOURCE_FILES)
+    
+endif(XSTLVerboseOutput)
 
-# Identify and link with the specific "packages" the project uses
-#find_package(package_name package_version REQUIRED package_type [other_options])
-#target_link_libraries(
-#  ${PROJECT_NAME}
-#  PUBLIC
-#    dependency1 ...
-#  PRIVATE
-#    dependency2 ...
-#    ${PROJECT_NAME}_PROJECT_OPTIONS
-#    ${PROJECT_NAME}_PROJECT_WARNINGS
-#)
-#if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-#  target_link_libraries(
-#    ${PROJECT_NAME}_LIB
-#    PUBLIC
-#      dependency1 ...
-#  )
-#endif()
+if(TARGET ${XSTL_TARGET})
+  message(STATUS "Added all header and implementation files.\n")
+endif(TARGET)
 
-# For Windows, it is necessary to link with the MultiThreaded library.
-# Depending on how the rest of the project's dependencies are linked, it might be necessary
-# to change the line to statically link with the library.
-#
-# This is done as follows:
-#
-# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-#
-# On Linux and Mac this variable is ignored. If any issues rise from it, try commenting it out
-# and letting CMake decide how to link with it.
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-
-verbose_message("Successfully added all dependencies and linked against them.")
-
-##################################################################################
-##################################################################################
-
-#
-# Set the build/user include directories
-#
-
-# Allow usage of header files in the `src` directory, but only for utilities
-if(${PROJECT_NAME}_BUILD_HEADERS_ONLY)
-  target_include_directories(
-    ${PROJECT_NAME}
-    INTERFACE
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  )
-else()
-  target_include_directories(
-    ${PROJECT_NAME}
-    PUBLIC
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    #${PROJECT_SOURCE_DIR}/include
-  )
-  if(${PROJECT_NAME}_BUILD_EXECUTABLE AND ${PROJECT_NAME}_ENABLE_UNIT_TESTING)
-    target_include_directories(
-      ${PROJECT_NAME}_LIB
-      PUBLIC
-      $<INSTALL_INTERFACE:include>
-      $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-      PRIVATE
-      ${CMAKE_CURRENT_SOURCE_DIR}/src
-      #${PROJECT_SOURCE_DIR}/include
-    )
-  endif()
-endif()
-
-message(STATUS "Finished setting up include directories.")
-
-##################################################################################
-##################################################################################
 
 #
 # Provide alias to library for
 #
 
-if(${PROJECT_NAME}_BUILD_EXECUTABLE)
-  add_executable(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(zicx::${PROJECT_NAME_LOWERCASE} ALIAS ${XSTL_TARGET})
+
+verbose_message("Project is now aliased as zicx::${PROJECT_NAME_LOWERCASE}.\n")
+
+#
+# Set Target Properties
+#
+
+set_target_properties(
+  ${XSTL_TARGET}
+  PROPERTIES
+  LINKER_LANGUAGE CXX
+  ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib/${CMAKE_BUILD_TYPE}"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/${CMAKE_BUILD_TYPE}"
+)
+
+
+#
+# Set the build/user include directories
+#
+
+target_include_directories(
+    ${XSTL_TARGET}
+    PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+message(STATUS "Finished setting up include directories.")
+
+#
+# Check if the library is being built as a shared library
+#
+
+if(BUILD_SHARED_LIBS)
+    message(STATUS "Building ${XSTL_TARGET} as a shared library")
+    target_compile_definitions(${XSTL_TARGET} INTERFACE -DBUILD_SHARED)
 else()
-  add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
-endif()
-
-verbose_message("Project is now aliased as ${PROJECT_NAME}::${PROJECT_NAME}.\n")
-
-##################################################################################
-##################################################################################
-
-#
-# Format the project using the `clang-format` target (i.e: cmake --build build --target clang-format)
-#
-
-add_clang_format_target()
+    message(STATUS "Building ${XSTL_TARGET} as a static library")
+    target_compile_definitions(${XSTL_TARGET} INTERFACE -DBUILD_STATIC)
+endif(BUILD_SHARED_LIBS)
 
 ##################################################################################
+# Set the project standard and warnings
 ##################################################################################
 
-#
+target_compile_features(${XSTL_TARGET} INTERFACE cxx_std_11)
+
+verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
+
+##################################################################################
+# Enable Doxygen
+
+## TODO : Export xml docs
+##################################################################################
+
+# include(Doxygen)
+
+##################################################################################
 # Install library for easy downstream inclusion
-#
+
+## TODO : Debug and test if it works as expected
+##################################################################################
 
 include(GNUInstallDirs)
 install(
   TARGETS
-  ${PROJECT_NAME}
+  ${XSTL_TARGET}
   EXPORT
-  ${PROJECT_NAME}Targets
+  XSTLTargets
   LIBRARY DESTINATION
   ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION
@@ -337,41 +302,20 @@ install(
 
 install(
   EXPORT
-  ${PROJECT_NAME}Targets
+  XSTLTargets
   FILE
-  ${PROJECT_NAME}Targets.cmake
+  XSTLTargets.cmake
   NAMESPACE
-  ${PROJECT_NAME}::
+  xstl::
   DESTINATION
-  ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+  ${CMAKE_INSTALL_LIBDIR}/cmake/XSTL
 )
 
 ##################################################################################
-##################################################################################
-
-#
-# Add version header
-#
-
-#configure_file(
-#  ${CMAKE_CURRENT_LIST_DIR}/cmake/version.hpp.in
-#  include/${PROJECT_NAME_LOWERCASE}/version.hpp
-#  @ONLY
-#)
-#
-#install(
-#  FILES
-#  ${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME_LOWERCASE}/version.hpp
-#  DESTINATION
-#  include/${PROJECT_NAME_LOWERCASE}
-#)
-
-##################################################################################
-##################################################################################
-
-#
 # Install the `include` directory
-#
+
+## TODO : Debug and test if it works as expected
+##################################################################################
 
 install(
   DIRECTORY
@@ -383,46 +327,45 @@ install(
 verbose_message("Install targets successfully built. Install with `cmake --build <build_directory> --target install --config <build_config>`.")
 
 ##################################################################################
-##################################################################################
-
-#
 # Quick `ConfigVersion.cmake` creation
-#
 
-#include(CMakePackageConfigHelpers)
-#write_basic_package_version_file(
-#  ${PROJECT_NAME}ConfigVersion.cmake
-#  VERSION
-#  ${PROJECT_VERSION}
-#  COMPATIBILITY
-#  SameMajorVersion
-#)
-
-#configure_package_config_file(
-#  ${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}Config.cmake.in
-#  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-#  INSTALL_DESTINATION
-#  ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-#)
-#
-#install(
-#  FILES
-#  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
-#  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
-#  DESTINATION
-#  ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-#)
-
-##################################################################################
+## TODO : Debug and test if it works as expected
+## TODO : install src files
 ##################################################################################
 
-#
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  ${PROJECT_NAME}ConfigVersion.cmake
+  VERSION
+  ${PROJECT_VERSION}
+  COMPATIBILITY
+  SameMajorVersion
+)
+
+configure_package_config_file(
+  ${CMAKE_CURRENT_LIST_DIR}/scripts/cmake/Config.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/XSTLConfig.cmake
+  INSTALL_DESTINATION
+  ${CMAKE_INSTALL_LIBDIR}/cmake/XSTL
+)
+
+install(
+  FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/XSTLConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/XSTLConfigVersion.cmake
+  DESTINATION
+  ${CMAKE_INSTALL_LIBDIR}/cmake/XSTL
+)
+
+##################################################################################
 # Generate export header if specified
-#
 
-if(${PROJECT_NAME}_GENERATE_EXPORT_HEADER)
+# TODO : Debug and test if it works as expected
+##################################################################################
+
+if(GenerateExportHeader)
   include(GenerateExportHeader)
-  generate_export_header(${PROJECT_NAME})
+  generate_export_header(${XSTL_TARGET})
   install(
     FILES
     ${PROJECT_BINARY_DIR}/${PROJECT_NAME_LOWERCASE}_export.h
@@ -436,13 +379,11 @@ endif()
 message(STATUS "Finished building requirements for installing the package.\n")
 
 ##################################################################################
+# Unit testing setup
+
 ##################################################################################
 
-#
-# Unit testing setup
-#
-
-if(${PROJECT_NAME}_ENABLE_UNIT_TESTING)
+if(XSTLEnableTesting)
   enable_testing()
   message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
   add_subdirectory(test)
