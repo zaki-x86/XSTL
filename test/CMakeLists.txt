@@ -72,8 +72,6 @@ endif()
 # Load the desired unit testing framework
 #
 
-add_subdirectory(test/libs/googletest)
-
 include(GoogleTest)
 
 set(GOOGLE_MOCK_LIBRARIES GTest::gmock GTest::gmock_main)
