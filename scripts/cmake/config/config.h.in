@@ -94,7 +94,7 @@
 #endif
 
 #ifdef XSTL_MSVC
-#define XSTL_FORCE_INLINE __forceinline inline
+#define XSTL_FORCE_INLINE __forceinline
 #elif defined(XSTL_GCC) || defined(XSTL_CLANG)
 #define XSTL_FORCE_INLINE __attribute__((always_inline)) inline
 #else

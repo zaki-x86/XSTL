@@ -44,7 +44,7 @@ _BEGIN_XSTL
  */
 
 template <typename _T, size_t _N>
-struct XSTL_INTERNAL _array_traits {
+struct _array_traits {
   // _CStyle_array aliases a c style array type
   using _CStyle_array = _T[_N];
 
@@ -67,7 +67,7 @@ struct XSTL_INTERNAL _array_traits {
 };
 
 template <typename _T>
-struct XSTL_INTERNAL _array_traits<_T, 0> {
+struct _array_traits<_T, 0> {
   struct _CStyle_array {
     // Indexing is undefined.
     // TODO: define function as noreturn
