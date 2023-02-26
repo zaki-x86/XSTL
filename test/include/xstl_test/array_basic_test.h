@@ -52,14 +52,13 @@ using PimitiveTypes = ::testing::Types<
     std::string
 >;
 using PointerTypes = ::testing::Types<
-    // pointers
     int*,
     long*,
     const char*,
     std::string*
 >;
 
-using STLContaineTypes = ::testing::Types<
+using STLContainerTypes = ::testing::Types<
     std::array<int, 5>
     //std::vector<int>,
     //std::deque<int>,

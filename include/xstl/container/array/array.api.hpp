@@ -7,7 +7,7 @@
  *
  * @copyright Copyright (c) 2023
  *
- */
+*/
 
 #ifndef _ARRAY_API_H_
 
@@ -15,8 +15,8 @@
 
 // <--- std headers --->
 #include<iostream>
-#include <iterator>
-#include <memory>
+#include<iterator>
+#include<memory>
 
 // <--- XSTL headers --->
 #include "xstl/config/config.h"
@@ -107,15 +107,15 @@ template <typename T, size_t _Size> struct array {
   // capacity and storage:
   // ***********************************
 
-  XSTL_FORCE_INLINE CONSTEXPR11 size_type size() const {
+  CONSTEXPR11 size_type size() const {
       return _Size;
   }
 
-  XSTL_FORCE_INLINE CONSTEXPR11 size_type max_size() const {
+  CONSTEXPR11 size_type max_size() const {
       return _Size;
   }
 
-  XSTL_FORCE_INLINE CONSTEXPR11 bool empty() const {
+  CONSTEXPR11 bool empty() const {
       return false;
   }
 
@@ -182,7 +182,7 @@ template <typename T, size_t _Size> struct array {
           data()[i] = val;
   }
 
-  void swap(array<T, _Size>& x) {
+  void swap(array<T, _Size>& x) noexcept {
       value_type temp;
       size_t i = 0 ;
       for (auto &e : x)
@@ -195,9 +195,7 @@ template <typename T, size_t _Size> struct array {
   }
 };
 
-
 // ops:
-
 // Array comparisons.
 template <typename _T, size_t _Size>
 XSTL_FORCE_INLINE bool operator==(const array<_T, _Size> &_one, const array<_T, _Size> &_two) {

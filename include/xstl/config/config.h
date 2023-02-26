@@ -94,7 +94,7 @@
 #endif
 
 #ifdef XSTL_MSVC
-#define XSTL_FORCE_INLINE __forceinline inline
+#define XSTL_FORCE_INLINE __forceinline
 #elif defined(XSTL_GCC) || defined(XSTL_CLANG)
 #define XSTL_FORCE_INLINE __attribute__((always_inline)) inline
 #else
@@ -126,6 +126,8 @@
 /// that can be used in more places in the language, such as in array dimensions or non-type template arguments.
 #if defined(__cpp_constexpr) && __cpp_constexpr >= 201603L
 #define CONSTEXPR17 constexpr
+#else
+#define CONSTEXPR17
 #endif
 
 /// improved - cxx20

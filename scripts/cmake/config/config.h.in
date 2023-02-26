@@ -126,6 +126,8 @@
 /// that can be used in more places in the language, such as in array dimensions or non-type template arguments.
 #if defined(__cpp_constexpr) && __cpp_constexpr >= 201603L
 #define CONSTEXPR17 constexpr
+#else
+#define CONSTEXPR17
 #endif
 
 /// improved - cxx20

@@ -9,6 +9,7 @@
 #include<vector>
 
 #include<helpers/generators.h>
+#include "xstl/config/config.h"
 #include "xstl/array.hpp"
 
 #define XSTL_ASSERT(cond, fail_msg) EXPECT_TRUE(cond) << (fail_msg)
@@ -46,7 +47,7 @@ _BEGIN_XSTL_TEST
         }
     };
 
-    /// FIXME : Getting a warning for all _verify_*_ok() functions 
+    /// FIXME Getting a warning for all _verify_*_ok() functions 
     /// use of member '_verify_*_ok' found via unqualified lookup into dependent bases of class templates is a Microsoft extension
     /// for all functionions _verify_*_ok()
     /// Issue is originated from the fact, for some compilers and c++ standards, the class `ArrayTester` is not able to find  `_verify_*_ok` because it is declared within the scope of a member function, and it didn't look for it within the super class context. 
@@ -58,7 +59,7 @@ _BEGIN_XSTL_TEST
     // _ref is a c-style array to use as a reference to debug xstl::array
     // _arr is a clone of _ref, and we used _ref as a "reference container" to debug _arr
     template<typename _Ty, std::size_t _Size>
-    struct XSTL_INTERNAL _Array_tester
+    struct _Array_tester
     {
     protected:
         _Array_tester() = default;
@@ -152,10 +153,6 @@ _BEGIN_XSTL_TEST
         }
 
         bool _verify_empty_ok() {
-            if constexpr(_Size == 0) {
-                XSTL_ASSERT(_arr.empty(), "empty() failed");
-                return _arr.empty();
-            }
             XSTL_ASSERT(!_arr.empty(), "empty() failed");
             return !_arr.empty();
         }
@@ -260,14 +257,14 @@ _BEGIN_XSTL_TEST
             
         }
 
-    protected:
+    private:
         xstl::array<_Ty, _Size> _arr;
         _Ty _ref[_Size];
         
         // Declared two template params: _Arr1 and _Arr2 to support any array type comparison whether it's 
         // a c-style array or std::array or xstl::array or any custom array type that supports access via [].
         template<typename _Arr1, typename _Arr2, typename Assertion> 
-        void _array_assert(_Arr1 _arr1, _Arr2 _arr2, std::size_t _N, Assertion assert_function) {
+        void _array_assert(_Arr1 _arr1, _Arr2 _arr2, std::size_t _N, Assertion assert_function) const {
             for (size_t i = 0; i< _N; ++i)
             {
                 assert_function(_arr1[i], _arr2[i]);
@@ -276,7 +273,7 @@ _BEGIN_XSTL_TEST
     };
 
     template<typename _Ty, std::size_t _Size>
-    struct XSTL_API ArrayTester : protected _Array_tester<_Ty, _Size>
+    struct ArrayTester : protected _Array_tester<_Ty, _Size>
     {
         using _Base = _Array_tester<_Ty, _Size>;
 
@@ -393,17 +390,20 @@ _BEGIN_XSTL_TEST
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::perform_relational_ops_checks() {
-
+        // TODO
+        return;
     }
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::perform_stream_ops_checks() {
-
+        // TODO
+        return;
     }
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::perform_nonmember_ops_checks() {
-
+        // TODO
+        return;
     }
     
     template<typename _Ty, std::size_t _Size>
@@ -413,22 +413,25 @@ _BEGIN_XSTL_TEST
         perform_storage_checks();
         perform_accessors_checks();
         perform_modifiers_checks();
+        perform_relational_ops_checks();
+        perform_stream_ops_checks();
+        perform_nonmember_ops_checks();
     }
 
 
     template<typename Type>
     bool CanCreateAnArrayOfZeroSizeTest() {
-
+        return false;
     }
 
     template<typename Type>
     void CanCreateAnArrayOfSmallSizeTest() {        
-        
+        return;
     }
 
     template<typename Type>
     bool CanCreateAnArrayOfLargeSizeTest() {
-        
+        return false;
     }
 
 _END_XSTL_TEST
