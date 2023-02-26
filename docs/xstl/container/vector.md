@@ -3,14 +3,23 @@
 **Defined in header file**: `<vector>`
 
 ```cpp
-// Signature
+template <class T, class Allocator = allocator<T>>
+class vector;
 ```
 
 **A brief description of the purpose of the class/function.**
 
 ## Description
 
-A brief description of the purpose of the function/class/method.
+A `vector` is a sequence container that encapsulates dynamic size arrays. Just like arrays, vectors use contiguous storage locations for their elements, which means that their elements can also be accessed using offsets on regular pointers to its elements, and just as efficiently as in arrays. But unlike arrays, their size can change dynamically, with their storage being handled automatically by the container.
+
+Internally, vectors use a dynamically allocated array to store their elements. This array may need to be reallocated in order to grow in size when new elements are inserted, which implies allocating a new array and moving all elements to it. This is a relatively expensive task in terms of processing time, and thus, vectors do not reallocate each time an element is added to the container.
+
+Instead, vector containers may allocate some extra storage to accommodate for possible growth, and thus the container may have an actual capacity greater than the storage strictly needed to contain its elements (i.e., its size).
+
+Accessing elements in a vector by an offset on a regular pointer, just like with arrays, is a constant operation, O(1). Inserting or erasing elements in the middle of the vector however causes the container to shift all the elements after the insertion point by one. This is also linear in the number of elements that have to be moved.
+
+Vectors are very similar to arrays, but have some important differences. First, vectors are dynamically allocated. Second, vectors are guaranteed to live in contiguous memory. Third, vectors can be resized. Fourth, vectors have a lot of built-in functions to help you manipulate them. Fifth, vectors are very easy to use. And lastly, vectors are very similar to arrays, so if you know how to use arrays, you already know how to use vectors.
 
 ## Container Properties
 
@@ -31,6 +40,14 @@ T
 &nbsp;&nbsp;&nbsp;&nbsp;Type of the elements contained.
 
 &nbsp;&nbsp;&nbsp;&nbsp;Aliased as member type `array::value_type`.
+
+```cpp
+Allocator
+```
+
+&nbsp;&nbsp;&nbsp;&nbsp;Allocator type used to allocate the storage. The default allocator is `std::allocator` which provides all the element types that a vector can hold. If the user wishes to store elements that are not copy constructible or not destructible, or to get better performance with a particular kind of storage allocation model, a user-defined allocator may be supplied.
+
+&nbsp;&nbsp;&nbsp;&nbsp;Aliased as member type `vector::allocator_type`.
 
 ## Specializations
 
