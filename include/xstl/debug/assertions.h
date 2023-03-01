@@ -1,0 +1,7 @@
+#ifndef _XSTL_ASSERTIONS_H_
+#define _XSTL_ASSERTIONS_H_
+
+
+
+
+#endif // _XSTL_ASSERTIONS_H_
