@@ -1,5 +1,5 @@
-#include "gtest/gtest.h"
 #include "xstl_test/array_basic_test.h"
+#include <gtest/gtest.h>
 
 int main(int argc, char* argv[])
 {

@@ -13,9 +13,6 @@
 
 _BEGIN_XSTL_TEST
 
-/// FIXME : warning related to an issue with instantiating the `tester` object
-/// use of undeclared identifier 'tester'; unqualified lookup into dependent bases of class template ('CanForwardIterateOverArray' , 'CanConstForwardIterateOverArray', .. etc) is a Microsoft extension
-
 template<typename Type>
 class ArrayBasicTest : public ::testing::Test {
 public:
@@ -27,12 +24,10 @@ public:
         tester = ArrayTester<Type, TESTING_SIZE>(arr, c_arr);
     }
 
-    void TearDown() override {
-    }
-
     xstl::array<Type, TESTING_SIZE> arr;
     Type c_arr[TESTING_SIZE];
     ArrayTester<Type, TESTING_SIZE> tester;
+    ArrayTester<Type, 0> empty_arr_tester;
 };
 
 using PimitiveTypes = ::testing::Types<
@@ -80,86 +75,81 @@ using STLContainerTypes = ::testing::Types<
 TYPED_TEST_SUITE_P(ArrayBasicTest);
 
 
-TYPED_TEST_P(ArrayBasicTest, CanForwardIterateOverArray) 
+TYPED_TEST_P(ArrayBasicTest, CanIterateOverArray) 
 {
-    this->tester.test_forward_iteration();
+    this->tester.perform_iterator_checks();
+    this->empty_arr_tester.perform_iterator_checks();
 }
 
-TYPED_TEST_P(ArrayBasicTest, CanConstForwardIterateOverArray)
-{
-    this->tester.test_const_forward_iteration();
-}
-
-TYPED_TEST_P(ArrayBasicTest, CanReverseIterateOverArray)
-{
-    this->tester.test_reverse_iteration();
-}
-
-TYPED_TEST_P(ArrayBasicTest, CanConstReverseIterateOverArray)
-{
-    this->tester.test_const_reverse_iteration();
-}
 
 TYPED_TEST_P(ArrayBasicTest, CanGetStorageInfoFromArray)
 {
     this->tester.perform_storage_checks();
+    this->empty_arr_tester.perform_storage_checks();
 }
 
-TYPED_TEST_P(ArrayBasicTest, CanAccessArrayUsingAccessOperator)
+TYPED_TEST_P(ArrayBasicTest, CanAccessArrayElementsViaOperator)
 {
-    this->tester.test_access_via_operator();
+    this->tester.test_access_operator();
+    this->empty_arr_tester.test_access_operator();
 }
 
-TYPED_TEST_P(ArrayBasicTest, CanAccessArrayUsingAt)
+TYPED_TEST_P(ArrayBasicTest, CanAccessArrayElementsViaAt)
 {
-    this->tester.test_access_via_at();
+    this->tester.test_at();
+    this->empty_arr_tester.test_at();
 }
 
-TYPED_TEST_P(ArrayBasicTest, CanGetFrontAndBackElementsOfArray)
+TYPED_TEST_P(ArrayBasicTest, CanAccessFrontAndBackElements)
 {
-    this->tester.test_front_and_back_access();
+    this->tester.test_front();
+    this->empty_arr_tester.test_front();
+    this->tester.test_back();
+    this->empty_arr_tester.test_back();
 }
 
-TYPED_TEST_P(ArrayBasicTest, CanGetWrappedCArray)
+TYPED_TEST_P(ArrayBasicTest, CanAccessCArray)
 {
     this->tester.test_generated_c_array();
+    this->empty_arr_tester.test_generated_c_array();
 }
 
 TYPED_TEST_P(ArrayBasicTest, CanFillArrayWithRandomValue)
 {
     this->tester.test_fill();
+    this->empty_arr_tester.test_fill();
 }
 
-TYPED_TEST_P(ArrayBasicTest, CanSwapArrayWithAnotherArray)
+TYPED_TEST_P(ArrayBasicTest, CanSwapArraysWithMemberFunction)
 {
     this->tester.test_swap();
+    this->empty_arr_tester.test_swap();
 }
+
 
 TYPED_TEST_P(ArrayBasicTest, CanPeformRelationalOpsOnArray)
 {
     this->tester.perform_relational_ops_checks();
+    this->empty_arr_tester.perform_relational_ops_checks();
 }
 
 TYPED_TEST_P(ArrayBasicTest, CanPrintArrayElements)
 {
-
+    this->tester.test_print();
+    this->empty_arr_tester.test_print();
 }
 
 REGISTER_TYPED_TEST_SUITE_P(ArrayBasicTest,
-    CanForwardIterateOverArray,
-    CanConstForwardIterateOverArray,
-    CanReverseIterateOverArray,
-    CanConstReverseIterateOverArray,
+    CanIterateOverArray,
     CanGetStorageInfoFromArray,
-    CanAccessArrayUsingAccessOperator,
-    CanAccessArrayUsingAt,
-    CanGetFrontAndBackElementsOfArray,
-    CanGetWrappedCArray,
+    CanAccessArrayElementsViaOperator,
+    CanAccessArrayElementsViaAt,
+    CanAccessFrontAndBackElements,
+    CanAccessCArray,
     CanFillArrayWithRandomValue,
-    CanSwapArrayWithAnotherArray,
+    CanSwapArraysWithMemberFunction,
     CanPeformRelationalOpsOnArray,
     CanPrintArrayElements
-
 );
 
 INSTANTIATE_TYPED_TEST_SUITE_P(ArrayTestWithPrimitiveTypes, ArrayBasicTest, PimitiveTypes);

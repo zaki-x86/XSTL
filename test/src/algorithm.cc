@@ -1,6 +1,6 @@
 
-#include <gtest/gtest.h>
 #include <xstl/algorithm.hpp>
+#include <gtest/gtest.h>
 
 TEST(TmpTest, CheckValues)
 {
