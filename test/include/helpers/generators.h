@@ -9,6 +9,7 @@
 #include <iostream>
 #include <random>
 #include <string>
+#include <memory>
 
 #ifdef __unix__
 
@@ -83,7 +84,7 @@ void set_random_test_value(long &var_, long range_from = INT32_MIN,
 void set_random_test_value(int *&var_, int range_from = INT32_MIN,
                            int range_to = INT32_MAX);
 
-void set_random_test_value(char &var_, bool XSTL_UNUSED literal_only = false);
+void set_random_test_value(char &var_);
 
 void set_random_test_value(char *&var_,
                            size_t size_ = generate_numeric<size_t>(0, 20));
@@ -99,7 +100,6 @@ void set_random_test_values(std::vector<int *> &vec_,
                             int range_to = INT32_MAX, size_t vec_size_ = 10);
 
 void set_random_test_values(std::vector<char> &vec_,
-                            bool XSTL_UNUSED literal_only = false,
                             size_t vec_size_ = 10);
 
 void set_random_test_values(std::vector<char *> &vec_,
@@ -122,10 +122,7 @@ void set_random_test_value(int *&var_, int range_from, int range_to) {
   var_ = new int(generate_numeric<int>(range_from, range_to));
 }
 
-void set_random_test_value(char &var_, bool XSTL_UNUSED literal_only) {
-  if (literal_only)
-    var_ = generate_literal();
-  else
+void set_random_test_value(char &var_) {
     var_ = generate_char();
 }
 
@@ -153,14 +150,9 @@ void set_random_test_values(std::vector<int *> &vec_, int range_from,
     vec_.push_back(new int(generate_numeric<int>(range_from, range_to)));
 }
 
-void set_random_test_values(std::vector<char> &vec_,
-                            bool XSTL_UNUSED literal_only, size_t vec_size_) {
-  if (literal_only)
-    for (size_t i = 0; i < vec_size_; i++)
-      vec_.push_back(generate_literal());
-  else
-    for (size_t i = 0; i < vec_size_; i++)
-      vec_.push_back(generate_char());
+void set_random_test_values(std::vector<char> &vec_, size_t vec_size_) {
+  for (size_t i = 0; i < vec_size_; i++)
+    vec_.push_back(generate_char());
 }
 
 void set_random_test_values(std::vector<char *> &vec_, size_t str_size,
