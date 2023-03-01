@@ -41,8 +41,6 @@ include(CompilerWarnings)
 
 set(XSTL_TARGET ${PROJECT_NAME})
 
-option(XSTLEnableExceptions "Enable exceptions in the project." ON)
-
 option(XSTLUseAltNames "Use alternative names for the project, such as naming the include directory all lowercase." ON)
 
 # Package Managers
@@ -255,6 +253,11 @@ message(STATUS "Finished setting up include directories.")
 # Check if the library is being built as a shared library
 #
 
+##################################################################################
+# Set library configurations
+##################################################################################
+option(XSTLEnableExceptions "Enable exceptions" ON)
+
 if(BUILD_SHARED_LIBS)
     message(STATUS "Building ${XSTL_TARGET} as a shared library")
     target_compile_definitions(${XSTL_TARGET} INTERFACE -DBUILD_SHARED)
@@ -263,13 +266,17 @@ else()
     target_compile_definitions(${XSTL_TARGET} INTERFACE -DBUILD_STATIC)
 endif(BUILD_SHARED_LIBS)
 
-##################################################################################
-# Set the project standard and warnings
-##################################################################################
 
 target_compile_features(${XSTL_TARGET} INTERFACE cxx_std_11)
 
 verbose_message("Using standard ${CMAKE_CXX_STANDARD}.\n")
+
+if(XSTLEnableExceptions)
+  target_compile_definitions(${XSTL_TARGET} PUBLIC ENABLE_EXCEPTIONS)
+else()
+  target_compile_definitions(${XSTL_TARGET} PUBLIC DISABLE_EXCEPTIONS)
+endif(XSTLEnableExceptions)
+
 
 ##################################################################################
 # Enable Doxygen
@@ -384,6 +391,7 @@ message(STATUS "Finished building requirements for installing the package.\n")
 ##################################################################################
 # Unit testing setup
 
+## TODO Add feature to test each library individually
 ##################################################################################
 
 if(XSTLEnableTesting)
