@@ -41,6 +41,8 @@ include(CompilerWarnings)
 
 set(XSTL_TARGET ${PROJECT_NAME})
 
+option(XSTLEnableExceptions "Enable exceptions in the project." ON)
+
 option(XSTLUseAltNames "Use alternative names for the project, such as naming the include directory all lowercase." ON)
 
 # Package Managers
@@ -386,6 +388,7 @@ message(STATUS "Finished building requirements for installing the package.\n")
 
 if(XSTLEnableTesting)
   if(XSTLEnableCi)
+    
     set_ci_project_warnings(${XSTL_TARGET})
   else()
     set_project_warnings(${XSTL_TARGET})
