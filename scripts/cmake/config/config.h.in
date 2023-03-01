@@ -52,6 +52,14 @@
 #define XSTL_DEBUG 1
 #endif
 
+
+#if defined(ENABLE_EXCEPTIONS)
+#define XSTL_EXCEPTIONS_ENABLED 1
+#else
+#define XSTL_EXCEPTIONS_DISABLED 1
+#endif
+
+
 // **************************************
 /// Define internal and public components
 // **************************************
@@ -160,18 +168,41 @@
 #define XSTL_NODISCARD
 #endif
 
+#if defined(__GNUC__) && (__GNUC__ >= 4) || defined(XSTL_CLANG)
+#define XSTL_CHECK_RETURN __attribute__ ((warn_unused_result))
+#elif defined(_MSC_VER) && (_MSC_VER >= 1700)
+#define XSTL_CHECK_RETURN _Check_return_
+#else
+#define XSTL_CHECK_RETURN
+#endif
+
 // functions that exit the application, loop forever or throw exceptions.
 #if defined(__has_cpp_attribute) && __has_cpp_attribute( noreturn ) >= 200809L
-#define XSTL_NORETURN [[noreturn]]
+    #if defined(_MSC_VER)
+    #define XSTL_NORETURN __declspec(noreturn)
+    #elif defined(__GNUC__) || defined(__clang__)
+    #define XSTL_NORETURN __attribute__((noreturn))
+    #else
+    #define XSTL_NORETURN
+    #endif
 #else
 #define XSTL_NORETURN
 #endif
 
+// MSVC ignores [[maybe_unused]] on function parameters
 #if defined(__has_cpp_attribute) && __has_cpp_attribute( maybe_unused ) >= 201603L
 #define XSTL_UNUSED [[maybe_unused]]
 #else
 #define XSTL_UNUSED
 #endif
+
+// To be used for MSVC, as XSTL_UNUSED won't work for MSVC
+#ifdef XSTL_MSVC
+#define XSTL_IGNORE(exp) (void)(exp)
+#else
+#define XSTL_IGNORE(exp)
+#endif
+
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute( assume ) >= 202207L
 #define XSTL_ASSUME(exp) [[maybe_unused(exp)]]
@@ -224,6 +255,7 @@
 
 #define _END_XSTL_TEST  }}
 #endif
+
 
 
 
