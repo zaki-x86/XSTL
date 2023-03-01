@@ -123,3 +123,9 @@ foreach(file ${TEST_SRCS})
 endforeach()
 
 verbose_message("Finished adding unit tests for ${PROJECT_NAME_LOWERCASE}.")
+
+##################################################################################
+# Build Examples
+##################################################################################
+
+add_subdirectory(examples/array)
