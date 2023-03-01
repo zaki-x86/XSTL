@@ -12,7 +12,7 @@
 
 #define _LIST_H_
 
-#include "container/list/list.api.hpp"
-#include "container/list/list.imp.cc"
+#include "zicx/container/list/list.api.hpp"
+#include "zicx/container/list/list.imp.cc"
 
 #endif // !_LIST_H_

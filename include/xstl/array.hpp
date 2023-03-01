@@ -13,6 +13,6 @@
 
 #define _ARRAY_H_
 
-#include "container/array/array.api.hpp"
+#include "zicx/container/array/array.api.hpp"
 
 #endif // !_ARRAY_H_

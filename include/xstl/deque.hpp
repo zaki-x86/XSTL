@@ -13,7 +13,7 @@
 
 #define _DEQUE_H_
 
-#include "container/deque/deque.api.hpp"
-#include "container/deque/deque.imp.cc"
+#include "zicx/container/deque/deque.api.hpp"
+#include "zicx/container/deque/deque.imp.cc"
 
 #endif // !_DEQUE_H_
