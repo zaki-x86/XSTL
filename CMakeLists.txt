@@ -90,7 +90,7 @@ endif()
 message(STATUS "Started CMake for ${XSTL_TARGET} v${PROJECT_VERSION}...\n")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  if (UNIX)
+  if (UNIX OR MINGW OR CMAKE_COMPILER_IS_GNUCXX )    
     add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
   endif (UNIX)  
   message(STATUS "_DEBUG macro is added for debugging specific code\n")
@@ -244,6 +244,7 @@ target_include_directories(
     ${XSTL_TARGET}
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -396,14 +397,13 @@ message(STATUS "Finished building requirements for installing the package.\n")
 
 if(XSTLEnableTesting)
   if(XSTLEnableCi)
-    
     set_ci_project_warnings(${XSTL_TARGET})
   else()
     set_project_warnings(${XSTL_TARGET})
   endif()
   
   verbose_message("Applied aggressive compiler warnings for testing.\n")
-  add_subdirectory(libs/gtest)
+  include(doctest/doctest)
   enable_testing()
   verbose_message("Build unit tests for the project. Tests should always be found in the test folder\n")
   add_subdirectory(test)
