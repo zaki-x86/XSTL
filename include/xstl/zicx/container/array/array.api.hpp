@@ -47,8 +47,9 @@ template <typename T, size_t _Size> struct array {
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using size_type = size_t;
   using difference_type = ptrdiff_t;
-
-  typename _array_traits<T, _Size>::_CStyle_array _m_Elements; 
+  
+  typedef _array_traits<T, _Size> _ArrayTraits;
+  typename _ArrayTraits::_CStyle_array _m_Elements; 
 
   // Don't look for array constructors
   // no explicit construct/copy/destroy for aggregate type
@@ -57,51 +58,51 @@ template <typename T, size_t _Size> struct array {
   // iterators:
   // ***********************************
 
-  iterator begin() noexcept {
-      return iterator(_m_Elements);
+  CONSTEXPR17 iterator begin() noexcept {
+      return iterator(data());
   }
 
-  const_iterator begin() const noexcept {
-      return const_iterator(_m_Elements);
+  CONSTEXPR17 const_iterator begin() const noexcept {
+      return const_iterator(data());
   }
 
-  iterator end() noexcept {
-      return iterator(_m_Elements + _Size);
+  CONSTEXPR17 iterator end() noexcept {
+      return iterator(data() + _Size);
   }
 
-  const_iterator end() const noexcept {
-      return const_iterator(_m_Elements + _Size);
+  CONSTEXPR17 const_iterator end() const noexcept {
+      return const_iterator(data() + _Size);
   }
 
-  reverse_iterator rbegin() noexcept {
+  CONSTEXPR17 reverse_iterator rbegin() noexcept {
       return reverse_iterator(end());
   }
 
-  const_reverse_iterator rbegin() const noexcept {
+  CONSTEXPR17 const_reverse_iterator rbegin() const noexcept {
       return const_reverse_iterator(end());
   }
 
-  reverse_iterator rend() noexcept {
+  CONSTEXPR17 reverse_iterator rend() noexcept {
       return reverse_iterator(begin());
   }
 
-  const_reverse_iterator rend() const noexcept {
+  CONSTEXPR17 const_reverse_iterator rend() const noexcept {
       return const_reverse_iterator(begin());
   }
 
-  const_iterator cbegin() const noexcept {
-      return const_iterator(_m_Elements);
+  CONSTEXPR17 const_iterator cbegin() const noexcept {
+      return const_iterator(data());
   }
 
-  const_iterator cend() const noexcept {
-      return const_iterator(_m_Elements + _Size);
+  CONSTEXPR17 const_iterator cend() const noexcept {
+      return const_iterator(data() + _Size);
   }
 
-  const_reverse_iterator crbegin() const noexcept {
+  CONSTEXPR17 const_reverse_iterator crbegin() const noexcept {
       return const_reverse_iterator(end());
   }
 
-  const_reverse_iterator crend() const noexcept {
+  CONSTEXPR17 const_reverse_iterator crend() const noexcept {
       return const_reverse_iterator(begin());
   }
 
@@ -125,60 +126,52 @@ template <typename T, size_t _Size> struct array {
   // element access:
   // ***********************************
 
-  reference operator[](size_type n) {
-      if (n < 0 || n >= _Size) {
-        _xstl_out_of_range("index out of range");
-      } 
-
-      return _m_Elements[n];
+  CONSTEXPR17 CONSTEXPR17 reference operator[](size_type n) noexcept {
+      return _ArrayTraits::_s_ref(_m_Elements, n);
   }
 
-  const_reference operator[](size_type n) const {
-      if (n < 0 || n >= _Size) {
-        _xstl_out_of_range("index out of range");
-      } 
-
-      return _m_Elements[n];
+  CONSTEXPR17 const_reference operator[](size_type n) const noexcept {
+      return _ArrayTraits::_s_ref(_m_Elements, n);
   }
 
-  const_reference at(size_type n) const {
-      if (n < 0 || n >= _Size) {
+  CONSTEXPR17 const_reference at(size_type n) const {
+      if (n < 0 || n >= _Size)
         _xstl_out_of_range("index out of range");
-      } 
+
       return (*this)[n];
   }
 
-  reference at(size_type n) {
-        if (n < 0 || n >= _Size) {
+  CONSTEXPR17 reference at(size_type n) {
+        if (n < 0 || n >= _Size)
             _xstl_out_of_range("index out of range");
-        } 
+
         return (*this)[n];
   }
 
-  reference front() {
-      return (*this)[0];
+  XSTL_FORCE_INLINE CONSTEXPR17 reference front() {
+      return (*this).at(0);
   }
 
-  const_reference front() const {
-      return (*this)[0];
+  XSTL_FORCE_INLINE CONSTEXPR17 const_reference front() const {
+      return (*this).at(0);
   }
 
-  reference back() {
-      return (*this)[_Size-1];
+  XSTL_FORCE_INLINE CONSTEXPR17 reference back() {
+      return (*this).at(_Size-1);
   }
 
-  const_reference back() const {
-      return (*this)[_Size - 1];
+  XSTL_FORCE_INLINE CONSTEXPR17 const_reference back() const {
+      return (*this).at(_Size - 1);
   }
  
   // observers:
 
-  pointer data() {
-      return _m_Elements;
+  CONSTEXPR17 pointer data() {
+      return _ArrayTraits::_s_ptr(_m_Elements);
   }
   
-  const_pointer data() const {
-      return _m_Elements;
+  CONSTEXPR17 const_pointer data() const {
+      return _ArrayTraits::_s_ptr(_m_Elements);
   }
 
   // ***********************************
@@ -230,11 +223,14 @@ XSTL_FORCE_INLINE bool operator>=(const array<_T, _Size> &_one, const array<_T, 
 
 template <class _T, size_t _Size>
 std::ostream &operator<<(std::ostream &os, const array<_T, _Size> &arr) {
-  os << "[";
-  for (const auto &x : arr) {
-    os << x << ", ";
+  os << "{";
+  for (auto it = arr.begin(); it != arr.end(); ++it) {
+    if (it == arr.end() - 1)
+        os << *it;
+    else
+        os << *it << ", ";
   }
-  os << "]";
+  os << "}";
   return os;
 }
 

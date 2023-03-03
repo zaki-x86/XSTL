@@ -74,7 +74,7 @@ struct _array_traits<_T, 0> {
   struct _CStyle_array {
     // Indexing is undefined.
     // TODO: define function as noreturn
-    XSTL_NORETURN CONSTEXPR11 _T& operator[](size_t) const noexcept {
+    XSTL_NORETURN _T& operator[](size_t) const noexcept {
       _xstl_out_of_range("Index out of range - array of size 0");
       exit(1);  // This line is unreachable, but it is needed to avoid a compiler warning.
     }
@@ -88,11 +88,11 @@ struct _array_traits<_T, 0> {
   // using _Is_swappable = xstl::true_type;
   // using _Is_nothrow_swappable = xstl::true_type;
 
-  static CONSTEXPR20 _T& _s_ref(const _CStyle_array&, size_t) noexcept {
+  static CONSTEXPR11 _T& _s_ref(const _CStyle_array&, size_t) noexcept {
     return *static_cast<_T*>(nullptr);
   }
 
-  static CONSTEXPR20 _T* _s_ptr(const _CStyle_array&) noexcept {
+  static CONSTEXPR11 _T* _s_ptr(const _CStyle_array&) noexcept {
     return nullptr;
   }
 };
