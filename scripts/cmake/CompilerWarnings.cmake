@@ -5,6 +5,8 @@
 # Courtesy of Jason Turner
 
 function(set_ci_project_warnings project_name)
+   message(STATUS "Setting CI warnings for ${project_name}")
+
    set(MSVC_CXXFLAGS
       /W4     # Baseline reasonable warnings
       /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss
@@ -419,6 +421,8 @@ function(set_ci_project_warnings project_name)
 endfunction()
 
 function(set_project_warnings project_name)
+   message(STATUS "Setting compiler warnings for ${project_name}")
+
    set(MSVC_WARNINGS
       /W4     # Baseline reasonable warnings
       /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss

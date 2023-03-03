@@ -35,7 +35,9 @@ namespace std {
 }
 #endif
 
+// --- Random Generators ---
 
+// double, float, long double
 template <typename T>
 typename std::enable_if_t<std::is_floating_point<T>::value, T>
 get_random_number(const T from = std::numeric_limits<T>::min(),
@@ -46,8 +48,9 @@ get_random_number(const T from = std::numeric_limits<T>::min(),
   return distr(generator);
 }
 
+// int, long, short, unsigned int, unsigned long, unsigned short
 template <typename T>
-typename std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_same_v<T, char> && !std::is_same_v<T, unsigned char>, T>
+typename std::enable_if_t<std::is_arithmetic<T>::value && !std::is_floating_point<T>::value && !std::is_same<T, char>::value && !std::is_same<T, unsigned char>::value, T>
 get_random_number(const T from = std::numeric_limits<T>::min(),
                   const T to = std::numeric_limits<T>::max()) {
   std::random_device rand_dev;
@@ -56,6 +59,7 @@ get_random_number(const T from = std::numeric_limits<T>::min(),
   return distr(generator);
 }
 
+// char
 char get_random_char() {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -63,6 +67,7 @@ char get_random_char() {
     return static_cast<char>(dis(gen));
 }
 
+// unsigned char
 unsigned char get_random_uchar() {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -70,6 +75,7 @@ unsigned char get_random_uchar() {
     return static_cast<unsigned char>(dis(gen));
 }
 
+// std::string
 std::string get_random_string() {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -81,6 +87,7 @@ std::string get_random_string() {
     return result;
 }
 
+// const char*
 const char* get_random_cstring() {
     static const char alphanum[] =
         "0123456789"
@@ -100,22 +107,22 @@ const char* get_random_cstring() {
 #if __cplusplus >= 201703L
 template <typename T>
 T generate_random_value() {
-    if constexpr (std::is_same_v<T, char>) {
+    if constexpr (std::is_same<T, char>::value) {
         return get_random_char();
-    } else if constexpr (std::is_same_v<T, std::string>) {
+    } else if constexpr (std::is_same<T, std::string>::value) {
         return get_random_string();
-    } else if constexpr (std::is_same_v<T, const char*>) {
+    } else if constexpr (std::is_same<T, const char*>::value) {
         return get_random_cstring();
-    } else if constexpr (std::is_same_v<T, std::nullptr_t>) {
+    } else if constexpr (std::is_same<T, std::nullptr_t>::value) {
         return nullptr;
-    } else if constexpr (std::is_same_v<T, bool>) {
+    } else if constexpr (std::is_same<T, bool>::value) {
         return get_random_number<short>(0, 1);
+    } else if constexpr (std::is_floating_point<T>::value) {
+        return get_random_number<T>();
+    } else if constexpr (std::is_arithmetic<T>::value && !std::is_same<T, char>::value && !std::is_same<T, unsigned char>::value && !std::is_same<T, bool>::value && !std::is_floating_point<T>::value) {
+        return get_random_number<T>();
     } else {
-        static_assert(std::is_arithmetic_v<T>, "Type must be arithmetic or char, std::string, or const char*");
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<T> dis(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
-        return dis(gen);
+        return T();
     }
 }
 #else

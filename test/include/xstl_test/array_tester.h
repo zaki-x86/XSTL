@@ -329,7 +329,7 @@ _BEGIN_XSTL_TEST
         }
 
         template<typename Ty>
-        typename std::enable_if_t<std::is_arithmetic_v<Ty> && !std::is_same<Ty, char>::value, void> 
+        typename std::enable_if_t<std::is_arithmetic<Ty>::value && !std::is_same<Ty, char>::value, void> 
         _test_equality() const {
             xstl::array<Ty, _Size> arr3;
             xstl::array<Ty, _Size> arr4;
@@ -394,7 +394,7 @@ _BEGIN_XSTL_TEST
         }
         #else
         template<typename Ty>
-        typename std::enable_if_t<std::is_arithmetic_v<Ty> && !std::is_same<Ty, char>::value && !std::is_floating_point_v<Ty>, void> 
+        typename std::enable_if_t<std::is_arithmetic<Ty>::value && !std::is_same<Ty, char>::value && !std::is_floating_point<Ty>::value, void> 
         _test_print() {
             xstl::array<Ty, 5> _dummy;
             Ty _val = get_random_number<Ty>();
@@ -420,7 +420,7 @@ _BEGIN_XSTL_TEST
         }
 
         template<typename Ty>
-        typename std::enable_if_t<std::is_floating_point_v<Ty>, void> 
+        typename std::enable_if_t<std::is_floating_point<Ty>::value, void> 
         _test_print() {
             // leave it
         }
@@ -741,10 +741,10 @@ _BEGIN_XSTL_TEST
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::perform_relational_ops_checks() {
-        #if defined(__MINGW32__) || defined(__MINGW64__)
-        this->template _test_equality<_Ty>();
-        #else
+        #if defined(XSTL_MSVC)
         this->_test_equality<_Ty>();
+        #else
+        this->template _test_equality<_Ty>();
         #endif
     }
 
@@ -753,7 +753,7 @@ _BEGIN_XSTL_TEST
         // Addition of `template` keyword is neccessary for code to compile on MinGW GCC. 
         // This tells the compiler that _test_print is a dependent name and that it is a template function.
         // You can get away without it when compiling with MSVC, Unix GCC, or Clang
-        #if defined(__MINGW32__) || defined(__MINGW64__)
+        #if !defined(XSTL_MSVC)
         this->template _test_print<_Ty>();
         #else
         this->_test_print<_Ty>();

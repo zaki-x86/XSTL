@@ -396,12 +396,6 @@ message(STATUS "Finished building requirements for installing the package.\n")
 ##################################################################################
 
 if(XSTLEnableTesting)
-  if(XSTLEnableCi)
-    set_ci_project_warnings(${XSTL_TARGET})
-  else()
-    set_project_warnings(${XSTL_TARGET})
-  endif()
-  
   verbose_message("Applied aggressive compiler warnings for testing.\n")
   include(doctest/doctest)
   enable_testing()
