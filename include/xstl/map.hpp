@@ -13,6 +13,6 @@
 
 #define _MAP_H_
 
-#include "zicx/container/map/map.api.hpp"
-#include "zicx/container/map/multimap.api.hpp"
+#include "parts/container/map/map.api.hpp"
+#include "parts/container/map/multimap.api.hpp"
 #endif // !_MAP_H_

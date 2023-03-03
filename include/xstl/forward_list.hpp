@@ -13,7 +13,7 @@
 
 #define _FORWARD_LIST_H_
 
-#include "zicx/container/forward_list/forward_list.api.hpp"
-#include "zicx/container/forward_list/forward_list.imp.cc"
+#include "parts/container/forward_list/forward_list.api.hpp"
+#include "parts/container/forward_list/forward_list.imp.cc"
 
 #endif // !_FORWARD_LIST_H_

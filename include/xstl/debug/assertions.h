@@ -23,7 +23,7 @@
 #define _xstl_assert_le(lhs, rhs) CHECK_LE(lhs, rhs)
 #define _xstl_assert_gt(lhs, rhs) CHECK_GT(lhs, rhs)
 #define _xstl_assert_ge(lhs, rhs) CHECK_GE(lhs, rhs)
-#define _xstl_assert_throws(expr, exception) CHECK_THROWS_AS(expr, exception)
+#define _xstl_assert_throws(expr, ...) CHECK_THROWS_AS(expr, __VA_ARGS__)
 #define _xstl_assert_nothrow(expr) CHECK_NOTHROW(expr)
 #define _xstl_assert_any_throw(expr) CHECK_THROWS(expr)
 #define _xstl_require(expr, ...) DOCTEST_REQUIRE_MESSAGE(cond, __VA_ARGS__)
