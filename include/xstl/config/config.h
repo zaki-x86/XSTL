@@ -43,7 +43,7 @@
 // == COMPILER WARNINGS HELPERS ====================================================================
 // =================================================================================================
 
-#if XSTL_CLANG
+#ifdef XSTL_CLANG
 #define XSTL_PRAGMA_TO_STR(x) _Pragma(#x)
 #define XSTL_CLANG_SUPPRESS_WARNING_PUSH _Pragma("clang diagnostic push")
 #define XSTL_CLANG_SUPPRESS_WARNING(w) XSTL_PRAGMA_TO_STR(clang diagnostic ignored w)
@@ -71,7 +71,7 @@
 #define XSTL_GCC_SUPPRESS_WARNING_WITH_PUSH(w)
 #endif // XSTL_GCC
 
-#if XSTL_MSVC
+#ifdef XSTL_MSVC
 #define XSTL_MSVC_SUPPRESS_WARNING_PUSH __pragma(warning(push))
 #define XSTL_MSVC_SUPPRESS_WARNING(w) __pragma(warning(disable : w))
 #define XSTL_MSVC_SUPPRESS_WARNING_POP __pragma(warning(pop))
