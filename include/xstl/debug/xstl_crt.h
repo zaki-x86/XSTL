@@ -73,9 +73,7 @@ XSTL_NORETURN void _z_xstl_out_of_range(XSTL_UNUSED const char *file, XSTL_UNUSE
 #endif
 
   #ifdef XSTL_MSVC                  
-  __pragma(warning(push))             
-  __pragma(warning(disable : 4702))
-  exit(1);  // This line is unreachable. Only here to suppress warnings.
+  __assume(0);  
   #elif defined(XSTL_GCC) || defined(XSTL_CLANG)
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wunreachable-code"
@@ -92,7 +90,13 @@ XSTL_NORETURN void _z_xstl_invalid_index(XSTL_UNUSED const char *file, XSTL_UNUS
 #else
   _xstl_error(file, line, msg, XSTL_EXIT::CRASH);
 #endif
+#ifdef XSTL_MSVC                  
+  __assume(0);  
+#elif defined(XSTL_GCC) || defined(XSTL_CLANG)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunreachable-code"
   exit(1);  // This line is unreachable. Only here to suppress warnings.
+#endif 
 }
 
 // ******************************************

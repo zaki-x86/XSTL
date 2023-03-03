@@ -41,7 +41,7 @@ char generate_literal() {
   return 'x';
 }
 
-// with MinGW - this function doesn't generate random strings properly
+// MAYFAIL with MinGW - this function doesn't generate random strings properly
 char generate_char() {
   const char charset[] = "0123456789"
                          "-_*.!@#$%^&()~`+={}<>?,[]"
