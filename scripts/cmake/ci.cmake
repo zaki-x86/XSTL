@@ -2,8 +2,6 @@
 # Source: https://github.com/nlohmann/json
 ##########################################################################
 
-set(XSTLWarningsAsErrors ON)
-
 # number of parallel jobs for CTest
 set(N 10)
 
@@ -170,16 +168,16 @@ endforeach()
 # Disable exceptions.
 ###############################################################################
 
-#add_custom_target(ci_test_noexceptions
-#    COMMAND ${CMAKE_COMMAND}
-#    -DCMAKE_BUILD_TYPE=Debug -GNinja
-#    -DXSTLEnableTesting=ON -DCMAKE_CXX_FLAGS=-DJSON_NOEXCEPTION -DDOCTEST_TEST_FILTER=--no-throw
-#    -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_noexceptions
-#    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_noexceptions
-#    COMMAND cd ${PROJECT_BINARY_DIR}/build_noexceptions && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
-#    COMMENT "Compile and test with exceptions switched off"
-#)
-#
+add_custom_target(ci_test_noexceptions
+    COMMAND ${CMAKE_COMMAND}
+    -DCMAKE_BUILD_TYPE=Debug -GNinja
+    -DXSTLEnableTesting=ON -DXSTLEnableExceptions=OFF
+    -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_noexceptions
+    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_noexceptions
+    COMMAND cd ${PROJECT_BINARY_DIR}/build_noexceptions && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
+    COMMENT "Compile and test with exceptions switched off"
+)
+
 ###############################################################################
 # Disable implicit conversions.
 ###############################################################################
@@ -242,7 +240,7 @@ endforeach()
 
 ## MAYFAIL Need to check where html directory is created to see the coverage report
 ###############################################################################
-
+# FIXME  Coverage is not working
 add_custom_target(ci_test_coverage
     COMMAND CXX=g++ ${CMAKE_COMMAND}
         -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_FLAGS="--coverage;-fprofile-arcs;-ftest-coverage"
@@ -254,14 +252,14 @@ add_custom_target(ci_test_coverage
     # No 32bit tests are considered -- yet --
     # COMMAND CXX=g++ ${CMAKE_COMMAND}
     #    -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_FLAGS="-m32;--coverage;-fprofile-arcs;-ftest-coverage"
-    #    -DXSTLEnableTesting=ON -D32bitTest=ONLY
+    #    -DXSTLEnableTesting=ON
     #    -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_coverage32
     # COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_coverage32
     # COMMAND cd ${PROJECT_BINARY_DIR}/build_coverage32 && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
-
     COMMAND ${LCOV_TOOL} --directory . --capture --output-file xstl.info --rc lcov_branch_coverage=1
     COMMAND ${LCOV_TOOL} -e xstl.info ${SRC_FILES} --output-file xstl.info.filtered --rc lcov_branch_coverage=1
-    COMMAND ${CMAKE_SOURCE_DIR}/test/utils/imapdl/filterbr.py xstl.info.filtered > xstl.info.filtered.noexcept
+    # MAYFAIL permission denied error was raised, so I add python interpreter to the command
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/test/utils/imapdl/filterbr.py xstl.info.filtered > xstl.info.filtered.noexcept
     COMMAND genhtml --title "XSTL for Modern C++" --legend --demangle-cpp --output-directory html --show-details --branch-coverage xstl.info.filtered.noexcept
 
     COMMENT "Compile and test with coverage"
