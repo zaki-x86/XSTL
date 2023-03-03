@@ -29,6 +29,8 @@
 #define XSTL_WIN
 #define XSTL_WIN32
 #define XSTL_WIN64
+#elif defined(__CYGWIN__) || defined(__CYGWIN32__) || defined(__CYGWIN64__) || defined(_WIN32) && defined(_WIN64)
+#define XSTL_WIN
 #endif
 
 #if defined(__linux__) || defined(__unix__)
@@ -52,14 +54,34 @@
 #define XSTL_DEBUG 1
 #endif
 
-
 #if defined(ENABLE_EXCEPTIONS)
 #define XSTL_EXCEPTIONS_ENABLED 1
 #else
 #define XSTL_EXCEPTIONS_DISABLED 1
 #endif
 
+#if defined(XSTL_WIN)
+#ifdef XSTL_MSVC
+#define XSTL_SYMBOL_EXPORT __declspec(dllexport)
+#define XSTL_SYMBOL_IMPORT __declspec(dllimport)
+#else // MSVC
+#define XSTL_SYMBOL_EXPORT __attribute__((dllexport))
+#define XSTL_SYMBOL_IMPORT __attribute__((dllimport))
+#endif // MSVC
+#else  // XSTL_WIN
+#define XSTL_SYMBOL_EXPORT __attribute__((visibility("default")))
+#define XSTL_SYMBOL_IMPORT
+#endif // XSTL_WIN
 
+#ifdef XSTL_CONFIG_IMPLEMENTATION_IN_DLL
+#ifdef XSTL_CONFIG_IMPLEMENT
+#define XSTL_INTERFACE XSTL_SYMBOL_EXPORT
+#else // XSTL_CONFIG_IMPLEMENT
+#define XSTL_INTERFACE DOCTEST_SYMBOL_IMPORT
+#endif // XSTL_CONFIG_IMPLEMENT
+#else  // XSTL_CONFIG_IMPLEMENTATION_IN_DLL
+#define XSTL_INTERFACE
+#endif // XSTL_CONFIG_IMPLEMENTATION_IN_DLL
 // **************************************
 /// Define internal and public components
 // **************************************
