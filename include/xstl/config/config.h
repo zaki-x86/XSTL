@@ -9,11 +9,11 @@
 // compiler:
 
 #if defined(__GNUC__)
-#define XSTL_GCC
+#define XSTL_GCC __GNUC__
 #elif defined(__clang__)
-#define XSTL_CLANG
+#define XSTL_CLANG __clang__
 #elif defined(_MSC_VER)
-#define XSTL_MSVC
+#define XSTL_MSVC _MSC_VER
 #endif
 
 
@@ -214,9 +214,14 @@
 // MSVC ignores [[maybe_unused]] on function parameters
 #if XSTL_CXX17
 #define XSTL_UNUSED [[maybe_unused]]
+#elif defined(XSTL_GCC) && (__GNUC__  >= 7)
+#define XSTL_UNUSED [[gnu::unused]]
+#elif defined(XSTL_CLANG)
+#define XSTL_UNUSED __attribute__((unused))
 #else
 #define XSTL_UNUSED
 #endif
+
 
 // To be used for MSVC, as XSTL_UNUSED won't work for MSVC
 #ifdef XSTL_MSVC
