@@ -8,7 +8,7 @@
 #include <random>
 #include <array>
 #include <vector>
-#include <typeinfo>
+#include <type_traits>
 #include <helpers/generators.h>
 #include <xstl/config/config.h>
 #include <xstl/debug/xstl_crt.h>
@@ -62,7 +62,7 @@ _BEGIN_XSTL_TEST
         static void init_xstl_array(xstl::array<_Ty, _Size>& _arr)
         {
             for (auto& _e : _arr)
-                set_random_test_value(_e);
+                _e = generate_random_value<_Ty>();
         }
         
         template<typename _Ty, size_t _Size>
@@ -70,10 +70,9 @@ _BEGIN_XSTL_TEST
         {
             for (size_t i = 0; i < _Size; i++)
             {
-                set_random_test_value(_arr[i]);
+                _arr[i] = generate_random_value<_Ty>();
             }
         }
-
     };
 
 // ************************************************
@@ -191,16 +190,14 @@ _BEGIN_XSTL_TEST
             return _arr.size() == _ref_size;
         }
 
-        bool _test_max_size() {
+        void _test_max_size() {
             auto _ref_size = sizeof(_ref) / sizeof(_Ty);
 
             _xstl_assert(_arr.max_size() == _ref_size, "max_size() failed");
-            return _arr.max_size() == _ref_size;
         }
 
-        bool _test_empty() {
+        void _test_empty() const {
             _xstl_assert(!_arr.empty(), "empty() failed");
-            return !_arr.empty();
         }
 
         void _test_access_operator() {
@@ -267,8 +264,8 @@ _BEGIN_XSTL_TEST
         void _test_fill() {
             // fill _new_arr with value 5
             _Ty _new_arr[_Size];
-            _Ty val;
-            set_random_test_value(val);
+            _Ty val = generate_random_value<_Ty>();
+            
             std::fill(_new_arr, _new_arr + _Size, val);
             // fill _arr with same value 
             _arr.fill(val);
@@ -279,14 +276,15 @@ _BEGIN_XSTL_TEST
             });
         }
 
-        void _test_swap() {
+        void _test_swap() const {
 
             // init arr1 and arr2 with random values
             xstl::array<_Ty, _Size> arr1;
             xstl::array<_Ty, _Size> arr2;
-            _Ty val1, val2;
-            set_random_test_value(val1);
-            set_random_test_value(val2);
+            
+            _Ty val1 = generate_random_value<_Ty>();
+            _Ty val2 = generate_random_value<_Ty>();
+
             std::fill(arr1.begin(), arr1.end(), val1);
             std::fill(arr2.begin(), arr2.end(), val2);
             arr1.swap(arr2);
@@ -298,38 +296,61 @@ _BEGIN_XSTL_TEST
             }            
         }
 
-        void _test_equality() {
-            xstl::array<_Ty, _Size> arr3;
-            xstl::array<_Ty, _Size> arr4;
-            xstl::array<_Ty, _Size> arr5;
-            xstl::array<_Ty, _Size> arr6;
-            _Ty val;
-            _Ty val2;
-            set_random_test_value(val);
-            set_random_test_value(val2);
+        template<typename Ty>
+        typename std::enable_if_t<std::is_same<Ty, char>::value, void> 
+        _test_equality() const {
+            xstl::array<Ty, _Size> arr3;
+            xstl::array<Ty, _Size> arr4;
+            xstl::array<Ty, _Size> arr5;
 
-            arr3.fill(val);
-            arr4.fill(val);
-            arr5.fill(val2);
-
-            for (auto &i : arr6)
-            {
-                set_random_test_value(i); 
-            }
+            arr3.fill('x');
+            arr4.fill('x');
+            arr5.fill('y');
 
             _xstl_assert(arr3 == arr4, "Arrays of equal elements should be equal");
             _xstl_assert(arr3 != arr5, "Arrays of unequal elements should be unequal");
-            _xstl_assert(arr5 != arr6, "Arrays of unequal elements should be unequal");
+            _xstl_assert(arr4 != arr5, "Arrays of unequal elements should be unequal");
         }
+
+        template<typename Ty>
+        typename std::enable_if_t<std::is_same<Ty, std::string>::value, void> 
+        _test_equality() const {
+            xstl::array<Ty, _Size> arr3;
+            xstl::array<Ty, _Size> arr4;
+            xstl::array<Ty, _Size> arr5;
+
+            arr3.fill("string1");
+            arr4.fill("string1");
+            arr5.fill("randasdsdss1s");
+
+            _xstl_assert(arr3 == arr4, "Arrays of equal elements should be equal");
+            _xstl_assert(arr3 != arr5, "Arrays of unequal elements should be unequal");
+            _xstl_assert(arr4 != arr5, "Arrays of unequal elements should be unequal");
+        }
+
+        template<typename Ty>
+        typename std::enable_if_t<std::is_arithmetic_v<Ty> && !std::is_same<Ty, char>::value, void> 
+        _test_equality() const {
+            xstl::array<Ty, _Size> arr3;
+            xstl::array<Ty, _Size> arr4;
+            xstl::array<Ty, _Size> arr5;
+
+            arr3.fill(55);
+            arr4.fill(55);
+            arr5.fill(120);
+
+            _xstl_assert(arr3 == arr4, "Arrays of equal elements should be equal");
+            _xstl_assert(arr3 != arr5, "Arrays of unequal elements should be unequal");
+            _xstl_assert(arr4 != arr5, "Arrays of unequal elements should be unequal");
+        }
+
 
         // constexpr if statement is not supported in __cplusplus < 201703L
         #if XSTL_CXX17
         void _test_print() {
             xstl::array<_Ty, 5> _dummy;
-            _Ty _val;
-            set_random_test_value(_val);
+            _Ty _val = generate_random_value<_Ty>();
             _dummy.fill(_val);
-            
 
             std::string _expected = "";
             if CONSTEXPR17(std::is_same<_Ty, std::string>::value)
@@ -373,17 +394,14 @@ _BEGIN_XSTL_TEST
         }
         #else
         template<typename Ty>
-        typename std::enable_if<!std::is_same<Ty, std::string>::value && !std::is_same<Ty, char>::value, void>::type 
+        typename std::enable_if_t<std::is_arithmetic_v<Ty> && !std::is_same<Ty, char>::value && !std::is_floating_point_v<Ty>, void> 
         _test_print() {
             xstl::array<Ty, 5> _dummy;
-            Ty _val;
-            set_random_test_value(_val);
+            Ty _val = get_random_number<Ty>();
             _dummy.fill(_val);
-            
 
             std::string _expected = "";
             _expected = "{" + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + "}";
-
         
             std::ostringstream output;
 
@@ -400,12 +418,19 @@ _BEGIN_XSTL_TEST
             // Check the contents of the output string stream
             _xstl_assert(output.str() == _expected, "print() failed");
         }
+
+        template<typename Ty>
+        typename std::enable_if_t<std::is_floating_point_v<Ty>, void> 
+        _test_print() {
+            // leave it
+        }
+
         template<typename Ty>
         typename std::enable_if<std::is_same<Ty, std::string>::value, void>::type 
         _test_print() {
             xstl::array<Ty, 5> _dummy;
-            Ty _val;
-            set_random_test_value(_val);
+            Ty _val = generate_random_value<_Ty>();
+
             _dummy.fill(_val);
             std::string _expected = "{" + _val + ", " + _val + ", " + _val + ", " + _val + ", " + _val + "}";
 
@@ -428,8 +453,7 @@ _BEGIN_XSTL_TEST
         typename std::enable_if<std::is_same<Ty, char>::value, void>::type 
         _test_print() {
             xstl::array<Ty, 5> _dummy;
-            Ty _val;
-            set_random_test_value(_val);
+            Ty _val = generate_random_value<_Ty>();
             _dummy.fill(_val);
             std::string _expected = "";
             _expected.push_back('{');
@@ -479,7 +503,9 @@ _BEGIN_XSTL_TEST
     template<typename _Ty>
     struct _Array_tester<_Ty, 0>
     {
-        _Array_tester() : _carr(static_cast<const xstl::array<_Ty, 0>>(_carr)) {}
+        _Array_tester() {
+            _carr = static_cast<const xstl::array<_Ty, 0>>(_carr);
+        }
 
         void _test_forward_iteration() {
             // Test: begin() and begin() const overload
@@ -548,8 +574,6 @@ _BEGIN_XSTL_TEST
             #endif
         }
 
-
-
         void _test_back(){
             // Test: back() and back() const overload
             #ifdef XSTL_EXCEPTIONS_ENABLED
@@ -561,8 +585,7 @@ _BEGIN_XSTL_TEST
         
         void _test_fill() {
             // Test: fill()
-            _Ty val;
-            set_random_test_value(val);
+            _Ty val = generate_random_value<_Ty>();
             _arr.fill(val);
             _carr.fill(val);
 
@@ -575,7 +598,7 @@ _BEGIN_XSTL_TEST
             _arr.swap(_carr);
         }
 
-        void _test_equality() {
+        void _test_equality() const {
             xstl::array<_Ty, 0> arr3;
             xstl::array<_Ty, 0> arr4;
 
@@ -718,7 +741,11 @@ _BEGIN_XSTL_TEST
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::perform_relational_ops_checks() {
-        this->_test_equality();
+        #if defined(__MINGW32__) || defined(__MINGW64__)
+        this->template _test_equality<_Ty>();
+        #else
+        this->_test_equality<_Ty>();
+        #endif
     }
 
     template<typename _Ty, std::size_t _Size>
@@ -726,7 +753,7 @@ _BEGIN_XSTL_TEST
         // Addition of `template` keyword is neccessary for code to compile on MinGW GCC. 
         // This tells the compiler that _test_print is a dependent name and that it is a template function.
         // You can get away without it when compiling with MSVC, Unix GCC, or Clang
-        if defined(__MINGW32__) || defined(__MINGW64__)
+        #if defined(__MINGW32__) || defined(__MINGW64__)
         this->template _test_print<_Ty>();
         #else
         this->_test_print<_Ty>();

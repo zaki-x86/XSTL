@@ -11,10 +11,10 @@ static const size_t TESTING_SIZE = 100;
 
 _BEGIN_XSTL_TEST
 
+
 TEST_SUITE("Container Library - Array Tests")
 {
-
-    TEST_CASE_TEMPLATE("Basic Array Operations Tests Against Primitive Types", Type, int, char, std::string)
+    TEST_CASE_TEMPLATE_DEFINE("Basic Array Operations Tests Against Primitive Types", Type, TEST_PRIMITIVE_TYPES)
     {
         xstl::array<Type, TESTING_SIZE> arr;
         Type c_arr[TESTING_SIZE];
@@ -90,6 +90,7 @@ TEST_SUITE("Container Library - Array Tests")
         }
     }
     
+    TEST_CASE_TEMPLATE_INVOKE(TEST_PRIMITIVE_TYPES, int, char, float, double, long, long long, unsigned int, unsigned long, unsigned long long, std::string);
 }
 
 _END_XSTL_TEST
