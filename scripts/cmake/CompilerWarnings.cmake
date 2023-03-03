@@ -368,18 +368,8 @@ function(set_ci_project_warnings project_name)
       set(MSVC_CXXFLAGS ${MSVC_CXXFLAGS} /WX)
    endif()
 
-   if(MSVC)
-      set(PROJECT_WARNINGS ${MSVC_CXXFLAGS})
-   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
-      set(PROJECT_WARNINGS ${CLANG_CXXFLAGS})
-   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      set(PROJECT_WARNINGS ${GCC_CXXFLAGS})
-   else()
-      message(AUTHOR_WARNING "No compiler warnings set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
-   endif()
-
-   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6)
-      # setl all GCC warnings avialable for gcc version > 6 
+   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS_EQUAL 6)
+      # setl all GCC warnings avialable for gcc version < 6 
       set(GCC_CXXFLAGS 
          -Wpedantic
          -Wpedantic-errors
@@ -391,7 +381,7 @@ function(set_ci_project_warnings project_name)
          -no-coverage-mismatch
       )
       
-   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4)
+   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSUIN_LESS_EQUAL 10)
       set(CLANG_CXXFLAGS
          -Wpedantic
          -Wpedantic-errors
@@ -406,6 +396,16 @@ function(set_ci_project_warnings project_name)
       message(AUTHOR_WARNING "No compiler warnings set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
    endif()
 
+   if(MSVC)
+      set(PROJECT_WARNINGS ${MSVC_CXXFLAGS})
+   elseif(CMAKE_CXX_COMPILER_ID MATCHES ".*Clang")
+      set(PROJECT_WARNINGS ${CLANG_CXXFLAGS})
+   elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      set(PROJECT_WARNINGS ${GCC_CXXFLAGS})
+   else()
+      message(AUTHOR_WARNING "No compiler warnings set for '${CMAKE_CXX_COMPILER_ID}' compiler.")
+   endif()
+   
    if(XSTLBuildHeadersOnly)
       target_compile_options(${project_name} INTERFACE ${PROJECT_WARNINGS})
    else()
