@@ -7,9 +7,10 @@
 #include <ctime>
 #include <functional>
 #include <iostream>
+#include <limits>
+#include <memory>
 #include <random>
 #include <string>
-#include <memory>
 
 #ifdef __unix__
 
@@ -21,165 +22,127 @@
 
 // --- Quick Generators ---
 
-template <typename T> T generate_numeric(const T from, const T to) {
+#if defined(__MINGW32__) || defined(__MINGW64__)
+namespace std {
+    template<typename T>
+    constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
+
+    template<typename T>
+    constexpr bool is_floating_point_v = is_floating_point<T>::value;
+
+    template<typename T, typename U>
+    constexpr bool is_same_v = is_same<T, U>::value;
+}
+#endif
+
+
+template <typename T>
+typename std::enable_if_t<std::is_floating_point<T>::value, T>
+get_random_number(const T from = std::numeric_limits<T>::min(),
+                  const T to = std::numeric_limits<T>::max()) {
+  std::random_device rand_dev;
+  std::mt19937 generator(rand_dev());
+  std::uniform_real_distribution<T> distr(from, to);
+  return distr(generator);
+}
+
+template <typename T>
+typename std::enable_if_t<std::is_arithmetic_v<T> && !std::is_floating_point_v<T> && !std::is_same_v<T, char> && !std::is_same_v<T, unsigned char>, T>
+get_random_number(const T from = std::numeric_limits<T>::min(),
+                  const T to = std::numeric_limits<T>::max()) {
   std::random_device rand_dev;
   std::mt19937 generator(rand_dev());
   std::uniform_int_distribution<T> distr(from, to);
   return distr(generator);
 }
 
-char generate_literal() {
-  const char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                         "abcdefghijklmnopqrstuvwxyz";
-
-  const size_t max_index = (sizeof(charset) - 1);
-  char out = charset[generate_numeric<int>(0, max_index)];
-
-  if (out != '\0' && isalnum(out))
-    return out;
-
-  return 'x';
+char get_random_char() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(-127, 127);
+    return static_cast<char>(dis(gen));
 }
 
-// MAYFAIL with MinGW - this function doesn't generate random strings properly
-char generate_char() {
-  const char charset[] = "0123456789"
-                         "-_*.!@#$%^&()~`+={}<>?,[]"
-                         "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                         "abcdefghijklmnopqrstuvwxyz";
-
-  const size_t max_index = (sizeof(charset) - 1);
-  char out = charset[generate_numeric<int>(0, max_index)];
-  if (out != '\0')
-    return out;
-
-  return 'x';
+unsigned char get_random_uchar() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 127);
+    return static_cast<unsigned char>(dis(gen));
 }
 
-std::string generate_string(const size_t len) {
-  std::string tmp_s;
-  tmp_s.reserve(len);
-
-  for (size_t i = 0; i < len; ++i){
-    tmp_s += generate_char();
-  }
-
-  if (tmp_s.size() != 0)
-    return tmp_s;
-
-  else if (tmp_s.size() == 0) {
-    tmp_s = "empty";
-    return tmp_s;
-  }
-
-  else
-    return "empty";
+std::string get_random_string() {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(1, 10);
+    std::string result;
+    for (int i = 0; i < dis(gen); ++i) {
+        result.push_back(get_random_char());
+    }
+    return result;
 }
 
-void set_random_test_value(int &var_, int range_from = INT32_MIN,
-                           int range_to = INT32_MAX);
-
-void set_random_test_value(long &var_, long range_from = INT32_MIN,
-                           long range_to = INT32_MAX);
-
-void set_random_test_value(int *&var_, int range_from = INT32_MIN,
-                           int range_to = INT32_MAX);
-
-void set_random_test_value(char &var_);
-
-void set_random_test_value(char *&var_,
-                           size_t size_ = generate_numeric<size_t>(0, 20));
-
-void set_random_test_value(std::string &var_,
-                           size_t size_ = generate_numeric<size_t>(0, 20));
-
-void set_random_test_values(std::vector<int> &vec_, int range_from = INT32_MIN,
-                            int range_to = INT32_MAX, size_t vec_size_ = 10);
-
-void set_random_test_values(std::vector<int *> &vec_,
-                            int range_from = INT32_MIN,
-                            int range_to = INT32_MAX, size_t vec_size_ = 10);
-
-void set_random_test_values(std::vector<char> &vec_,
-                            size_t vec_size_ = 10);
-
-void set_random_test_values(std::vector<char *> &vec_,
-                            size_t str_size = generate_numeric<size_t>(0, 20),
-                            size_t vec_size_ = 10);
-
-void set_random_test_values(std::vector<std::string> &vec_,
-                            size_t str_size = generate_numeric<size_t>(0, 20),
-                            size_t vec_size_ = 10);
-
-void set_random_test_value(int &var_, int range_from, int range_to) {
-  var_ = generate_numeric<int>(range_from, range_to);
+const char* get_random_cstring() {
+    static const char alphanum[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(1, 10);
+    static char str[11];
+    for (int i = 0; i < dis(gen); ++i) {
+        str[i] = alphanum[get_random_uchar() % (sizeof(alphanum) - 1)];
+    }
+    str[dis(gen)] = 0;
+    return str;
 }
 
-void set_random_test_value(long &var_, long range_from, long range_to) {
-  var_ = generate_numeric<long>(range_from, range_to);
+#if __cplusplus >= 201703L
+template <typename T>
+T generate_random_value() {
+    if constexpr (std::is_same_v<T, char>) {
+        return get_random_char();
+    } else if constexpr (std::is_same_v<T, std::string>) {
+        return get_random_string();
+    } else if constexpr (std::is_same_v<T, const char*>) {
+        return get_random_cstring();
+    } else if constexpr (std::is_same_v<T, std::nullptr_t>) {
+        return nullptr;
+    } else if constexpr (std::is_same_v<T, bool>) {
+        return get_random_number<short>(0, 1);
+    } else {
+        static_assert(std::is_arithmetic_v<T>, "Type must be arithmetic or char, std::string, or const char*");
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<T> dis(std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+        return dis(gen);
+    }
 }
-
-void set_random_test_value(int *&var_, int range_from, int range_to) {
-  var_ = new int(generate_numeric<int>(range_from, range_to));
-}
-
-void set_random_test_value(char &var_) {
-    var_ = generate_char();
-}
-
-void set_random_test_value(char *&var_, size_t size_) {
-#ifdef _MSC_VER
-  var_ = _strdup(generate_string(size_).c_str());
 #else
-  var_ = strdup(generate_string(size_).c_str());
-#endif
+template <typename T>
+typename std::enable_if_t<std::is_arithmetic<T>::value && !std::is_same<T, char>::value, T>
+generate_random_value() {
+    return get_random_number<T>();
+}
+    
+template <typename T>
+typename std::enable_if_t<std::is_same<T, char>::value, T>
+generate_random_value() {
+    return get_random_char();
 }
 
-void set_random_test_value(std::string &var_, size_t size_) {
-  var_ = generate_string(size_);
+template <typename T>
+typename std::enable_if_t<std::is_same<T, std::string>::value, T>
+generate_random_value() {
+    return get_random_string();
 }
 
-void set_random_test_values(std::vector<int> &vec_, int range_from,
-                            int range_to, size_t vec_size_) {
-  for (size_t i = 0; i < vec_size_; i++)
-    vec_.push_back(generate_numeric<int>(range_from, range_to));
+template <typename T>
+typename std::enable_if_t<std::is_pointer<T>::value && std::is_same<T, char>::value, T>
+generate_random_value() {
+    return get_random_cstring();
 }
 
-void set_random_test_values(std::vector<int *> &vec_, int range_from,
-                            int range_to, size_t vec_size_) {
-  for (size_t i = 0; i < vec_size_; i++)
-    vec_.push_back(new int(generate_numeric<int>(range_from, range_to)));
-}
+#endif // __cplusplus >= 201703L
 
-void set_random_test_values(std::vector<char> &vec_, size_t vec_size_) {
-  for (size_t i = 0; i < vec_size_; i++)
-    vec_.push_back(generate_char());
-}
-
-void set_random_test_values(std::vector<char *> &vec_, size_t str_size,
-                            size_t vec_size_) {
-#ifdef XSTL_MSVC
-  for (size_t i = 0; i < vec_size_; i++)
-    vec_.push_back(_strdup(generate_string(str_size).c_str()));
-#else
-  for (size_t i = 0; i < vec_size_; i++)
-    vec_.push_back(strdup(generate_string(str_size).c_str()));
-#endif
-}
-
-void set_random_test_values(std::vector<std::string> &vec_, size_t str_size,
-                            size_t vec_size_) {
-  for (size_t i = 0; i < vec_size_; i++)
-    vec_.push_back(generate_string(str_size));
-}
-
-template <typename T> T generate_random_test_value() {
-  std::shared_ptr<T> val(new T);
-  set_random_test_value(*val);
-
-  return *val;
-}
-
-template <typename T> T generate_random_test_values() {}
-
-#endif // !_GENERATORS_H_
+#endif // _GENERATORS_H_
