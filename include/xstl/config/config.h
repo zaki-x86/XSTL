@@ -178,13 +178,13 @@
 /// Attributes
 /// See: https://en.cppreference.com/w/cpp/feature_test#:~:text=of%20said%20features.-,Attributes,-__has_cpp_attribute(%20attribute
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute( deprecated ) >= 201309L
-#define XSTL_DEPRECATED [[deprecated]]
+#ifdef XSTL_CXX14
+#define XSTL_DEPRECATED(msg) [[deprecated(msg)]]
 #else
 #define XSTL_DEPRECATED
 #endif
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute( nodiscard ) >= 201603L
+#ifdef XSTL_CXX17
 #define XSTL_NODISCARD [[nodiscard]]
 #else
 #define XSTL_NODISCARD
@@ -199,7 +199,7 @@
 #endif
 
 // functions that exit the application, loop forever or throw exceptions.
-#if defined(__has_cpp_attribute) && __has_cpp_attribute( noreturn ) >= 200809L
+#ifdef XSTL_CXX11
     #if defined(_MSC_VER)
     #define XSTL_NORETURN __declspec(noreturn)
     #elif defined(__GNUC__) || defined(__clang__)
@@ -212,7 +212,7 @@
 #endif
 
 // MSVC ignores [[maybe_unused]] on function parameters
-#if defined(__has_cpp_attribute) && __has_cpp_attribute( maybe_unused ) >= 201603L
+#if XSTL_CXX17
 #define XSTL_UNUSED [[maybe_unused]]
 #else
 #define XSTL_UNUSED
@@ -226,13 +226,13 @@
 #endif
 
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute( assume ) >= 202207L
+#ifdef XSTL_CXX23
 #define XSTL_ASSUME(exp) [[maybe_unused(exp)]]
 #else
 #define XSTL_ASSUME(exp)
 #endif
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute( likely ) >= 201803L && __has_cpp_attribute( unlikely ) >= 201803L
+#ifdef XSTL_CXX20
 #define XSTL_LIKELY [[likely]]
 #define XSTL_UNLIKELY [[unlikely]]
 #else
