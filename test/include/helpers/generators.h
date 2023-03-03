@@ -50,7 +50,6 @@ char generate_char() {
 
   const size_t max_index = (sizeof(charset) - 1);
   char out = charset[generate_numeric<int>(0, max_index)];
-  std::cout << "out = " << out << "\n";
   if (out != '\0')
     return out;
 
@@ -63,7 +62,6 @@ std::string generate_string(const size_t len) {
 
   for (size_t i = 0; i < len; ++i){
     tmp_s += generate_char();
-    std::cout << "tmp_s = " << tmp_s << "\n";
   }
 
   if (tmp_s.size() != 0)
