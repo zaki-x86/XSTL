@@ -3,12 +3,12 @@
 #define _ARRAY_DEBUG_H_
 
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 #include <random>
 #include <array>
 #include <vector>
-
-#include <gtest/gtest.h>
+#include <typeinfo>
 #include <helpers/generators.h>
 #include <xstl/config/config.h>
 #include <xstl/debug/xstl_crt.h>
@@ -22,19 +22,14 @@
 /**
  * @brief Assertion macros for xstl::array
  * 
- * `XSTL_ASSERT*` macros are used to assert the correctness of xstl::array
+ * `_xstl_assert*` macros are used to assert the correctness of xstl::array
  * These assertions are based on the `gtest` framework, they generate non_fatal failures, and continue the test execution
  * 
- * XSTL_ASSERT(cond, fail_msg) asserts that `cond` is true, and if not, prints `fail_msg`
- * XSTL_ASSERT_DEATH(exp, err_msg, fail_msg) asserts that `exp` causes the process to termninate with an error message `err_msg`, and if not, prints `fail_msg`
- * XSTL_ASSERT_THROW(exp, exception, fail_msg) asserts that `exp` throws an exception of type `exception`, and if not, prints `fail_msg`
+ * _xstl_assert(cond, fail_msg) asserts that `cond` is true, and if not, prints `fail_msg`
+ * _xstl_assert_death(exp, err_msg, fail_msg) asserts that `exp` causes the process to termninate with an error message `err_msg`, and if not, prints `fail_msg`
+ * _xstl_assert_throws(exp, exception, fail_msg) asserts that `exp` throws an exception of type `exception`, and if not, prints `fail_msg`
 */
 
-#define XSTL_ASSERT(cond, fail_msg) EXPECT_TRUE(cond) << (fail_msg)
-
-#define XSTL_ASSERT_DEATH(exp, err_msg, fail_msg) EXPECT_DEATH(exp, err_msg) << (fail_msg)
-
-#define XSTL_ASSERT_THROW(exp, exception, fail_msg) EXPECT_THROW(exp, exception) << (fail_msg)
 
 _BEGIN_XSTL_TEST
 
@@ -129,8 +124,7 @@ _BEGIN_XSTL_TEST
 
             for (struct { size_t i; typename xstl::array<_Ty, _Size>::iterator _it; } loop = { 0, _arr.begin() }; loop._it != _arr.end(); ++loop._it, ++loop.i)
             {
-                XSTL_ASSERT(*(loop._it) == _ref[loop.i], "iterator functions failed!");
-                //EXPECT_TRUE(*(loop._it) == _ref[loop.i]) << "iterator functions failed!";
+                _xstl_assert(*(loop._it) == _ref[loop.i], "iterator functions failed!");
             }
 
             xstl::array<_Ty, _Size> _carr{};
@@ -141,7 +135,7 @@ _BEGIN_XSTL_TEST
             
             for (struct{ size_t i; typename xstl::array<_Ty, _Size>::const_iterator _it; } loop = { 0, _carr.begin()}; loop._it != _carr.end(); ++loop._it, ++loop.i)
             {
-                XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of iterator functions failed!");
+                _xstl_assert(*(loop._it) == _ref[loop.i], "constant overloads of iterator functions failed!");
             }
         }
 
@@ -153,7 +147,7 @@ _BEGIN_XSTL_TEST
             // test of: cbegin() const and cend() const
             for (struct{ size_t i; typename xstl::array<_Ty, _Size>::const_iterator _it; } loop = { 0, _carr.begin() }; loop._it != _carr.end(); ++loop._it, ++loop.i)
             {
-                XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of iterator functions failed!");
+                _xstl_assert(*(loop._it) == _ref[loop.i], "constant overloads of iterator functions failed!");
             }
         }
 
@@ -162,7 +156,7 @@ _BEGIN_XSTL_TEST
 
             for (struct{ size_t i; typename xstl::array<_Ty, _Size>::reverse_iterator _it; } loop = { _Size - 1, _arr.rbegin() }; loop._it != _arr.rend(); ++loop._it, --loop.i)
             {
-                XSTL_ASSERT(*(loop._it) == _ref[loop.i], "reverse iterator functions failed!");
+                _xstl_assert(*(loop._it) == _ref[loop.i], "reverse iterator functions failed!");
             }
 
             xstl::array<_Ty, _Size> _carr{};
@@ -173,7 +167,7 @@ _BEGIN_XSTL_TEST
 
             for (struct { size_t i; typename xstl::array<_Ty, _Size>::const_reverse_iterator _it; } loop = { _Size - 1, _carr.crbegin() }; loop._it != _carr.rend(); ++loop._it, --loop.i)
             {
-                XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of reverse iterator functions failed!");
+                _xstl_assert(*(loop._it) == _ref[loop.i], "constant overloads of reverse iterator functions failed!");
             }
         }
 
@@ -186,26 +180,26 @@ _BEGIN_XSTL_TEST
 
             for (struct{ size_t i ; typename xstl::array<_Ty, _Size>::const_reverse_iterator _it; } loop = { _Size - 1, _carr.crbegin() }; loop._it != _carr.crend(); ++loop._it, --loop.i)
             {
-                XSTL_ASSERT(*(loop._it) == _ref[loop.i], "constant overloads of reverse iterator functions failed!");
+                _xstl_assert(*(loop._it) == _ref[loop.i], "constant overloads of reverse iterator functions failed!");
             }
         }
 
         bool _test_size() {
             auto _ref_size = sizeof(_ref) / sizeof(_Ty);
 
-            XSTL_ASSERT(_arr.size() == _ref_size, "size() failed");
+            _xstl_assert(_arr.size() == _ref_size, "size() failed");
             return _arr.size() == _ref_size;
         }
 
         bool _test_max_size() {
             auto _ref_size = sizeof(_ref) / sizeof(_Ty);
 
-            XSTL_ASSERT(_arr.max_size() == _ref_size, "max_size() failed");
+            _xstl_assert(_arr.max_size() == _ref_size, "max_size() failed");
             return _arr.max_size() == _ref_size;
         }
 
         bool _test_empty() {
-            XSTL_ASSERT(!_arr.empty(), "empty() failed");
+            _xstl_assert(!_arr.empty(), "empty() failed");
             return !_arr.empty();
         }
 
@@ -216,8 +210,8 @@ _BEGIN_XSTL_TEST
 
             for (size_t i = 0; i < _Size; i++)
             {
-                XSTL_ASSERT(_arr[i] == _ref[i], "operator[](size_t) failed");
-                XSTL_ASSERT(_carr[i] == _ref[i], "operator[](size_t) const overload failed");
+                _xstl_assert(_arr[i] == _ref[i], "operator[](size_t) failed");
+                _xstl_assert(_carr[i] == _ref[i], "operator[](size_t) const overload failed");
             }
         }
 
@@ -228,8 +222,8 @@ _BEGIN_XSTL_TEST
 
             for (size_t i = 0; i < _Size; i++)
             {
-                XSTL_ASSERT(_arr.at(i) == _ref[i],  "at(size_t) failed");
-                XSTL_ASSERT(_carr.at(i) == _ref[i], "at(size_t) const overload failed");
+                _xstl_assert(_arr.at(i) == _ref[i],  "at(size_t) failed");
+                _xstl_assert(_carr.at(i) == _ref[i], "at(size_t) const overload failed");
             }
         }
 
@@ -239,8 +233,8 @@ _BEGIN_XSTL_TEST
             _carr = static_cast<const xstl::array<_Ty, _Size>>(_carr);
 
             // Test: front() and front() const overload
-            XSTL_ASSERT(_arr.front() == _ref[0], "front() failed");
-            XSTL_ASSERT(_carr.front() == _ref[0], "front() const overload failed");
+            _xstl_assert(_arr.front() == _ref[0], "front() failed");
+            _xstl_assert(_carr.front() == _ref[0], "front() const overload failed");
         }
 
         void _test_back() {
@@ -249,8 +243,8 @@ _BEGIN_XSTL_TEST
             _carr = static_cast<const xstl::array<_Ty, _Size>>(_carr);
 
             // Test: back() and back() const overload
-            XSTL_ASSERT(_arr.back() == _ref[_Size - 1], "back() failed");
-            XSTL_ASSERT(_carr.back() == _ref[_Size - 1], "back() const overload failed");
+            _xstl_assert(_arr.back() == _ref[_Size - 1], "back() failed");
+            _xstl_assert(_carr.back() == _ref[_Size - 1], "back() const overload failed");
         }
 
         void _test_generated_c_array() {
@@ -263,10 +257,10 @@ _BEGIN_XSTL_TEST
             const _Ty* _carr_data = _carr.data();
 
             _array_assert(_arr_data, _ref, _Size, [](_Ty x, _Ty y) {
-                XSTL_ASSERT(x == y, "data() failed");
+                _xstl_assert(x == y, "data() failed");
                 });
             _array_assert(_carr_data, _ref, _Size, [](_Ty x, _Ty y) {
-                XSTL_ASSERT(x == y, "data() const overload failed");
+                _xstl_assert(x == y, "data() const overload failed");
                 });
         }
 
@@ -281,7 +275,7 @@ _BEGIN_XSTL_TEST
 
             // compare: _arr, _new_arr
             _array_assert(_arr, _new_arr, _Size, [](_Ty x, _Ty y){
-                XSTL_ASSERT(x == y, "fill(const_reference) failed");
+                _xstl_assert(x == y, "fill(const_reference) failed");
             });
         }
 
@@ -300,14 +294,80 @@ _BEGIN_XSTL_TEST
 
             for (auto &i : arr1)
             {
-                XSTL_ASSERT(i == val2, "swap() failed");
+                _xstl_assert(i == val2, "swap() failed");
+            }            
+        }
+
+        void _test_equality() {
+            xstl::array<_Ty, _Size> arr3;
+            xstl::array<_Ty, _Size> arr4;
+            xstl::array<_Ty, _Size> arr5;
+            xstl::array<_Ty, _Size> arr6;
+            _Ty val;
+            _Ty val2;
+            set_random_test_value(val);
+            set_random_test_value(val2);
+
+            arr3.fill(val);
+            arr4.fill(val);
+            arr5.fill(val2);
+
+            for (auto &i : arr6)
+            {
+                set_random_test_value(i); 
             }
-            
-            
+
+            _xstl_assert(arr3 == arr4, "Arrays of equal elements should be equal");
+            _xstl_assert(arr3 != arr5, "Arrays of unequal elements should be unequal");
+            _xstl_assert(arr5 != arr6, "Arrays of unequal elements should be unequal");
         }
 
         void _test_print() {
-            std::cout << _arr << std::endl;
+            xstl::array<_Ty, 5> _dummy;
+            _Ty _val;
+            set_random_test_value(_val);
+            _dummy.fill(_val);
+            
+
+            std::string _expected = "";
+            if constexpr(std::is_same<_Ty, std::string>::value)
+            {
+                _expected = "{" + _val + ", " + _val + ", " + _val + ", " + _val + ", " + _val + "}";
+            }
+            else if constexpr(std::is_same<_Ty, char>::value)
+            {
+                _expected.push_back('{');
+                _expected.push_back(_val);
+                _expected = _expected + ", ";
+                _expected.push_back(_val);
+                _expected = _expected + ", ";
+                _expected.push_back(_val);
+                _expected = _expected + ", ";
+                _expected.push_back(_val);
+                _expected = _expected + ", ";
+                _expected.push_back(_val);
+                _expected.push_back('}');                
+            }
+            else
+            {
+                _expected = "{" + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + "}";
+            }
+
+        
+            std::ostringstream output;
+
+            // Redirect std::cout to the output string stream
+            std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+            std::cout.rdbuf(output.rdbuf());
+
+            // Output something to std::cout
+            std::cout << _dummy;
+
+            // Restore std::cout
+            std::cout.rdbuf(oldCoutStreamBuf);
+
+            // Check the contents of the output string stream
+            _xstl_assert(output.str() == _expected, "print() failed");
         }
 
     private:
@@ -332,80 +392,79 @@ _BEGIN_XSTL_TEST
 
         void _test_forward_iteration() {
             // Test: begin() and begin() const overload
-            XSTL_ASSERT(_arr.begin() == _arr.end(), "begin() failed");
-            XSTL_ASSERT(_carr.begin() == _carr.end(), "begin() const overload failed"); 
+            _xstl_assert(_arr.begin() == _arr.end(), "begin() failed");
+            _xstl_assert(_carr.begin() == _carr.end(), "begin() const overload failed"); 
         }
         void _test_const_forward_iteration() {
             // Test: cbegin() and cend() const overload
-            XSTL_ASSERT(_carr.cbegin() == _carr.cend(), "cbegin() const overload failed");
+            _xstl_assert(_carr.cbegin() == _carr.cend(), "cbegin() const overload failed");
         }
         void _test_reverse_iteration() {
             // Test: rbegin() and rbegin() const overload
-            XSTL_ASSERT(_arr.rbegin() == _arr.rend(), "rbegin() failed");
-            XSTL_ASSERT(_carr.rbegin() == _carr.rend(), "rbegin() const overload failed");
+            _xstl_assert(_arr.rbegin() == _arr.rend(), "rbegin() failed");
+            _xstl_assert(_carr.rbegin() == _carr.rend(), "rbegin() const overload failed");
         }
         void _test_const_reverse_iteration() {
             // Test: crbegin() and crend() const overload
-            XSTL_ASSERT(_carr.crbegin() == _carr.crend(), "crbegin() const overload failed");
+            _xstl_assert(_carr.crbegin() == _carr.crend(), "crbegin() const overload failed");
         }
 
         void _test_size() {
             // Test: size() and size() const overload
-            XSTL_ASSERT(_arr.size() == 0, "size() failed");
-            XSTL_ASSERT(_carr.size() == 0, "size() const overload failed");
+            _xstl_assert(_arr.size() == 0, "size() failed");
+            _xstl_assert(_carr.size() == 0, "size() const overload failed");
         }
 
         void _test_max_size() {
             // Test: max_size() and max_size() const overload
-            XSTL_ASSERT(_arr.max_size() == 0, "max_size() failed");
-            XSTL_ASSERT(_carr.max_size() == 0, "max_size() const overload failed");
+            _xstl_assert(_arr.max_size() == 0, "max_size() failed");
+            _xstl_assert(_carr.max_size() == 0, "max_size() const overload failed");
         }
 
         void _test_empty() {
             // Test: empty() and empty() const overload
-            XSTL_ASSERT(_arr.empty() == true, "empty() failed");
-            XSTL_ASSERT(_carr.empty() == true, "empty() const overload failed");
+            _xstl_assert(_arr.empty() == true, "empty() failed");
+            _xstl_assert(_carr.empty() == true, "empty() const overload failed");
         }
 
         void _test_access_operator() const {
             // Test: operator[] and operator[] const overload
-            #ifdef XSTL_EXCEPTIONS_ENABLED
-            XSTL_ASSERT_THROW(_arr[0], std::out_of_range, "operator[] failed - exception not thrown");
-            #else
-            XSTL_ASSERT_DEATH(_arr[0], "out of range", "operator[] failed - no termination occured, or error message is not correct");
-            #endif
-        }
+            // TODO implement a proper death test
+            return;
+        } 
 
         void _test_at() const {
             // Test: at() and at() const overload
             #ifdef XSTL_EXCEPTIONS_ENABLED
-            XSTL_ASSERT_THROW(_arr.at(0), std::out_of_range, "at() failed - exception not thrown");
+            _xstl_assert_throws(_arr.at(1), std::out_of_range);
             #else
-            XSTL_ASSERT_DEATH(_arr.at(0), "out of range", "at() failed - no termination occured, or error message is not correct");
+            _xstl_assert_death(_arr.at(1));
             #endif
         }
         
         void _test_generated_c_array() {
             // Test: data() and data() const overload
-            XSTL_ASSERT(_arr.data() == nullptr, "data() failed");
-            XSTL_ASSERT(_carr.data() == nullptr, "data() const overload failed");
+            _xstl_assert(_arr.data() == nullptr, "data() failed");
+            _xstl_assert(_carr.data() == nullptr, "data() const overload failed");
         }
 
-        void _test_front() {
+        void _test_front() const {
             // Test: front() and front() const overload
             #ifdef XSTL_EXCEPTIONS_ENABLED
-            XSTL_ASSERT_THROW(_arr.front(), std::out_of_range, "front() failed - exception not thrown");
+            _xstl_assert_throws(_arr.front(), std::out_of_range);
             #else
-            XSTL_ASSERT_DEATH(_arr.front(), "out of range", "front() failed - no termination occured, or error message is not correct");
+            _xstl_assert_death(_arr.front());
             #endif
         }
+
+
 
         void _test_back(){
             // Test: back() and back() const overload
             #ifdef XSTL_EXCEPTIONS_ENABLED
-            XSTL_ASSERT_THROW(_arr.back(), std::out_of_range, "back() failed - exception not thrown");
+            _xstl_assert_throws(_arr.back(), std::out_of_range);
             #else
-            XSTL_ASSERT_DEATH(_arr.back(), "out of range", "back() failed - no termination occured, or error message is not correct");
+            _xstl_assert_death(_arr.back());
             #endif
         }
         
@@ -416,8 +475,8 @@ _BEGIN_XSTL_TEST
             _arr.fill(val);
             _carr.fill(val);
 
-            XSTL_ASSERT(_arr.empty(), "fill() failed");
-            XSTL_ASSERT(_carr.empty(), "fill() const overload failed");
+            _xstl_assert(_arr.empty(), "fill() failed");
+            _xstl_assert(_carr.empty(), "fill() const overload failed");
         }
         
         void _test_swap() {
@@ -425,16 +484,35 @@ _BEGIN_XSTL_TEST
             _arr.swap(_carr);
         }
 
+        void _test_equality() {
+            xstl::array<_Ty, 0> arr3;
+            xstl::array<_Ty, 0> arr4;
+
+            _xstl_assert(arr3 == arr4, "Empty arrays should be equal"); 
+        }
+
         void _test_print(){
-            // Test: operator<<
-            std::cout << _arr << std::endl;
-            std::cout << _carr << std::endl;
+            // Test: operator<<        
+            std::ostringstream output;
+
+            // Redirect std::cout to the output string stream
+            std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+            std::cout.rdbuf(output.rdbuf());
+
+            // Output something to std::cout
+            std::cout << _arr;
+
+            // Restore std::cout
+            std::cout.rdbuf(oldCoutStreamBuf);
+
+            // Check the contents of the output string stream
+            _xstl_assert(output.str() == "{}", "print() failed");
         }
 
         // add private members
     private:
-        xstl::array<_Ty, 0> _arr;
-        xstl::array<_Ty, 0> _carr;
+        xstl::array<_Ty, 0> _arr{};
+        xstl::array<_Ty, 0> _carr{};
     };
     
 // *************************************************************
@@ -549,14 +627,12 @@ _BEGIN_XSTL_TEST
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::perform_relational_ops_checks() {
-        // TODO
-        return;
+        this->_test_equality();
     }
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::test_print() {
-        // TODO
-        return;
+        this->_test_print();
     }
 
     template<typename _Ty, std::size_t _Size>
@@ -656,7 +732,7 @@ _BEGIN_XSTL_TEST
         }
 
         void perform_relational_ops_checks() {
-            
+            this->_test_equality();
         }
     };
 

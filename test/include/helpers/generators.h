@@ -41,6 +41,7 @@ char generate_literal() {
   return 'x';
 }
 
+// with MinGW - this function doesn't generate random strings properly
 char generate_char() {
   const char charset[] = "0123456789"
                          "-_*.!@#$%^&()~`+={}<>?,[]"
@@ -49,8 +50,8 @@ char generate_char() {
 
   const size_t max_index = (sizeof(charset) - 1);
   char out = charset[generate_numeric<int>(0, max_index)];
-
-  if (out != '\0' && isalnum(out))
+  std::cout << "out = " << out << "\n";
+  if (out != '\0')
     return out;
 
   return 'x';
@@ -60,8 +61,10 @@ std::string generate_string(const size_t len) {
   std::string tmp_s;
   tmp_s.reserve(len);
 
-  for (size_t i = 0; i < len; ++i)
+  for (size_t i = 0; i < len; ++i){
     tmp_s += generate_char();
+    std::cout << "tmp_s = " << tmp_s << "\n";
+  }
 
   if (tmp_s.size() != 0)
     return tmp_s;
