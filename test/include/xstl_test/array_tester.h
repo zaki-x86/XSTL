@@ -725,11 +725,11 @@ _BEGIN_XSTL_TEST
     void ArrayTester<_Ty, _Size>::test_print() {
         // Addition of `template` keyword is neccessary for code to compile on MinGW GCC. 
         // This tells the compiler that _test_print is a dependent name and that it is a template function.
-        // You can get away without when compiling with MSVC
-        #ifdef XSTL_MSVC
-        this->_test_print<_Ty>();
-        #else
+        // You can get away without it when compiling with MSVC, Unix GCC, or Clang
+        if defined(__MINGW32__) || defined(__MINGW64__)
         this->template _test_print<_Ty>();
+        #else
+        this->_test_print<_Ty>();
         #endif
     }
 
