@@ -322,6 +322,8 @@ _BEGIN_XSTL_TEST
             _xstl_assert(arr5 != arr6, "Arrays of unequal elements should be unequal");
         }
 
+        // constexpr if statement is not supported in __cplusplus < 201703L
+        #if XSTL_CXX17
         void _test_print() {
             xstl::array<_Ty, 5> _dummy;
             _Ty _val;
@@ -330,11 +332,11 @@ _BEGIN_XSTL_TEST
             
 
             std::string _expected = "";
-            if constexpr(std::is_same<_Ty, std::string>::value)
+            if CONSTEXPR17(std::is_same<_Ty, std::string>::value)
             {
                 _expected = "{" + _val + ", " + _val + ", " + _val + ", " + _val + ", " + _val + "}";
             }
-            else if constexpr(std::is_same<_Ty, char>::value)
+            else if CONSTEXPR17(std::is_same<_Ty, char>::value)
             {
                 _expected.push_back('{');
                 _expected.push_back(_val);
@@ -369,6 +371,95 @@ _BEGIN_XSTL_TEST
             // Check the contents of the output string stream
             _xstl_assert(output.str() == _expected, "print() failed");
         }
+        #else
+        template<typename Ty>
+        typename std::enable_if<!std::is_same<Ty, std::string>::value && !std::is_same<Ty, char>::value, void>::type 
+        _test_print() {
+            xstl::array<Ty, 5> _dummy;
+            Ty _val;
+            set_random_test_value(_val);
+            _dummy.fill(_val);
+            
+
+            std::string _expected = "";
+            _expected = "{" + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + "}";
+
+        
+            std::ostringstream output;
+
+            // Redirect std::cout to the output string stream
+            std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+            std::cout.rdbuf(output.rdbuf());
+
+            // Output something to std::cout
+            std::cout << _dummy;
+
+            // Restore std::cout
+            std::cout.rdbuf(oldCoutStreamBuf);
+
+            // Check the contents of the output string stream
+            _xstl_assert(output.str() == _expected, "print() failed");
+        }
+        template<typename Ty>
+        typename std::enable_if<std::is_same<Ty, std::string>::value, void>::type 
+        _test_print() {
+            xstl::array<Ty, 5> _dummy;
+            Ty _val;
+            set_random_test_value(_val);
+            _dummy.fill(_val);
+            std::string _expected = "{" + _val + ", " + _val + ", " + _val + ", " + _val + ", " + _val + "}";
+
+            std::ostringstream _output;
+            // Redirect std::cout to the output string stream
+            std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+            std::cout.rdbuf(_output.rdbuf());
+
+            // Output something to std::cout
+            std::cout << _dummy;
+
+            // Restore std::cout
+            std::cout.rdbuf(oldCoutStreamBuf);
+
+            // Check the contents of the output string stream
+            _xstl_assert(_output.str() == _expected, "print() failed");
+        }
+
+        template<typename Ty>
+        typename std::enable_if<std::is_same<Ty, char>::value, void>::type 
+        _test_print() {
+            xstl::array<Ty, 5> _dummy;
+            Ty _val;
+            set_random_test_value(_val);
+            _dummy.fill(_val);
+            std::string _expected = "";
+            _expected.push_back('{');
+            _expected.push_back(_val);
+            _expected = _expected + ", ";
+            _expected.push_back(_val);
+            _expected = _expected + ", ";
+            _expected.push_back(_val);
+            _expected = _expected + ", ";
+            _expected.push_back(_val);
+            _expected = _expected + ", ";
+            _expected.push_back(_val);
+            _expected.push_back('}'); 
+
+            std::ostringstream _output;
+            // Redirect std::cout to the output string stream
+            std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+            std::cout.rdbuf(_output.rdbuf());
+
+            // Output something to std::cout
+            std::cout << _dummy;
+
+            // Restore std::cout
+            std::cout.rdbuf(oldCoutStreamBuf);
+
+            // Check the contents of the output string stream
+            _xstl_assert(_output.str() == _expected, "print() failed");
+        }
+        #endif
+        
 
     private:
         xstl::array<_Ty, _Size> _arr;
@@ -632,7 +723,14 @@ _BEGIN_XSTL_TEST
 
     template<typename _Ty, std::size_t _Size>
     void ArrayTester<_Ty, _Size>::test_print() {
-        this->_test_print();
+        // Addition of `template` keyword is neccessary for code to compile on MinGW GCC. 
+        // This tells the compiler that _test_print is a dependent name and that it is a template function.
+        // You can get away without when compiling with MSVC
+        #ifdef XSTL_MSVC
+        this->_test_print<_Ty>();
+        #else
+        this->template _test_print<_Ty>();
+        #endif
     }
 
     template<typename _Ty, std::size_t _Size>
