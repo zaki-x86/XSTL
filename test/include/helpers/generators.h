@@ -20,20 +20,6 @@
 
 #include "xstl/config/config.h"
 
-// --- Quick Generators ---
-
-#if defined(__MINGW32__) || defined(__MINGW64__)
-namespace std {
-    template<typename T>
-    constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
-
-    template<typename T>
-    constexpr bool is_floating_point_v = is_floating_point<T>::value;
-
-    template<typename T, typename U>
-    constexpr bool is_same_v = is_same<T, U>::value;
-}
-#endif
 
 // --- Random Generators ---
 

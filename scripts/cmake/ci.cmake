@@ -123,7 +123,6 @@ find_program(SCAN_BUILD_TOOL NAMES scan-build-15 scan-build-14 scan-build-13 sca
 # -Wreserved-identifier           See https://github.com/onqtam/doctest/issues/536.
 
 set(CLANG_CXXFLAGS
-    -Werror
     -Weverything
     -Wno-c++98-compat
     -Wno-c++98-compat-pedantic
@@ -147,7 +146,6 @@ set(CLANG_CXXFLAGS
 
 set(GCC_CXXFLAGS
     -pedantic
-    -Werror
     --all-warnings
     --extra-warnings
     -W

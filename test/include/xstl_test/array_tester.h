@@ -110,11 +110,12 @@ _BEGIN_XSTL_TEST
     protected:
         _Array_tester() = default;
         _Array_tester(const xstl::array<_Ty, _Size>& arr, _Ty* ref)
+        : _arr(arr), _ref()
         {
             for (std::size_t i = 0; i < _Size; ++i)
             {
                 *(_ref + i) = *(ref + i);
-                _arr[i] = arr[i];
+                //_arr[i] = arr[i];
             }
         }
        
