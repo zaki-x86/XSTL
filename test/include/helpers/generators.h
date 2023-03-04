@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <limits>
+#include <numeric>
 #include <memory>
 #include <random>
 #include <string>
@@ -23,9 +24,22 @@
 
 // --- Random Generators ---
 
+template<typename _Int>
+class _IsIntegerNumber {
+public:
+    static constexpr bool value = std::is_same<_Int, int>::value ||
+                        std::is_same<_Int, unsigned int>::value ||
+                        std::is_same<_Int, long>::value ||
+                        std::is_same<_Int, unsigned long>::value ||
+                        std::is_same<_Int, long long>::value ||
+                        std::is_same<_Int, unsigned long long>::value;
+};
+
+
+
 // double, float, long double
 template <typename T>
-typename std::enable_if_t<std::is_floating_point<T>::value, T>
+typename std::enable_if<std::is_floating_point<T>::value, T>::type
 get_random_number(const T from = std::numeric_limits<T>::min(),
                   const T to = std::numeric_limits<T>::max()) {
   std::random_device rand_dev;
@@ -36,7 +50,7 @@ get_random_number(const T from = std::numeric_limits<T>::min(),
 
 // int, long, short, unsigned int, unsigned long, unsigned short
 template <typename T>
-typename std::enable_if_t<std::is_arithmetic<T>::value && !std::is_floating_point<T>::value && !std::is_same<T, char>::value && !std::is_same<T, unsigned char>::value, T>
+typename std::enable_if<_IsIntegerNumber<T>::value, T>::type
 get_random_number(const T from = std::numeric_limits<T>::min(),
                   const T to = std::numeric_limits<T>::max()) {
   std::random_device rand_dev;
@@ -113,25 +127,25 @@ T generate_random_value() {
 }
 #else
 template <typename T>
-typename std::enable_if_t<std::is_arithmetic<T>::value && !std::is_same<T, char>::value, T>
+typename std::enable_if<std::is_arithmetic<T>::value && !std::is_same<T, char>::value, T>::type
 generate_random_value() {
     return get_random_number<T>();
 }
     
 template <typename T>
-typename std::enable_if_t<std::is_same<T, char>::value, T>
+typename std::enable_if<std::is_same<T, char>::value, T>::type
 generate_random_value() {
     return get_random_char();
 }
 
 template <typename T>
-typename std::enable_if_t<std::is_same<T, std::string>::value, T>
+typename std::enable_if<std::is_same<T, std::string>::value, T>::type
 generate_random_value() {
     return get_random_string();
 }
 
 template <typename T>
-typename std::enable_if_t<std::is_pointer<T>::value && std::is_same<T, char>::value, T>
+typename std::enable_if<std::is_pointer<T>::value && std::is_same<T, char>::value, T>::type
 generate_random_value() {
     return get_random_cstring();
 }

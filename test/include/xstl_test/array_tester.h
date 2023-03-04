@@ -9,6 +9,7 @@
 #include <array>
 #include <vector>
 #include <type_traits>
+#include <numeric>
 #include <helpers/generators.h>
 #include <xstl/config/config.h>
 #include <xstl/debug/xstl_crt.h>
@@ -18,18 +19,6 @@
 // ************************************************
 // * Assertion Macros
 // ************************************************
-
-/**
- * @brief Assertion macros for xstl::array
- * 
- * `_xstl_assert*` macros are used to assert the correctness of xstl::array
- * These assertions are based on the `gtest` framework, they generate non_fatal failures, and continue the test execution
- * 
- * _xstl_assert(cond, fail_msg) asserts that `cond` is true, and if not, prints `fail_msg`
- * _xstl_assert_death(exp, err_msg, fail_msg) asserts that `exp` causes the process to termninate with an error message `err_msg`, and if not, prints `fail_msg`
- * _xstl_assert_throws(exp, exception, fail_msg) asserts that `exp` throws an exception of type `exception`, and if not, prints `fail_msg`
-*/
-
 
 _BEGIN_XSTL_TEST
 
@@ -298,7 +287,7 @@ _BEGIN_XSTL_TEST
         }
 
         template<typename Ty>
-        typename std::enable_if_t<std::is_same<Ty, char>::value, void> 
+        typename std::enable_if<std::is_same<Ty, char>::value, void>::type
         _test_equality() const {
             xstl::array<Ty, _Size> arr3;
             xstl::array<Ty, _Size> arr4;
@@ -314,7 +303,7 @@ _BEGIN_XSTL_TEST
         }
 
         template<typename Ty>
-        typename std::enable_if_t<std::is_same<Ty, std::string>::value, void> 
+        typename std::enable_if<std::is_same<Ty, std::string>::value, void>::type
         _test_equality() const {
             xstl::array<Ty, _Size> arr3;
             xstl::array<Ty, _Size> arr4;
@@ -330,7 +319,23 @@ _BEGIN_XSTL_TEST
         }
 
         template<typename Ty>
-        typename std::enable_if_t<std::is_arithmetic<Ty>::value && !std::is_same<Ty, char>::value, void> 
+        typename std::enable_if<_IsIntegerNumber<Ty>::value, void>::type
+        _test_equality() const {
+            xstl::array<Ty, _Size> arr3;
+            xstl::array<Ty, _Size> arr4;
+            xstl::array<Ty, _Size> arr5;
+
+            arr3.fill(55);
+            arr4.fill(55);
+            arr5.fill(120);
+
+            _xstl_assert(arr3 == arr4, "Arrays of equal elements should be equal");
+            _xstl_assert(arr3 != arr5, "Arrays of unequal elements should be unequal");
+            _xstl_assert(arr4 != arr5, "Arrays of unequal elements should be unequal");
+        }
+
+        template<typename Ty>
+        typename std::enable_if<std::is_floating_point<Ty>::value, void>::type
         _test_equality() const {
             xstl::array<Ty, _Size> arr3;
             xstl::array<Ty, _Size> arr4;
@@ -354,7 +359,7 @@ _BEGIN_XSTL_TEST
             _dummy.fill(_val);
 
             std::string _expected = "";
-            if CONSTEXPR17(std::is_same<_Ty, std::string>::value)
+            if CONSTEXPR17(std::is_same<_Ty, std::string>::value || std::is_same<_Ty, const char*>::value)
             {
                 _expected = "{" + _val + ", " + _val + ", " + _val + ", " + _val + ", " + _val + "}";
             }
@@ -372,9 +377,13 @@ _BEGIN_XSTL_TEST
                 _expected.push_back(_val);
                 _expected.push_back('}');                
             }
-            else
+            else if CONSTEXPR17(_IsIntegerNumber<T>::value)
             {
                 _expected = "{" + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + "}";
+            }
+
+            else {
+                return;
             }
 
         
@@ -395,7 +404,7 @@ _BEGIN_XSTL_TEST
         }
         #else
         template<typename Ty>
-        typename std::enable_if_t<std::is_arithmetic<Ty>::value && !std::is_same<Ty, char>::value && !std::is_floating_point<Ty>::value, void> 
+        typename std::enable_if<_IsIntegerNumber<Ty>::value, void>::type
         _test_print() {
             xstl::array<Ty, 5> _dummy;
             Ty _val = get_random_number<Ty>();
@@ -421,9 +430,10 @@ _BEGIN_XSTL_TEST
         }
 
         template<typename Ty>
-        typename std::enable_if_t<std::is_floating_point<Ty>::value, void> 
+        typename std::enable_if<std::is_floating_point<Ty>::value, void>::type
         _test_print() {
             // leave it
+            return;
         }
 
         template<typename Ty>
