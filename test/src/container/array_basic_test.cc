@@ -11,15 +11,6 @@ static const size_t TESTING_SIZE = 100;
 
 _BEGIN_XSTL_TEST
 
-#if __cplusplus >= 201103L
-MESSAGE("C++11 or higher detected");
-#elif __cplusplus >= 201403L
-MESSAGE("C++14 or higher detected");
-#elif __cplusplus >= 201703L
-MESSAGE("C++17 or higher detected");
-#elif __cplusplus >= 202002L
-MESSAGE("C++20 or higher detected");
-#endif
 
 TEST_SUITE("Container Library - Array Tests")
 {
