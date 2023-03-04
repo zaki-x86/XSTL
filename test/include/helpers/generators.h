@@ -27,7 +27,8 @@
 template<typename _Int>
 class _IsIntegerNumber {
 public:
-    static constexpr bool value = std::is_same<_Int, int>::value ||
+    static constexpr bool value = std::is_same<_Int, short>::value ||
+                        std::is_same<_Int, int>::value ||
                         std::is_same<_Int, unsigned int>::value ||
                         std::is_same<_Int, long>::value ||
                         std::is_same<_Int, unsigned long>::value ||

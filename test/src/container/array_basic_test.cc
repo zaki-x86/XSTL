@@ -11,9 +11,18 @@ static const size_t TESTING_SIZE = 100;
 
 _BEGIN_XSTL_TEST
 
+#if __cplusplus >= 201103L
+std::cout << "C++11 or higher detected" << std::endl;
+#elif __cplusplus >= 201403L
+std::cout << "C++14 or higher detected" << std::endl;
+#elif __cplusplus >= 201703L
+std::cout << "C++17 or higher detected" << std::endl;
+#elif __cplusplus >= 202002L
+std::cout << "C++20 or higher detected" << std::endl;
+#endif
 
 TEST_SUITE("Container Library - Array Tests")
-{
+{    
     TEST_CASE_TEMPLATE_DEFINE("Basic Array Operations Tests Against Primitive Types", Type, TEST_PRIMITIVE_TYPES)
     {
         xstl::array<Type, TESTING_SIZE> arr;

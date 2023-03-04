@@ -353,17 +353,19 @@ _BEGIN_XSTL_TEST
 
         // constexpr if statement is not supported in __cplusplus < 201703L
         #if XSTL_CXX17
-        void _test_print() {
-            xstl::array<_Ty, 5> _dummy;
-            _Ty _val = generate_random_value<_Ty>();
+        template<typename Ty>
+        typename std::enable_if<std::is_arithmetic<Ty>::value || std::is_same<Ty, std::string>::value, void>::type
+        _test_print() const {
+            xstl::array<Ty, 5> _dummy;
+            Ty _val = generate_random_value<Ty>();
             _dummy.fill(_val);
 
             std::string _expected = "";
-            if CONSTEXPR17(std::is_same<_Ty, std::string>::value || std::is_same<_Ty, const char*>::value)
+            if CONSTEXPR17(std::is_same<Ty, std::string>::value || std::is_same<Ty, const char*>::value)
             {
                 _expected = "{" + _val + ", " + _val + ", " + _val + ", " + _val + ", " + _val + "}";
             }
-            else if CONSTEXPR17(std::is_same<_Ty, char>::value)
+            else if CONSTEXPR17(std::is_same<Ty, char>::value)
             {
                 _expected.push_back('{');
                 _expected.push_back(_val);
@@ -377,7 +379,7 @@ _BEGIN_XSTL_TEST
                 _expected.push_back(_val);
                 _expected.push_back('}');                
             }
-            else if CONSTEXPR17(_IsIntegerNumber<T>::value)
+            else if CONSTEXPR17(_IsIntegerNumber<Ty>::value)
             {
                 _expected = "{" + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + ", " + std::to_string(_val) + "}";
             }
@@ -386,7 +388,6 @@ _BEGIN_XSTL_TEST
                 return;
             }
 
-        
             std::ostringstream output;
 
             // Redirect std::cout to the output string stream
