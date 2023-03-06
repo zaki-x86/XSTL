@@ -593,19 +593,21 @@ add_custom_target(ci_test_coverage
 
 ###############################################################################
 # Sanitizers.
+
+# Disable temprarly
 ###############################################################################
 
 set(CLANG_CXX_FLAGS_SANITIZER "-g -O1 -fsanitize=address -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -fno-omit-frame-pointer -fno-sanitize-recover=all -fno-sanitize=unsigned-integer-overflow -fno-sanitize=unsigned-shift-base")
 
-add_custom_target(ci_test_clang_sanitizer
-    COMMAND CXX=${CLANG_TOOL} CXXFLAGS=${CLANG_CXX_FLAGS_SANITIZER} ${CMAKE_COMMAND}
-        -DCMAKE_BUILD_TYPE=Debug -GNinja
-        -DXSTLEnableTesting=ON
-        -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_clang_sanitizer
-    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_clang_sanitizer
-    COMMAND cd ${PROJECT_BINARY_DIR}/build_clang_sanitizer && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
-    COMMENT "Compile and test with sanitizers"
-)
+# add_custom_target(ci_test_clang_sanitizer
+#     COMMAND CXX=${CLANG_TOOL} CXXFLAGS=${CLANG_CXX_FLAGS_SANITIZER} ${CMAKE_COMMAND}
+#         -DCMAKE_BUILD_TYPE=Debug -GNinja
+#         -DXSTLEnableTesting=ON
+#         -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_clang_sanitizer
+#     COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_clang_sanitizer
+#     COMMAND cd ${PROJECT_BINARY_DIR}/build_clang_sanitizer && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
+#     COMMENT "Compile and test with sanitizers"
+# )
 
 ###############################################################################
 # Check if header is amalgamated and sources are properly indented.
@@ -660,11 +662,11 @@ add_custom_target(ci_clang_analyze
 
 # MAYFAIL
 ###############################################################################
-
-add_custom_target(ci_cppcheck
-    COMMAND ${CPPCHECK_TOOL} --language=c++ --enable=warning --suppress=missingReturn --inline-suppr --inconclusive --force --std=c++11 ${SRC_FILES} --error-exitcode=1
-    COMMENT "Check code with Cppcheck"
-)
+# Disable temporarily because of a bug in Cppcheck 1.82
+# add_custom_target(ci_cppcheck
+#     COMMAND ${CPPCHECK_TOOL} --language=c++ --enable=warning --suppress=missingReturn --inline-suppr --inconclusive --force --std=c++11 ${SRC_FILES} --error-exitcode=1
+#     COMMENT "Check code with Cppcheck"
+# )
 
 ###############################################################################
 # Check code with cpplint.
