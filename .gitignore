@@ -29,6 +29,13 @@
 
 # Directories
 .vscode
+.vs
+build
+__pycache__
+*.internal*
+
+# Directories
+.vscode
 build
 __pycache__
 *.internal*

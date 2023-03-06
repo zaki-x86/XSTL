@@ -4,9 +4,6 @@
 # TODO : Define test options
 ##################################################################################
 
-include(CompilerWarnings)
-
-option(XSTLWarningsAsErrors ""  OFF)
 option(XSTLEnableValgrind   ""  OFF)
 option(XSTLFastTests        ""  OFF)
 
@@ -68,20 +65,13 @@ endif()
 # source : https://github.com/nlohmann/json/blob/develop/tests/CMakeLists.txt
 ##################################################################################
 
-#
-# Load the desired unit testing framework
-#
-
-include(GoogleTest)
-
-set(GOOGLE_MOCK_LIBRARIES GTest::gmock GTest::gmock_main)
-
 verbose_message("Adding tests ...")
 
-file(GLOB TEST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
+file(GLOB_RECURSE TEST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
 
 foreach(file ${TEST_SRCS})
-    string(REGEX REPLACE "(.*/)([a-zA-Z0-9_ ]+)(\.cpp)" "\\2" TEST_NAME ${file}) 
+    message(STATUS "Adding test ${file}")
+    get_filename_component(TEST_NAME ${file} NAME_WE)
     add_executable(${TEST_NAME} ${file})
 
   #
@@ -98,34 +88,33 @@ foreach(file ${TEST_SRCS})
     target_compile_features(${TEST_NAME} PUBLIC cxx_std_23)
   else()
     target_compile_features(${TEST_NAME} PUBLIC cxx_std_11)
-  endif(XSTLTestStandard)
+  endif()
   
 
-
-    # For local testing
-
-    if(NOT XSTLEnableCi)
-        set_project_warnings(${TEST_NAME})
-    endif()
-
-
+    target_include_directories(
+        ${TEST_NAME}
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    )
 
     target_link_libraries(
         ${TEST_NAME}
         zicx::xstl
-        GTest::gtest_main
-    #    Only if needed, uncomment line below
-    #    ${GOOGLE_MOCK_LIBRARIES}
     )
     
 
     #
     # Add the unit tests
     #
-    #add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})  
-    gtest_discover_tests(${TEST_NAME})
-
+    #doctest_add_test(NAME ${TEST_NAME} COMMAND  $<TARGET_FILE:${TEST_NAME}>)  
+    doctest_discover_tests(${TEST_NAME} -v)
 
 endforeach()
 
 verbose_message("Finished adding unit tests for ${PROJECT_NAME_LOWERCASE}.")
+
+##################################################################################
+# Build Examples
+##################################################################################
+
+add_subdirectory(examples/array)

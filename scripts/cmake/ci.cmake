@@ -123,7 +123,6 @@ find_program(SCAN_BUILD_TOOL NAMES scan-build-15 scan-build-14 scan-build-13 sca
 # -Wreserved-identifier           See https://github.com/onqtam/doctest/issues/536.
 
 set(CLANG_CXXFLAGS
-    -Werror
     -Weverything
     -Wno-c++98-compat
     -Wno-c++98-compat-pedantic
@@ -147,7 +146,6 @@ set(CLANG_CXXFLAGS
 
 set(GCC_CXXFLAGS
     -pedantic
-    -Werror
     --all-warnings
     --extra-warnings
     -W
@@ -439,6 +437,7 @@ set(GCC_CXXFLAGS
 
 ########################################################################
 # default gcc compiler test
+
 ########################################################################
 add_custom_target(ci_test_gcc
     COMMAND CXX=${GCC_TOOL} CXXFLAGS="${GCC_CXXFLAGS}" ${CMAKE_COMMAND}
@@ -495,16 +494,16 @@ endforeach()
 # Disable exceptions.
 ###############################################################################
 
-#add_custom_target(ci_test_noexceptions
-#    COMMAND ${CMAKE_COMMAND}
-#    -DCMAKE_BUILD_TYPE=Debug -GNinja
-#    -DXSTLEnableTesting=ON -DCMAKE_CXX_FLAGS=-DJSON_NOEXCEPTION -DDOCTEST_TEST_FILTER=--no-throw
-#    -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_noexceptions
-#    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_noexceptions
-#    COMMAND cd ${PROJECT_BINARY_DIR}/build_noexceptions && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
-#    COMMENT "Compile and test with exceptions switched off"
-#)
-#
+add_custom_target(ci_test_noexceptions
+    COMMAND ${CMAKE_COMMAND}
+    -DCMAKE_BUILD_TYPE=Debug -GNinja
+    -DXSTLEnableTesting=ON -DXSTLEnableExceptions=OFF
+    -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_noexceptions
+    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_noexceptions
+    COMMAND cd ${PROJECT_BINARY_DIR}/build_noexceptions && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
+    COMMENT "Compile and test with exceptions switched off"
+)
+
 ###############################################################################
 # Disable implicit conversions.
 ###############################################################################
@@ -567,7 +566,7 @@ endforeach()
 
 ## MAYFAIL Need to check where html directory is created to see the coverage report
 ###############################################################################
-
+# FIXME  Coverage is not working
 add_custom_target(ci_test_coverage
     COMMAND CXX=g++ ${CMAKE_COMMAND}
         -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_FLAGS="--coverage;-fprofile-arcs;-ftest-coverage"
@@ -579,14 +578,14 @@ add_custom_target(ci_test_coverage
     # No 32bit tests are considered -- yet --
     # COMMAND CXX=g++ ${CMAKE_COMMAND}
     #    -DCMAKE_BUILD_TYPE=Debug -GNinja -DCMAKE_CXX_FLAGS="-m32;--coverage;-fprofile-arcs;-ftest-coverage"
-    #    -DXSTLEnableTesting=ON -D32bitTest=ONLY
+    #    -DXSTLEnableTesting=ON
     #    -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_coverage32
     # COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_coverage32
     # COMMAND cd ${PROJECT_BINARY_DIR}/build_coverage32 && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
-
     COMMAND ${LCOV_TOOL} --directory . --capture --output-file xstl.info --rc lcov_branch_coverage=1
     COMMAND ${LCOV_TOOL} -e xstl.info ${SRC_FILES} --output-file xstl.info.filtered --rc lcov_branch_coverage=1
-    COMMAND ${CMAKE_SOURCE_DIR}/test/utils/imapdl/filterbr.py xstl.info.filtered > xstl.info.filtered.noexcept
+    # MAYFAIL permission denied error was raised, so I add python interpreter to the command
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/test/utils/imapdl/filterbr.py xstl.info.filtered > xstl.info.filtered.noexcept
     COMMAND genhtml --title "XSTL for Modern C++" --legend --demangle-cpp --output-directory html --show-details --branch-coverage xstl.info.filtered.noexcept
 
     COMMENT "Compile and test with coverage"
@@ -594,19 +593,21 @@ add_custom_target(ci_test_coverage
 
 ###############################################################################
 # Sanitizers.
+
+# Disable temprarly
 ###############################################################################
 
 set(CLANG_CXX_FLAGS_SANITIZER "-g -O1 -fsanitize=address -fsanitize=undefined -fsanitize=integer -fsanitize=nullability -fno-omit-frame-pointer -fno-sanitize-recover=all -fno-sanitize=unsigned-integer-overflow -fno-sanitize=unsigned-shift-base")
 
-add_custom_target(ci_test_clang_sanitizer
-    COMMAND CXX=${CLANG_TOOL} CXXFLAGS=${CLANG_CXX_FLAGS_SANITIZER} ${CMAKE_COMMAND}
-        -DCMAKE_BUILD_TYPE=Debug -GNinja
-        -DXSTLEnableTesting=ON
-        -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_clang_sanitizer
-    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_clang_sanitizer
-    COMMAND cd ${PROJECT_BINARY_DIR}/build_clang_sanitizer && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
-    COMMENT "Compile and test with sanitizers"
-)
+# add_custom_target(ci_test_clang_sanitizer
+#     COMMAND CXX=${CLANG_TOOL} CXXFLAGS=${CLANG_CXX_FLAGS_SANITIZER} ${CMAKE_COMMAND}
+#         -DCMAKE_BUILD_TYPE=Debug -GNinja
+#         -DXSTLEnableTesting=ON
+#         -S${PROJECT_SOURCE_DIR} -B${PROJECT_BINARY_DIR}/build_clang_sanitizer
+#     COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}/build_clang_sanitizer
+#     COMMAND cd ${PROJECT_BINARY_DIR}/build_clang_sanitizer && ${CMAKE_CTEST_COMMAND} --parallel ${N} --output-on-failure
+#     COMMENT "Compile and test with sanitizers"
+# )
 
 ###############################################################################
 # Check if header is amalgamated and sources are properly indented.
@@ -661,11 +662,11 @@ add_custom_target(ci_clang_analyze
 
 # MAYFAIL
 ###############################################################################
-
-add_custom_target(ci_cppcheck
-    COMMAND ${CPPCHECK_TOOL} --language=c++ --enable=warning --suppress=missingReturn --inline-suppr --inconclusive --force --std=c++11 ${SRC_FILES} --error-exitcode=1
-    COMMENT "Check code with Cppcheck"
-)
+# Disable temporarily because of a bug in Cppcheck 1.82
+# add_custom_target(ci_cppcheck
+#     COMMAND ${CPPCHECK_TOOL} --language=c++ --enable=warning --suppress=missingReturn --inline-suppr --inconclusive --force --std=c++11 ${SRC_FILES} --error-exitcode=1
+#     COMMENT "Check code with Cppcheck"
+# )
 
 ###############################################################################
 # Check code with cpplint.

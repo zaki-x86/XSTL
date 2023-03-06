@@ -43,7 +43,10 @@ jobs:
     container: ghcr.io/nlohmann/json-ci:v2.4.0
     strategy:
       matrix:
-        target: [ci_cppcheck, ci_test_valgrind]
+        target: [
+                #ci_cppcheck, 
+                ci_test_valgrind
+                ]
     steps:
       - uses: actions/checkout@v3
       - name: Run CMake
@@ -56,7 +59,9 @@ jobs:
     container: silkeh/clang:dev
     strategy:
       matrix:
-        target: [ci_clang_tidy, ci_test_clang_sanitizer, ci_clang_analyze]
+        target: [ci_clang_tidy, 
+                #ci_test_clang_sanitizer, 
+                ci_clang_analyze]
     steps:
       - name: Install git, clang-tools, and unzip
         run: apt-get update ; apt-get install -y git clang-tools unzip

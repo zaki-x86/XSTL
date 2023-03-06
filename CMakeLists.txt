@@ -34,7 +34,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake ${CMAKE_MODULE_PATH})
 message(STATUS "Module path is set to: ${CMAKE_MODULE_PATH}")
 include(Utils)
-
+include(CompilerWarnings)
 ##################################################################################
 # Set project options
 ##################################################################################
@@ -52,6 +52,7 @@ option(XSTLEnableVcPkg "Enable the Vcpkg package manager for this project." OFF)
 option(XSTLEnableTesting "Enable unit tests for the projects (from the `test` subfolder)." OFF)
 option(XSTLEnableCi "Enable CI build targets." OFF)
 option(XSTLEnableDoxygen "Enable Doxygen documentation builds of source." OFF)
+option(XSTLWarningsAsErrors "Treat compiler warnings as errors"  OFF)
 
 # Generate compile_commands.json for clang based tools
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -89,7 +90,7 @@ endif()
 message(STATUS "Started CMake for ${XSTL_TARGET} v${PROJECT_VERSION}...\n")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  if (UNIX)
+  if (UNIX OR MINGW OR CMAKE_COMPILER_IS_GNUCXX )    
     add_compile_options("$<$<CONFIG:DEBUG>:-D_DEBUG>")    #this will allow to use same _DEBUG macro available in both Linux as well as Windows - MSCV environment. Easy to put Debug specific code.
   endif (UNIX)  
   message(STATUS "_DEBUG macro is added for debugging specific code\n")
@@ -210,7 +211,7 @@ endif(XSTLVerboseOutput)
 
 if(TARGET ${XSTL_TARGET})
   message(STATUS "Added all header and implementation files.\n")
-endif(TARGET)
+endif()
 
 
 #
@@ -243,6 +244,7 @@ target_include_directories(
     ${XSTL_TARGET}
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs>
     $<INSTALL_INTERFACE:include>
 )
 
@@ -252,6 +254,11 @@ message(STATUS "Finished setting up include directories.")
 # Check if the library is being built as a shared library
 #
 
+##################################################################################
+# Set library configurations
+##################################################################################
+option(XSTLEnableExceptions "Enable exceptions" ON)
+
 if(BUILD_SHARED_LIBS)
     message(STATUS "Building ${XSTL_TARGET} as a shared library")
     target_compile_definitions(${XSTL_TARGET} INTERFACE -DBUILD_SHARED)
@@ -260,13 +267,17 @@ else()
     target_compile_definitions(${XSTL_TARGET} INTERFACE -DBUILD_STATIC)
 endif(BUILD_SHARED_LIBS)
 
-##################################################################################
-# Set the project standard and warnings
-##################################################################################
 
 target_compile_features(${XSTL_TARGET} INTERFACE cxx_std_11)
 
-verbose_message("Applied compiler warnings. Using standard ${CMAKE_CXX_STANDARD}.\n")
+verbose_message("Using standard ${CMAKE_CXX_STANDARD}.\n")
+
+if(XSTLEnableExceptions)
+  target_compile_definitions(${XSTL_TARGET} PUBLIC ENABLE_EXCEPTIONS)
+else()
+  target_compile_definitions(${XSTL_TARGET} PUBLIC DISABLE_EXCEPTIONS)
+endif(XSTLEnableExceptions)
+
 
 ##################################################################################
 # Enable Doxygen
@@ -381,11 +392,13 @@ message(STATUS "Finished building requirements for installing the package.\n")
 ##################################################################################
 # Unit testing setup
 
+## TODO Add feature to test each library individually
 ##################################################################################
 
 if(XSTLEnableTesting)
-  add_subdirectory(libs/gtest)
+  verbose_message("Applied aggressive compiler warnings for testing.\n")
+  include(doctest/doctest)
   enable_testing()
-  message(STATUS "Build unit tests for the project. Tests should always be found in the test folder\n")
+  verbose_message("Build unit tests for the project. Tests should always be found in the test folder\n")
   add_subdirectory(test)
 endif()
