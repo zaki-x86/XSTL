@@ -46,7 +46,7 @@ template <typename T, size_t _Size> struct array {
   using reverse_iterator = std::reverse_iterator<iterator>;
   using const_reverse_iterator = std::reverse_iterator<const_iterator>;
   using size_type = size_t;
-  using difference_type = ptrdiff_t;
+  using difference_type = std::ptrdiff_t;
   
   typedef _array_traits<T, _Size> _ArrayTraits;
   typename _ArrayTraits::_CStyle_array _m_Elements; 

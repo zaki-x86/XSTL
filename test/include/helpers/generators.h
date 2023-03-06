@@ -60,6 +60,7 @@ get_random_number(const T from = std::numeric_limits<T>::min(),
   return distr(generator);
 }
 
+
 // char
 char get_random_char() {
     std::random_device rd;

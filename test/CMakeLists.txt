@@ -70,6 +70,7 @@ verbose_message("Adding tests ...")
 file(GLOB_RECURSE TEST_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc)
 
 foreach(file ${TEST_SRCS})
+    message(STATUS "Adding test ${file}")
     get_filename_component(TEST_NAME ${file} NAME_WE)
     add_executable(${TEST_NAME} ${file})
 

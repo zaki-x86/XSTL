@@ -142,10 +142,14 @@
 /// see: msc: https://learn.microsoft.com/en-us/cpp/cpp/inline-functions-cpp?view=msvc-170
 /// They are best used for small functions, such as accessing private data member
 
-#if defined(__cpp_inline_variables) && __cpp_inline_variables >= 201606L || __cplusplus >= 201703L
-#define INLINE_VAR inline
+#if !defined(__cpp_inline_variables) && __cplusplus >= 201606L
+#define __cpp_inline_variables 201606L
+#endif
+
+#if defined(__cpp_inline_variables) || defined(XSTL_CXX17)
+#define XSTL_INLINE_VAR inline
 #else
-#define INLINE_VAR
+#define XSTL_INLINE_VAR
 #endif
 
 #ifdef XSTL_MSVC
@@ -296,6 +300,13 @@
 
 #define _BEGIN_XSTL namespace xstl {
 #define _END_XSTL }
+
+#define _XSTL xstl::
+
+#define _BEGIN_INTERNAL namespace internal {
+#define _END_INTERNAL }
+
+#define _INTERNAL internal::
 
 #if defined(__cplusplus) && __cplusplus >= 201703L
 #define _BEGIN_XSTL_TEST namespace xstl::test {
