@@ -189,7 +189,7 @@ TEST_SUITE("Type Transformations Test")
 
 }
 
-TEST_SUITE("Type Relationships Test")
+TEST_SUITE("Type Operations Test")
 {
     TEST_CASE("Test xstl::conjunction and xstl::conjunction_v")
     {
@@ -222,24 +222,271 @@ TEST_SUITE("Type Relationships Test")
 
 }
 
+TEST_SUITE("Type Relationships Test")
+{
+    TEST_CASE_TEMPLATE("Test xstl::is_same and xstl::is_same_v", T, int, bool)
+    {
+        CHECK(xstl::is_same<T, T>::value);
+        CHECK(xstl::is_same_v<T, T>);
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_base_of and xstl::is_base_of_v", T, int, bool)
+    {
+        CHECK(xstl::is_base_of<T, T>::value);
+        CHECK(xstl::is_base_of_v<T, T>);
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_convertible and xstl::is_convertible_v", T, int, bool)
+    {
+        CHECK(xstl::is_convertible<T, T>::value);
+        CHECK(xstl::is_convertible_v<T, T>);
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_nothrow_convertible and xstl::is_nothrow_convertible_v", T, int, bool)
+    {
+        CHECK(xstl::is_nothrow_convertible<T, T>::value);
+        CHECK(xstl::is_nothrow_convertible_v<T, T>);
+    }
+
+    TEST_CASE("Test xstl::is_invockable")
+    {
+        
+    }
+
+    TEST_CASE("Test xstl::is_invockable_r")
+    {
+        
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_invockable")
+    {
+        
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_invockable_r")
+    {
+        
+    }
+
+    TEST_CASE("Test xstl::is_layout_compatible")
+    {
+
+    }
+
+    TEST_CASE("Test xstl::is_pointer_interconvertible_base_of")
+    {
+        
+    }
+
+    TEST_CASE("Test xstl::is_pointer_interconvertible_with_class")
+    {
+        
+    }
+
+    TEST_CASE("Test xstl::is_corresponding_member")
+    {
+
+    }
+
+}
+
 TEST_SUITE("Properties Queries Test")
 {
+    /**
+     * Tests the following traits:
+     * alignment_of, rank, and extent
+    */
 
+   TEST_CASE_TEMPLATE("Test xstl::alignment_of and xstl::alignment_of_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+   {
+       CHECK(xstl::alignment_of<T>::value == alignof(T));
+       CHECK(xstl::alignment_of_v<T> == alignof(T));
+   }
+
+   TEST_CASE_TEMPLATE("Test xstl::rank and xstl::rank_v of an array type", T, int[10], bool[10], char[10], unsigned char[10], short[10], unsigned short[10], long[10], unsigned long[10], long long[10], unsigned long long[10], float[10], double[10], long double[10])
+   {
+       CHECK(xstl::rank<T>::value == 1);
+       CHECK(xstl::rank_v<T> == 1);
+   }
 }
 
 TEST_SUITE("Supported Operations Type Test")
 {
+    /**
+     * Tests the following operations:
+     * is_constructible, is_trivially_constructible, is_nothrow_constructible, is_default_constructible, is_trivially_default_constructible, is_nothrow_default_constructible, is_copy_constructible, is_trivially_copy_constructible, is_nothrow_copy_constructible, is_move_constructible, is_trivially_move_constructible, is_nothrow_move_constructible, is_assignable, is_trivially_assignable, is_nothrow_assignable, is_copy_assignable, is_trivially_copy_assignable, is_nothrow_copy_assignable, is_move_assignable, is_trivially_move_assignable, is_nothrow_move_assignable, is_destructible, is_trivially_destructible, is_nothrow_destructible, has_virtual_destructor, is_swappable_with, is_swappable, is_nothrow_swappable_with, is_nothrow_swappable
+    */
+
+   TEST_CASE_TEMPLATE("Test xstl::is_constructible and xstl::is_constructible_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+   {
+       CHECK(xstl::is_constructible<T>::value);
+       CHECK(xstl::is_constructible_v<T>);
+   }
+
+   TEST_CASE("Test xstl::is_trivially_constructible and xstl::is_trivially_constructible_v")
+   {
+       
+   }
+
+    TEST_CASE("Test xstl::is_nothrow_constructible and xstl::is_nothrow_constructible_v")
+    {
+         
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_default_constructible and xstl::is_default_constructible_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+    {
+        CHECK(xstl::is_default_constructible<T>::value);
+        CHECK(xstl::is_default_constructible_v<T>);
+    }
+
+    TEST_CASE("Test xstl::is_trivially_default_constructible and xstl::is_trivially_default_constructible_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_default_constructible and xstl::is_nothrow_default_constructible_v")
+    {
+         
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_copy_constructible and xstl::is_copy_constructible_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+    {
+        CHECK(xstl::is_copy_constructible<T>::value);
+        CHECK(xstl::is_copy_constructible_v<T>);
+    }
+
+    TEST_CASE("Test xstl::is_trivially_copy_constructible and xstl::is_trivially_copy_constructible_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_copy_constructible and xstl::is_nothrow_copy_constructible_v")
+    {
+         
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_move_constructible and xstl::is_move_constructible_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+    {
+        CHECK(xstl::is_move_constructible<T>::value);
+        CHECK(xstl::is_move_constructible_v<T>);
+    }
+
+    TEST_CASE("Test xstl::is_trivially_move_constructible and xstl::is_trivially_move_constructible_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_move_constructible and xstl::is_nothrow_move_constructible_v")
+    {
+         
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_assignable and xstl::is_assignable_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+    {
+        CHECK(xstl::is_assignable<T, T>::value);
+        CHECK(xstl::is_assignable_v<T, T>);
+    }
+
+    TEST_CASE("Test xstl::is_trivially_assignable and xstl::is_trivially_assignable_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_assignable and xstl::is_nothrow_assignable_v")
+    {
+         
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_copy_assignable and xstl::is_copy_assignable_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+    {
+        CHECK(xstl::is_copy_assignable<T>::value);
+        CHECK(xstl::is_copy_assignable_v<T>);
+    }
+
+    TEST_CASE("Test xstl::is_trivially_copy_assignable and xstl::is_trivially_copy_assignable_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_copy_assignable and xstl::is_nothrow_copy_assignable_v")
+    {
+         
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_move_assignable and xstl::is_move_assignable_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+    {
+        CHECK(xstl::is_move_assignable<T>::value);
+        CHECK(xstl::is_move_assignable_v<T>);
+    }
+
+    TEST_CASE("Test xstl::is_trivially_move_assignable and xstl::is_trivially_move_assignable_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_move_assignable and xstl::is_nothrow_move_assignable_v")
+    {
+         
+    }
+
+    TEST_CASE_TEMPLATE("Test xstl::is_destructible and xstl::is_destructible_v", T, int, bool, char, unsigned char, short, unsigned short, long, unsigned long, long long, unsigned long long, float, double, long double)
+    {
+        CHECK(xstl::is_destructible<T>::value);
+        CHECK(xstl::is_destructible_v<T>);
+    }
+
+    TEST_CASE("Test xstl::is_trivially_destructible and xstl::is_trivially_destructible_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_destructible and xstl::is_nothrow_destructible_v")
+    {
+         
+    }
+    
+    TEST_CASE("Test xstl::has_virtual_destructor and xstl::has_virtual_destructor_v")
+    {
+         
+    }
+
+    TEST_CASE("Test xstl::is_swappable_with")
+    {
+
+    }
+
+    TEST_CASE("Test xstl::is_swappable")
+    {
+
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_swappable_with")
+    {
+
+    }
+
+    TEST_CASE("Test xstl::is_nothrow_swappable")
+    {
+
+    }
 
 }
 
 TEST_SUITE("Type Properties Test")
 {
-
+    /**
+     * Tests the following traits:
+     * xstl::is_const, xstl::is_const_v, xstl::is_volatile, xstl::is_volatile_v, xstl::is_trivial, xstl::is_trivial_v, xstl::is_standard_layout, xstl::is_standard_layout_v, xstl::is_pod, xstl::is_pod_v, xstl::is_literal_type, xstl::is_literal_type_v, xstl::is_empty, xstl::is_empty_v, xstl::is_polymorphic, xstl::is_polymorphic_v, xstl::is_abstract, xstl::is_abstract_v, xstl::is_signed, xstl::is_signed_v, xstl::is_unsigned, xstl::is_unsigned_v, xstl::is_final, xstl::is_final_v, xstl::is_aggregate, xstl::is_aggregate_v, xstl::is_trivially_copyable, xstl::is_trivially_copyable_v, xstl::has_unique_object_representation, xstl::has_unique_object_representation_v, xstl::is_bounded_array, xstl::is_bounded_array_v, xstl::is_unbounded_array, xstl::is_unbounded_array_v, xstl::is_scoped_enum
+    */
+   
 }
 
 TEST_SUITE("Composite Type Categories Test")
 {
-
+    /**
+     * Tests the following traits:
+     * xstl::is_reference, xstl::is_reference_v, xstl::is_object, xstl::is_object_v, xstl::is_scalar, xstl::is_scalar_v, xstl::is_compound, xstl::is_compound_v, xstl::is_member_pointer, xstl::is_member_pointer_v, xstl::is_member_object_pointer, xstl::is_member_object_pointer_v, xstl::is_member_function_pointer, xstl::is_member_function_pointer_v, xstl::is_fundamental, xstl::is_fundamental_v, xstl::is_arithmetic, xstl::is_arithmetic_v, xstl::is_reference_wrapper, xstl::is_reference_wrapper_v
+    */
 }
 
 TEST_SUITE("Primary Type Categories Test")

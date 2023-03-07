@@ -3,6 +3,7 @@ name: Ubuntu
 on:
   push:
     branches:
+      - develop_*
       - develop
       - main
       - release/*
